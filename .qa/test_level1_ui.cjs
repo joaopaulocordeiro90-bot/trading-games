@@ -16,6 +16,7 @@ const ctx = {
   document:{ getElementById:()=>null, createElement:()=>({}), head:{appendChild:()=>{}} },
   isCampaignMode:()=>state.campaign.active,
   getCampaignLevel:()=>level,
+  getRoundData:r=>level.scenario.rounds[r-1],
   getCurrentExwOffersForRender:rd=>rd.offers_exw,
   formatOfferDisplayName:o=>(o.label||'Origem').split(' - ')[0],
   escapeHtml:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'),
