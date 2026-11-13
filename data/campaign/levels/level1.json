@@ -798,18 +798,14 @@
   },
   "scenarioId": 1,
   "intro": [
-    "Level 1 — Originação pura. Você administrará um cargo de 60.000 t com destino à China. A venda e o frete marítimo já estão fixos para simplificar a primeira etapa.",
-    "A compra ocorre no interior para retirada em fevereiro/2027, com chegada prevista a Santos em março/2027. Os preços de referência são observações de 06 a 12/11/2026 no BRZ Replacement.",
-    "Venda CFR de treinamento: +130 c/bu. Frete marítimo Santos → Norte da China fixado em US$ 46,60/t, e custo portuário (fobbing) de US$ 11,00/t. Esses componentes entram no cálculo do custo CFR equivalente.",
-    "Você escolhe até uma origem por sessão, entre quatro referências verificadas. As quantidades dos lotes são simuladas; o jogo só contrata o saldo necessário para completar o navio.",
-    "Meta: completar 60.000 t em cinco rodadas com basis médio de aquisição ≤ +125 c/bu. A diferença entre venda +130 e custo médio representa margem bruta indicativa, não MTM de mercado."
+    "Bem-vindo ao Level 1 — Originação pura. Seu objetivo é completar um navio de 60.000 t de soja para a China em cinco rodadas.",
+    "A venda CFR +130 c/bu e o frete marítimo US$ 46,60/t já foram fixados no exercício. Você escolherá apenas a origem EXW; as quantidades são simuladas e os preços usam referências BRZ de 06 a 12/11/2026.",
+    "Siga o painel em três etapas: Mercado → Ofertas → Posição. A calculadora é opcional. Meta: basis médio de aquisição ≤ +125 c/bu. A margem é indicativa, não MTM ou lucro realizado."
   ],
   "exwGuide": [
-    "A tela mostra quatro referências de originação de fevereiro/2027. O valor R$/sc representa preço físico indicado no BRZ, não negociação executável nem volume verificado.",
-    "Primeiro, converta o preço EXW de R$/sc em US$/t usando o dólar futuro de março/2027 da sessão. Cada tonelada contém 16,6667 sacas.",
-    "Depois some frete rodoviário origem → Santos (BRZ Fretes S45/S46, convertido de R$/t em US$/t), fobbing US$ 11/t e frete marítimo contratado US$ 46,60/t.",
-    "Converta o custo CFR para c/bu e subtraia a CBOT H27 da rodada. Esse é o basis de aquisição do lote; compare com a venda pré-fixada +130 c/bu.",
-    "Você pode contratar uma oferta por rodada, até o volume restante. Não é obrigatório comprar em todas as sessões; avalie o impacto no basis médio antes de confirmar."
+    "1/3 — MERCADO: leia o radar da sessão. Venda CFR, marítimo e destino já estão definidos; você decide apenas a origem EXW.",
+    "2/3 — OFERTAS: selecione uma origem. Se desejar, abra a calculadora para comparar preço convertido, frete até Santos, fobbing e basis CFR equivalente.",
+    "3/3 — RESULTADO: compre no máximo um lote por rodada, ou avance sem comprar. Acompanhe volume, basis médio e margem bruta indicativa. A meta é 60.000 t com basis ≤ +125 c/bu."
   ],
   "description": "Simule cinco sessões de originação; compre no máximo uma oferta por rodada e complete 60.000 t em Santos. Preços e fretes são observações do BRZ; disponibilidade/volumes e venda CFR são simulações claramente identificadas.",
   "marketContext": {
