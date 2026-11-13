@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## 2026-11-13 — Correção de integração visual do Level 1
+- Retirados os painéis sobrepostos e a máscara que cobriam a arte do caderno e o quadro "OFERTAS EXW".
+- Mercado, Origem e Posição agora são exibidos dentro da área útil do caderno existente. As ofertas ficam no quadro da direita; o mapa e os sacos de soja permanecem ativos e visíveis.
+- Mantidos os botões originais **Comprar** e **Descartar** do caderno, o botão de avançar rodada, o guia e os demais hotspots.
+- Calculadora CFR e modo de leitura ampliada passam a abrir somente por clique, sem modal automático em desktop ou celular.
+- Mantidos cálculos, feedback após compras, scorecard 0–100 e desbloqueio persistente de L2.
+- Testes de navegador: cinco rodadas, seleção pelo quadro, cálculo CFR, compra pelo hotspot original, resultado final, mobile sem sobreposição automática e isolamento Iniciante/Expert.
+
 ## 2026-11-13 — Etapa 2 / Level 1
 - Organização visual: painel de decisão único, área de carga clara, sem tabela e caderno de ofertas duplicados. Tipografia ampliada.
 - Exibição em celulares: painel de foco abre automaticamente na tela de originação; os demais modos mantêm o layout anterior.
