@@ -82,9 +82,9 @@ try:
     js("setStage('partials_soja')")
     wait.until(lambda d:js("return state.stage==='partials_soja'"))
     js("backFromPartials()")
-    assert js("return state.stage")==='partials_menu'
+    assert js("return state.stage")=='partials_menu'
     js("backFromPartials()")
-    assert js("return state.stage")==='r1_exw'
+    assert js("return state.stage")=='r1_exw'
     screen_ready()
     assert not driver.find_elements(By.ID,'l1wb-dialog')  # nenhuma camada aberta na chegada
     driver.save_screenshot(str(ARTIFACTS/'01-layout-original-integrado.png'))
