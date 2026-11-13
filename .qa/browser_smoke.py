@@ -55,6 +55,9 @@ try:
     js("initCampaignRun(1); state.campaign.introRedirectPending=false;state.guideSeen={campaign_exw:true,campaign_home:true,r1_exw_first_offer:true};state.guideOverlayOpen=false; state.guideFlow=null;setStage('r1_exw');")
     at_panel()
     assert "1 · Mercado" in at_panel().text
+    assert len(driver.find_elements(By.CSS_SELECTOR, ".l1wb-sideguide")) == 1
+    assert len(driver.find_elements(By.ID,"txt_text_note")) == 0
+    assert len(driver.find_elements(By.ID,"txt_text_exw_offers")) == 0
     driver.save_screenshot(str(ARTIFACTS/"01-mercado.png"))
 
     driver.find_element(By.CSS_SELECTOR,'#l1wb-panel [data-l1-tab="offers"]').click()
@@ -73,6 +76,8 @@ try:
     driver.find_element(By.CSS_SELECTOR,'#l1wb-panel [data-l1-action="buy"]').click()
     wait.until(lambda d: len(d.find_elements(By.ID,"campaignAdvanceModal")) == 1)
     assert js("return Number(state.confirmed.exw[1]?.volume_t||0)") > 0
+    assert len(driver.find_elements(By.CSS_SELECTOR, "#campaignAdvanceModal .l1-feedback")) == 1
+    assert "Basis do lote" in driver.find_element(By.ID,"campaignAdvanceModal").text
     driver.save_screenshot(str(ARTIFACTS/"04-resumo.png"))
     js("closeCampaignAdvanceModal();")
     driver.find_element(By.CSS_SELECTOR,'#l1wb-panel [data-l1-tab="book"]').click()
@@ -104,6 +109,16 @@ try:
     js("nextRound();")
     wait.until(lambda d: js("return state.stage === 'campaign_result'"))
     driver.save_screenshot(str(ARTIFACTS/"05-resultado.png"))
+    score = js("return buildCampaignLevel1Result().scorecard.total")
+    assert 70 <= score <= 100, f"Nota inesperada: {score}"
+    assert js("return buildCampaignLevel1Result().approved") is True
+    assert js("return readCampaignL1Record()?.bestScore") >= score
+    assert js("return getCampaignUnlockedLevel()") >= 2
+    assert len(driver.find_elements(By.CSS_SELECTOR, ".l1-scorecard")) == 1
+    js("backToCampaignMenu()")
+    wait.until(lambda d: len(d.find_elements(By.ID, "campaignLevelsContainer")) == 1)
+    assert "Desbloqueado" in driver.find_element(By.ID,"campaignLevelsContainer").text
+    driver.save_screenshot(str(ARTIFACTS/"05b-menu-progresso.png"))
 
     for mode in ("guided","expert"):
         js(f"state.primaryMode='scenarios';state.gameMode='{mode}';state.campaign.active=false;state.round=1;state.guideSeen={{r1_exw:true}};state.guideOverlayOpen=false;setStage('r1_exw');")
