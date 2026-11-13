@@ -735,6 +735,9 @@ function exitCampaignFlow() {
 
 function getCampaignContextLabel() {
   const level = getCampaignLevel(state.campaign.levelId || 1);
+  if (Number(state.campaign?.levelId) === 1) {
+    return `Soja CFR China • Navio de ${formatTon(level.targetVolumeT)} t • Porto Santos definido • Venda +${level.fixedSaleBasisCentBu} ¢/bu • Frete marítimo US$ ${level.fixedFreightUsdT}/t`;
+  }
   return `Venda: 1 cargo soja CFR China • Embarque ${level.shipmentMonth} • Venda ${level.fixedSaleBasisCentBu} ¢/bu • Frete marítimo US$ ${level.fixedFreightUsdT}/t • ${level.fixedPortLabel} → ${level.fixedDestination}`;
 }
 
@@ -979,12 +982,19 @@ function campaignL1WorkbenchMarkup(rd) {
   const round=Number(state.round);
   let content='';
   if(tab==='market'){
-    const note=String(rd.market_headline||rd.news||'Observe as referências de mercado antes de comprar.');
-    content=`<span class="l1wb-label">Mercado · Rodada ${round}</span>
-      <h3>${escapeHtml(note)}</h3>
-      <p>Venda CFR China e porto Santos já definidos.</p>
-      <p>Compare as origens na tabela ao lado ou selecione uma saca no mapa.</p>
-      <div class="l1wb-actions"><button class="l1wb-btn l1wb-btn-primary" type="button" data-l1-tab="offers">Ver decisão →</button></div>`;
+    const news=String(rd.master_news||rd.market_headline||rd.news||'Observe o mercado antes de comprar.');
+    const previous=round>1?getRoundData(round-1):null;
+    const fmtMove=(v,d=1)=>`${Number(v)>=0?'+':''}${num(v,d)}`;
+    const currentPx=rd.offers_exw?.find(x=>x.city==='Porto Nacional');
+    const previousPx=previous?.offers_exw?.find(x=>x.city==='Porto Nacional');
+    const physical=(currentPx&&previousPx)?` · Físico TO ${fmtMove(Number(currentPx.price_brl_saca)-Number(previousPx.price_brl_saca),2)} R$/sc`:'';
+    const reaction=previous?`<p class="l1wb-mini"><strong>Efeito da notícia anterior:</strong> Chicago ${fmtMove(Number(rd.cbot_cent_bu)-Number(previous.cbot_cent_bu),2)} ¢/bu · dólar ${fmtMove(Number(rd.usd)-Number(previous.usd),4)} R$/US$${physical}.</p>`:'';
+    content=`<span class="l1wb-label">1. Notícia-mestre · rodada ${round}</span>
+      <h3>${escapeHtml(news)}</h3>
+      ${reaction}
+      <p><strong>O que observar:</strong> ${escapeHtml(rd.market_signal||'Compare Chicago, câmbio e preço físico.')}</p>
+      <p><strong>Sua missão:</strong> ${escapeHtml(rd.decision_prompt||'Compare as origens e decida se compra ou espera.')}</p>
+      <div class="l1wb-actions"><button class="l1wb-btn l1wb-btn-primary" type="button" data-l1-tab="offers">2. Comparar origens →</button><button class="l1wb-btn" type="button" data-l1-action="focus">Ler mais ⛶</button></div>`;
   }
   if(tab==='offers'){
     let inner='<span class="l1wb-label">Decisão · Uma compra por rodada</span><h3>Selecione uma oferta no quadro à direita ou no mapa.</h3><p>Confira volume e custo antes de usar o botão COMPRAR do caderno.</p>';
@@ -1017,7 +1027,7 @@ function campaignL1WorkbenchMarkup(rd) {
     <button type="button" class="l1wb-btn" role="tab" data-l1-tab="book" aria-selected="${tab==='book'}">Posição</button>
     <button type="button" class="l1wb-btn" data-l1-action="focus" aria-label="Ampliar leitura do caderno">Ler ⛶</button></nav>
     <div class="l1wb-content">${content}</div>
-    <div class="l1wb-foot">Meta: basis médio ≤ +${num(level.targetBasisCentBu,0)} ¢/bu · Valores indicativos BRZ</div>`;
+    <div class="l1wb-foot">Meta: basis médio ≤ +${num(level.targetBasisCentBu,0)} ¢/bu · Cenário simulado</div>`;
 }
 
 function campaignL1OfferListMarkup(rd){
@@ -1028,7 +1038,7 @@ function campaignL1OfferListMarkup(rd){
     const active=!!selected&&Number(selected.id)===Number(o.id);
     return `<button type="button" class="l1wb-offer" data-l1-select="${i}" aria-pressed="${active}">
        <span class="l1wb-offer-top"><strong>${escapeHtml(formatOfferDisplayName(o))}</strong></span>
-       <span class="l1wb-offer-top"><small>${vol(o.volume_t)} t · Fev/27</small><span class="l1wb-offer-price">R$ ${num(o.price_brl_saca)}/sc</span></span>
+       <span class="l1wb-offer-top"><small>${vol(o.volume_t)} t · Disponível</small><span class="l1wb-offer-price">R$ ${num(o.price_brl_saca)}/sc</span></span>
        ${active?`<span class="l1wb-offer-flag">${confirmed?'✓ Compra confirmada':'✓ Selecionada · consulte o caderno'}</span>`:''}
     </button>`}).join('')}`;
 }
@@ -1050,7 +1060,7 @@ function campaignL1CalculatorMarkup(rd){
     <div class="l1wb-costrow"><span>Frete rodoviário</span><strong>US$ ${num(lot.inlandUsdT)}/t</strong></div>
     <div class="l1wb-costrow"><span>Fobbing + marítimo</span><strong>US$ ${num(lot.fobbingUsdT+lot.maritimeUsdT)}/t</strong></div>
     <div class="l1wb-costrow"><span>Custo CFR equivalente</span><strong>${num(lot.cfrCostCentBu,1)} ¢/bu</strong></div>
-    <div class="l1wb-costrow"><span>CBOT H27</span><strong>${num(lot.cbotCentBu) } ¢/bu</strong></div>
+    <div class="l1wb-costrow"><span>Chicago (CBOT)</span><strong>${num(lot.cbotCentBu) } ¢/bu</strong></div>
     <div class="l1wb-costrow"><span>Basis desta origem</span><strong>${signed(lot.basisCentBu)} ¢/bu</strong></div>
     <div class="l1wb-costrow"><span>Basis médio projetado</span><strong>${signed(projected.basisAvg)} ¢/bu</strong></div>
     <div class="l1wb-costrow"><span>Margem bruta por tonelada</span><strong>US$ ${num(lot.pnlUsdT)}/t</strong></div>
@@ -1124,8 +1134,8 @@ function buildCampaignStatusHtml() {
   return `
     <div class="campaign-canvas-card campaign-status-card">
       <div class="campaign-canvas-title">STATUS · L1</div>
-      <div class="campaign-status-block"><span>Venda contratada (simulação)</span>CFR +${Number(level.fixedSaleBasisCentBu).toFixed(0)} c/bu · Santos → Norte da China · Mar/27.</div>
-      <div class="campaign-status-block"><span>Originação</span>Retirada Fev/27; chegada Santos Mar/27.</div>
+      <div class="campaign-status-block"><span>Venda contratada (simulação)</span>CFR +${Number(level.fixedSaleBasisCentBu).toFixed(0)} c/bu · Santos → Norte da China.</div>
+      <div class="campaign-status-block"><span>Originação</span>Compra EXW: escolha a praça, o volume e o preço físico.</div>
       <div class="campaign-status-block"><span>Custos fixados</span>Marítimo US$ ${Number(level.fixedFreightUsdT).toFixed(2)}/t · fobbing US$ ${Number(level.fixedFobbingUsdT).toFixed(2)}/t; rodoviário por praça.</div>
       <div class="campaign-status-block"><span>Meta</span>${formatTon(level.targetVolumeT)} t em ${level.rounds} rodadas · basis ≤ +${Number(level.targetBasisCentBu).toFixed(0)} c/bu.</div>
     </div>`;
@@ -1158,7 +1168,7 @@ function buildCampaignNewsPanelHtml(roundNum = state.round) {
   const totalRounds = Number(level.rounds || 5);
   const rawHeadline = String(rd.market_headline || rd.news || '').trim();
   const headline = rawHeadline || 'Mercado sem manchete relevante nesta rodada.';
-  const roundLabel = `Sessão ${Number(roundNum || 1)} / ${totalRounds} · dados históricos BRZ`;
+  const roundLabel = `Rodada ${Number(roundNum || 1)} / ${totalRounds} · notícia simulada`;
   return `
     <div class="campaign-canvas-card campaign-news-card">
       <div class="campaign-news-kicker">${escapeHtml(roundLabel)}</div>
@@ -1188,7 +1198,7 @@ function buildCampaignRoundSummaryHtml(roundNum = state.round) {
       ${feedback}
       ${partialNotice}
       <details class="l1-result-details"><summary>Como o basis e a margem foram calculados</summary><p>${introHtml}</p>
-      <p>Preço EXW: R$ ${lot.priceBrlSc.toFixed(2)}/sc · dólar Mar/27: R$ ${lot.fx.toFixed(4)} · CBOT H27: ${lot.cbotCentBu.toFixed(2)} c/bu · frete Santos: US$ ${lot.inlandUsdT.toFixed(2)}/t.</p>
+      <p>Preço EXW: R$ ${lot.priceBrlSc.toFixed(2)}/sc · câmbio: R$ ${lot.fx.toFixed(4)} · Chicago: ${lot.cbotCentBu.toFixed(2)} c/bu · frete Santos: US$ ${lot.inlandUsdT.toFixed(2)}/t.</p>
       <div class="campaign-formula-box">
         <div><span>Soja interior</span><strong>${lot.interiorCentBu.toFixed(1)} c/bu</strong></div>
         <div><span>Logística interna</span><strong>${lot.inlandCentBu.toFixed(1)} c/bu</strong></div>
@@ -2148,14 +2158,22 @@ function setStage(stage) {
 }
 
 function openPartialsMenu() {
-  state.prevStage = state.stage;
-  setStage("partials_menu");
+  // Memoriza a tela de trabalho; navegar pelas sub-telas não deve substituir o retorno.
+  const origin=state.stage;
+  state.partialsReturnStage = origin.startsWith('partials_') ? (state.partialsReturnStage || 'r1_exw') : origin;
+  setStage('partials_menu');
 }
 
 function backFromPartials() {
-  setStage(state.prevStage || "r1_home");
+  // Soja Originada → Menu do Trader → Oferta EXW (ou tela de origem).
+  if (state.stage !== 'partials_menu' && String(state.stage).startsWith('partials_')) {
+    setStage('partials_menu');
+    return;
+  }
+  const destination=state.partialsReturnStage || (isCampaignMode() ? 'r1_exw' : 'r1_home');
+  state.partialsReturnStage=null;
+  setStage(destination);
 }
-
 function renderHome() {
   stopTimer();
   state.stage = "home_canva";
@@ -2183,6 +2201,7 @@ function resetGameStateForNewRun() {
   delete state.freightPlan; // legado
 
   state.ui.showDetails = false;
+  state.partialsReturnStage = null;
   state.totalRounds = 0;
   state.primaryMode = state.primaryMode === "campaign" ? state.primaryMode : null;
   if (!isCampaignMode()) {
@@ -3235,7 +3254,7 @@ function renderOverlaysForScreen(screenId, rd) {
   }
 
   // ✅ rodada (no home)
-  if (screenId === "r1_home" && sc.text_round) addText("text_round", String(state.round));
+  if (screenId === "r1_home" && sc.text_round) addText("text_round", String(state.round), "overlayText", isCampaignMode() && Number(state.campaign?.levelId)===1 ? {fontSize:"76px"} : {});
 
   // ✅ Título (parciais)
   if (sc.text_title && (screenId === "partials_menu" || screenId.startsWith("partials_"))) {
@@ -3250,11 +3269,14 @@ function renderOverlaysForScreen(screenId, rd) {
     addText("text_title", titleMap[screenId] || "");
   }
 
-  // ✅ CBOT / CÂMBIO
-  if (isCampaignMode() && Number(state.campaign.levelId) === 1 && screenId === 'r1_exw') {
-    // Fonte mais compacta e posições próprias: referência H27 (4 dígitos + decimais).
-    if (sc.l1_text_cbot) addText('l1_text_cbot', Number(rd.cbot_cent_bu).toLocaleString('pt-BR', {minimumFractionDigits:2,maximumFractionDigits:2}), 'overlayText', {fontWeight:'900'});
-    if (sc.l1_text_cambio) addText('l1_text_cambio', Number(rd.usd).toLocaleString('pt-BR', {minimumFractionDigits:4,maximumFractionDigits:4}), 'overlayText', {fontWeight:'900'});
+  // ✅ Fonte consistente de Chicago e câmbio na abertura e na origem, apenas L1.
+  if (isCampaignMode() && Number(state.campaign.levelId) === 1 &&
+      (screenId === 'r1_home' || screenId === 'r1_exw')) {
+    const cbKey=screenId==='r1_exw'&&sc.l1_text_cbot?'l1_text_cbot':'text_cbot';
+    const fxKey=screenId==='r1_exw'&&sc.l1_text_cambio?'l1_text_cambio':'text_cambio';
+    const compact={fontSize:'40px',fontWeight:'900',whiteSpace:'nowrap'};
+    if (sc[cbKey]) addText(cbKey,Number(rd.cbot_cent_bu).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}),'overlayText',compact);
+    if (sc[fxKey]) addText(fxKey,Number(rd.usd).toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4}),'overlayText',compact);
   } else {
     if (sc.text_cbot) addText("text_cbot", String(rd.cbot_cent_bu));
     if (sc.text_cambio) addText("text_cambio", String(rd.usd));
@@ -3407,7 +3429,7 @@ if (screenId === "r1_cfr") {
 
 Venda CFR China e frete marítimo já estão fixados. A decisão agora está na origem: preço, volume e logística interna até Santos.
 
-Estime o custo CFR equivalente de cada EXW, incluindo fobbing, e preserve o basis médio do book em até +${Number(getCampaignLevel(state.campaign.levelId || 1).targetBasisCentBu).toFixed(0)} c/bu. Preços/fretes BRZ; volumes simulados.`;
+Estime o custo CFR equivalente de cada EXW, incluindo fobbing, e preserve o basis médio do book em até +${Number(getCampaignLevel(state.campaign.levelId || 1).targetBasisCentBu).toFixed(0)} c/bu. Cotações de cenário e volumes simulados.`;
         return "Selecione uma oferta (clique em um saco).";
       }
       const isConf = !!state.confirmed.exw[state.round];
@@ -4353,7 +4375,8 @@ function positionTradeDetailOnCanvas() {
       addHot("hot_endround", () => nextRound());
       addIconButton("hot_ports", "PORTOS", () => {});
       addIconButton("hot_longshort", "LONG /<br>SHORT", () => {});
-      addLockOverlay("hot_news", "Esta etapa será desbloqueada nos próximos níveis");
+      if (Number(state.campaign.levelId) === 1) addHot("hot_news", () => setStage("r1_news"));
+      else addLockOverlay("hot_news", "Esta etapa será desbloqueada nos próximos níveis");
       addLockOverlay("hot_frete", "Esta etapa será desbloqueada nos próximos níveis");
       addLockOverlay("hot_cfr", "Esta etapa será desbloqueada nos próximos níveis");
       addLockOverlay("hot_mtm", "Esta etapa será desbloqueada nos próximos níveis");
@@ -4467,13 +4490,14 @@ addHot("hot_calib", () => toggleCalib(!calibEnabled));
   }
 
   // voltar das telas (exceto ship_select e home_canva e results_screen)
-  if (sc.hot_back && screenId !== "ship_select" && screenId !== "home_canva" && screenId !== "results_screen") {
+  if (sc.hot_back && !screenId.startsWith("partials_") && screenId !== "ship_select" && screenId !== "home_canva" && screenId !== "results_screen") {
     addHot("hot_back", () => {
       if (isCampaignMode() && screenId === "r1_exw") {
         setStage("r1_home");
         return;
       }
-      setStage(state.prevStage || "home_canva");
+      if (screenId.startsWith("partials_")) backFromPartials();
+      else setStage(state.prevStage || "home_canva");
     });
   }
 
