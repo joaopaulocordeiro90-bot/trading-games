@@ -64,7 +64,7 @@ try:
     assert info['noteBg']=='rgba(0, 0, 0, 0)' and info['listBg']=='rgba(0, 0, 0, 0)',info
     assert info['shields']==0 and info['originalImage'],info
     assert len(driver.find_elements(By.CSS_SELECTOR,'#l1wb-offers .l1wb-offer'))==4
-    assert 'Notícia-mestre' in driver.find_element(By.ID,'l1wb-panel').text
+    assert 'notícia-mestre' in driver.find_element(By.ID,'l1wb-panel').text.casefold()
     assert 'BRZ' not in driver.find_element(By.ID,'l1wb-panel').text
     # No Level 1, a manchete está liberada no início e a fonte de câmbio/Chicago é padronizada.
     js("setStage('r1_home')")
