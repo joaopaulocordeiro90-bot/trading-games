@@ -658,6 +658,11 @@ function selectExwOfferForCurrentRound(offer, rd, screenId = "r1_exw") {
     const inlandMap = getExwInlandByCorridor(draft);
     draft.corredor = fixedKey;
     draft.inland_usd_t_selected = Number(inlandMap?.[fixedKey] || draft.inland_usd_t || draft.freight_inland_usd_t || 0);
+    // Ao selecionar pelo mapa, também abre a etapa Ofertas do L1 para dar feedback imediato.
+    if (isCampaignLevel1Exw(screenId)) {
+      state.campaign.l1Tab = 'offers';
+      state.campaign.l1CalcVisible = false;
+    }
   }
   state.choices.exw[state.round] = draft;
   renderOverlaysForScreen(screenId, rd);
