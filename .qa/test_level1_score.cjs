@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const src = fs.readFileSync(path.join(root,'game.js'), 'utf8');
 const level = JSON.parse(fs.readFileSync(path.join(root,'data/campaign/levels/level1.json'), 'utf8'));
 const start = src.indexOf('function calculateCampaignOfferBasisSnapshot(');
-const mid = src.indexOf('/* ============================================================================\n   CAMPANHA L1 — WORKBENCH',start);
+const mid = src.indexOf('/* ============================================================================\n   CAMPANHA L1 — INTERFACE INTEGRADA AO CADERNO',start);
 const scoreStart = src.indexOf('/* ==========================================================================\n   CAMPANHA L1 — SCORECARD DIDÁTICO V2', mid);
 const scoreEnd = src.indexOf('function positionAccessModalOnCanvas()',scoreStart);
 assert(start>0&&mid>start&&scoreStart>mid&&scoreEnd>scoreStart,'L1 score engine missing');
