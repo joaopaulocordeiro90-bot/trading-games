@@ -17,3 +17,5 @@ jobs:
           python-version: '3.12'
       - name: Integridade e isolamento dos modos
         run: python .qa/validate_site.py
+      - name: Testes econômicos e UX do Level 1
+        run: node .qa/test_level1_ui.cjs
