@@ -82,10 +82,12 @@ try:
         at_panel()
         assert js("return state.round") == round
         wait.until(lambda d: js("return document.querySelector('#l1wb-panel [data-l1-tab=\\\"market\\\"]')?.getAttribute('aria-selected') === 'true'"))
-        driver.find_element(By.CSS_SELECTOR,'#l1wb-panel [data-l1-tab="offers"]').click()
-        driver.find_elements(By.CSS_SELECTOR, "#l1wb-panel .l1wb-offer")[2].click()
+        # Rodadas 2–5: o canvas reconstruído substitui os nós do DOM.
+        # Dispare o clique no nó atual (sem reutilizar referências Selenium antigas).
+        js("""document.querySelector('#l1wb-panel [data-l1-tab="offers"]').click();""")
+        js("""document.querySelectorAll('#l1wb-panel .l1wb-offer')[2].click();""")
         at_panel()
-        driver.find_element(By.CSS_SELECTOR,'#l1wb-panel [data-l1-action="buy"]').click()
+        js("""document.querySelector('#l1wb-panel [data-l1-action="buy"]').click();""")
         wait.until(lambda d: len(d.find_elements(By.ID,"campaignAdvanceModal")) == 1)
         js("closeCampaignAdvanceModal();")
     js("nextRound();")
