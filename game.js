@@ -717,7 +717,7 @@ function initCampaignRun(levelId = 1) {
   if (Number(level.id) === 1) {
     state.campaign.l1Tab = 'market';
     state.campaign.l1CalcVisible = false;
-    state.campaign.l1Focus = false;
+    state.campaign.l1Focus = typeof window !== 'undefined' && window.innerWidth < 720;
   }
   state.settings.shipCount = 1;
   state.timeLeft = 0;
@@ -881,7 +881,7 @@ function ensureCampaignL1WorkbenchStyle() {
   const el = document.createElement('style');
   el.id = 'campaign-l1-workbench-style';
   el.textContent = `
-  .l1wb { position:absolute;left:16px;top:149px;width:948px;height:696px;z-index:19;
+  .l1wb { position:absolute;left:16px;top:149px;width:948px;height:846px;z-index:19;
     box-sizing:border-box;padding:16px 18px;border-radius:22px;background:rgba(255,255,255,.985);
     border:2px solid #e9d9c4;box-shadow:0 16px 36px rgba(15,23,42,.22);
     color:#142235;pointer-events:auto;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;
@@ -889,13 +889,13 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb *{box-sizing:border-box}
   .l1wb-head{display:flex;gap:14px;align-items:center;justify-content:space-between}
   .l1wb-overline{color:#935115;letter-spacing:.095em;font-size:11px;font-weight:900;text-transform:uppercase}
-  .l1wb-head h2{font-size:23px;line-height:1.15;margin:1px 0 0;color:#152238}
+  .l1wb-head h2{font-size:26px;line-height:1.15;margin:1px 0 0;color:#152238}
   .l1wb-status{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-  .l1wb-chip{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:10px;background:#f8f4ec;border:1px solid #eedfc9;font-size:13px;font-weight:800;white-space:nowrap}
+  .l1wb-chip{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:10px;background:#f8f4ec;border:1px solid #eedfc9;font-size:16px;font-weight:800;white-space:nowrap}
   .l1wb-progress{height:6px;overflow:hidden;border-radius:20px;background:#e8e3d8}
   .l1wb-progress i{display:block;height:100%;background:linear-gradient(90deg,#d97706,#15803d);border-radius:20px}
   .l1wb-tabs{display:flex;align-items:center;gap:7px;border-bottom:1px solid #e2e5e9;padding-bottom:7px}
-  .l1wb-btn{font:inherit;cursor:pointer;border:1px solid #d5d9de;border-radius:10px;padding:8px 12px;background:#fff;color:#172233;font-size:13px;font-weight:800}
+  .l1wb-btn{font:inherit;cursor:pointer;border:1px solid #d5d9de;border-radius:10px;padding:8px 12px;background:#fff;color:#172233;font-size:16px;font-weight:800}
   .l1wb-btn:hover{background:#f9f3e6}
   .l1wb-btn[aria-selected=true]{background:#202a37;color:#fff;border-color:#202a37}
   .l1wb-btn-primary{background:#157a50;color:white;border-color:#157a50}
@@ -903,20 +903,21 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb-btn:disabled{opacity:.48;cursor:not-allowed}
   .l1wb-filler{flex:1}
   .l1wb-content{flex:1;min-height:0;overflow:auto;scrollbar-width:thin}
-  .l1wb-note{font-size:15px;line-height:1.43;color:#405064;margin:6px 0}
-  .l1wb-label{display:block;text-transform:uppercase;letter-spacing:.055em;font-size:11px;font-weight:900;color:#925113;margin-bottom:5px}
-  .l1wb-market h3{font-size:18px;line-height:1.24;margin:3px 0 7px;color:#172233}
-  .l1wb-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:#64748b}
+  .l1wb-note{font-size:18px;line-height:1.43;color:#405064;margin:6px 0}
+  .l1wb-label{display:block;text-transform:uppercase;letter-spacing:.055em;font-size:13px;font-weight:900;color:#925113;margin-bottom:5px}
+  .l1wb-market{min-height:100%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;max-width:840px}
+  .l1wb-market h3{font-size:24px;line-height:1.24;margin:3px 0 7px;color:#172233}
+  .l1wb-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;color:#64748b}
   .l1wb-grid{display:grid;grid-template-columns:1.02fr 1fr;gap:13px;height:100%;min-height:0}
   .l1wb-offers{overflow:auto;display:flex;flex-direction:column;gap:5px;max-height:100%}
-  .l1wb-offer{font:inherit;font-size:13px;line-height:1.15;text-align:left;background:#fafbfc;color:#192838;border:1px solid #dbe1e6;padding:8px 9px;cursor:pointer;border-radius:10px;display:flex;align-items:center;gap:10px;justify-content:space-between}
-  .l1wb-offer strong{display:block;font-size:14px}
-  .l1wb-offer small{display:block;font-size:11px;color:#64748b;padding-top:2px}
+  .l1wb-offer{font:inherit;font-size:16px;line-height:1.15;text-align:left;background:#fafbfc;color:#192838;border:1px solid #dbe1e6;padding:8px 9px;cursor:pointer;border-radius:10px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+  .l1wb-offer strong{display:block;font-size:17px}
+  .l1wb-offer small{display:block;font-size:13px;color:#64748b;padding-top:2px}
   .l1wb-offer[aria-pressed=true]{border:2px solid #157a50;background:#eff8f1;padding:7px 8px}
   .l1wb-costbox{background:#f7f9fa;border:1px solid #dce4e9;border-radius:14px;padding:12px;overflow:auto}
-  .l1wb-costbox h3{font-size:16px;margin:2px 0 6px}
-  .l1wb-costrow{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px solid #e2e7ea}
-  .l1wb-costrow strong{font-size:14px}
+  .l1wb-costbox h3{font-size:19px;margin:2px 0 6px}
+  .l1wb-costrow{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:16px;padding:5px 0;border-bottom:1px solid #e2e7ea}
+  .l1wb-costrow strong{font-size:17px}
   .l1wb-actions{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:9px}
   .l1wb-hint{font-size:12px;color:#64748b;line-height:1.3}
   .l1wb-position{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:3px 0 10px}
@@ -936,8 +937,8 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb-focus-panel .l1wb-market h3{font-size:22px}
   .l1wb-focus-panel .l1wb-note{font-size:17px}
   .l1wb-legacy-shield{position:absolute;pointer-events:none;z-index:11;border-radius:16px;background:#eaf0f3;box-shadow:0 8px 20px #14223520}
-  .l1wb-sideguide{position:absolute;z-index:12;top:290px;left:1465px;width:353px;min-height:565px;pointer-events:none;
-    border-radius:22px;background:linear-gradient(150deg,#0e3144,#173b4b);color:white;padding:25px 22px;box-sizing:border-box;font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+  .l1wb-sideguide{position:absolute;z-index:12;top:290px;left:1465px;width:353px;min-height:565px;pointer-events:none;display:flex;flex-direction:column;justify-content:space-around;
+    border-radius:22px;background:linear-gradient(150deg,#0e3144,#173b4b);color:white;padding:25px 22px;box-sizing:border-box;font:18px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
   .l1wb-sideguide h3{margin:0 0 12px;font-size:23px;color:white}.l1wb-sideguide p{margin:10px 0;opacity:.88}
   .l1wb-sideguide strong{display:block;color:#f9d47d;font-size:27px;margin:20px 0 6px}
   .l1wb-sideguide-meter{height:9px;background:#416273;border-radius:9px;overflow:hidden;margin-top:12px}
@@ -2272,7 +2273,7 @@ const totalRounds = state.totalRounds || getActiveRules()?.rounds || 5;
       if (Number(state.campaign?.levelId) === 1) {
         state.campaign.l1Tab = 'market';
         state.campaign.l1CalcVisible = false;
-        state.campaign.l1Focus = false;
+        state.campaign.l1Focus = typeof window !== 'undefined' && window.innerWidth < 720;
       }
       state.campaign.roundSplashUntil = 0;
       setStage("r1_exw");
