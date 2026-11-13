@@ -125,6 +125,16 @@ try:
         wait.until(lambda d: len(d.find_elements(By.ID, "overlayLayer")) == 1)
         assert len(driver.find_elements(By.ID,"l1wb-panel")) == 0
         driver.save_screenshot(str(ARTIFACTS/f"06-{mode}.png"))
+    # A interface original usa canvas escalado. Em celular, o L1 abre o
+    # painel independente em modo foco para preservar leitura e cliques.
+    driver.set_window_size(430, 900)
+    js("initCampaignRun(1);state.campaign.introRedirectPending=false;state.guideSeen={campaign_exw:true,campaign_home:true,r1_exw_first_offer:true};state.guideOverlayOpen=false;state.guideFlow=null;setStage('r1_exw');")
+    wait.until(lambda d: len(d.find_elements(By.ID, "l1wb-dialog")) == 1)
+    assert js("return state.campaign.l1Focus") is True
+    driver.save_screenshot(str(ARTIFACTS/"07-mobile-foco.png"))
+    # Testa retorno ao layout convencional sem modificar os modos de cenários.
+    js("state.campaign.l1Focus=false;document.querySelector('#l1wb-dialog')?.remove();")
+
     # Áudio legado ausente na base original: não faz parte do escopo L1.
     # Continuamos reprovando qualquer erro JavaScript novo ou recurso essencial 404.
     errors = [e for e in driver.get_log("browser") if e.get("level") == "SEVERE"
