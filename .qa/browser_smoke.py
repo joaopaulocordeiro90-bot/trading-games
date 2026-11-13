@@ -52,7 +52,9 @@ def at_panel():
 try:
     driver.get(f"http://127.0.0.1:{server.server_address[1]}/")
     wait.until(lambda d: js("return typeof initCampaignRun === 'function' && !!getCampaignLevel(1).scenario;"))
-    js("initCampaignRun(1); state.campaign.introRedirectPending=false;state.guideSeen={campaign_exw:true,campaign_home:true,r1_exw_first_offer:true};state.guideOverlayOpen=false; state.guideFlow=null;setStage('r1_exw');")
+    js("initCampaignRun(1); state.campaign.introRedirectPending=false;state.guideSeen={campaign_exw:true,campaign_home:true,r1_exw_first_offer:true};state.guideOverlayOpen=false; state.guideFlow=null;")
+    wait.until(lambda d: js("return state.stage === 'r1_home' && !!document.querySelector('#bgImg')?.complete"))
+    js("setStage('r1_exw');")
     at_panel()
     assert "1 · Mercado" in at_panel().text
     assert len(driver.find_elements(By.CSS_SELECTOR, ".l1wb-sideguide")) == 1
@@ -128,7 +130,9 @@ try:
     # A interface original usa canvas escalado. Em celular, o L1 abre o
     # painel independente em modo foco para preservar leitura e cliques.
     driver.set_window_size(430, 900)
-    js("initCampaignRun(1);state.campaign.introRedirectPending=false;state.guideSeen={campaign_exw:true,campaign_home:true,r1_exw_first_offer:true};state.guideOverlayOpen=false;state.guideFlow=null;setStage('r1_exw');")
+    js("initCampaignRun(1);state.campaign.introRedirectPending=false;state.guideSeen={campaign_exw:true,campaign_home:true,r1_exw_first_offer:true};state.guideOverlayOpen=false;state.guideFlow=null;")
+    wait.until(lambda d: js("return state.stage === 'r1_home' && !!document.querySelector('#bgImg')?.complete"))
+    js("setStage('r1_exw');")
     wait.until(lambda d: len(d.find_elements(By.ID, "l1wb-dialog")) == 1)
     assert js("return state.campaign.l1Focus") is True
     driver.save_screenshot(str(ARTIFACTS/"07-mobile-foco.png"))
