@@ -881,7 +881,7 @@ function ensureCampaignL1WorkbenchStyle() {
   const el = document.createElement('style');
   el.id = 'campaign-l1-workbench-style';
   el.textContent = `
-  .l1wb { position:absolute;left:16px;top:149px;width:884px;height:388px;z-index:19;
+  .l1wb { position:absolute;left:16px;top:149px;width:948px;height:696px;z-index:19;
     box-sizing:border-box;padding:16px 18px;border-radius:22px;background:rgba(255,255,255,.985);
     border:2px solid #e9d9c4;box-shadow:0 16px 36px rgba(15,23,42,.22);
     color:#142235;pointer-events:auto;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;
@@ -935,6 +935,28 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb-focus-panel .l1wb-btn{font-size:15px;padding:11px 15px}
   .l1wb-focus-panel .l1wb-market h3{font-size:22px}
   .l1wb-focus-panel .l1wb-note{font-size:17px}
+  .l1wb-legacy-shield{position:absolute;pointer-events:none;z-index:11;border-radius:16px;background:#eaf0f3;box-shadow:0 8px 20px #14223520}
+  .l1wb-sideguide{position:absolute;z-index:12;top:290px;left:1465px;width:353px;min-height:565px;pointer-events:none;
+    border-radius:22px;background:linear-gradient(150deg,#0e3144,#173b4b);color:white;padding:25px 22px;box-sizing:border-box;font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+  .l1wb-sideguide h3{margin:0 0 12px;font-size:23px;color:white}.l1wb-sideguide p{margin:10px 0;opacity:.88}
+  .l1wb-sideguide strong{display:block;color:#f9d47d;font-size:27px;margin:20px 0 6px}
+  .l1wb-sideguide-meter{height:9px;background:#416273;border-radius:9px;overflow:hidden;margin-top:12px}
+  .l1wb-sideguide-meter b{display:block;background:#f9d47d;height:100%;border-radius:9px}
+  .l1wb-score-preview{margin-top:11px;border-radius:9px;padding:9px 11px;background:#eaf5ee;font-size:12px;color:#125c40}
+  .l1-feedback{border-radius:12px;background:#fff7e8;border:1px solid #e9cfaa;padding:14px 16px;margin:8px 0 14px}
+  .l1-feedback.is-positive{background:#edf7ee;border-color:#b6d4be}.l1-feedback-title{font-size:18px;font-weight:800;margin-bottom:9px}
+  .l1-feedback-metrics{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}.l1-feedback p{font-size:13px;margin:10px 0 0}
+  .l1-scorecard{border:1px solid #dce4ed;background:#f7fafc;border-radius:17px;padding:15px 18px;margin:14px 0}
+  .l1-scorecard-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;font-weight:800;color:#43566a}
+  .l1-scorecard-head strong{font-size:29px;color:#18304b}.l1-scorecard-head small{font-size:14px}
+  .l1-scorecard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px;margin-top:12px}
+  .l1-score-item>div{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}
+  .l1-score-item>i{display:block;height:7px;background:#dce4ed;border-radius:8px;overflow:hidden;margin-top:5px}
+  .l1-score-item>i>b{display:block;height:100%;border-radius:8px;background:#0d8065}
+  .l1-score-note{font-size:12px;color:#64748b;line-height:1.45;margin:12px 0 0}
+  .l1-best-score{display:inline-flex;font-size:13px;align-self:center;color:#0c7153;font-weight:700}
+  .l1-result-details{border:1px solid #e3e9ef;border-radius:12px;padding:8px 14px;margin:15px 0}
+  .l1-result-details summary{cursor:pointer;padding:10px 0;font-weight:700}
   @media(max-width:640px){.l1wb-focus-panel .l1wb-grid{grid-template-columns:1fr;overflow:auto;height:auto}.l1wb-focus-panel .l1wb-content{overflow:auto}.l1wb-focus-panel .l1wb-offers{max-height:240px}.l1wb-focus-panel .l1wb-head{align-items:flex-start;flex-direction:column}.l1wb-focus-panel .l1wb-tabs{flex-wrap:wrap}}
   `;
   document.head.appendChild(el);
@@ -990,6 +1012,7 @@ function campaignL1WorkbenchMarkup(rd) {
     <div><span>Originado</span><b>${vol(booked)} t</b></div><div><span>Basis médio</span><b>${booked?signed(book.basisAvg)+' ¢':'—'}</b></div>
     <div><span>Margem bruta indicativa</span><b>${booked?'US$ '+vol(book.pnlUsd):'—'}</b></div></div>
     <div class="l1wb-history">${book.usedLots.length?book.usedLots.map(l=>`${escapeHtml(l.origin)} · ${vol(l.usedVolumeT)} t · ${signed(l.basisCentBu)} ¢/bu`).join('<hr style="border:0;border-top:1px solid #e6eaef;margin:5px 0">'):'Nenhuma compra confirmada. A primeira oferta contratada aparecerá aqui.'}</div>
+    <div class="l1wb-score-preview">${booked?`Pontuação parcial (não define aprovação): <strong>${calculateCampaignL1Score(book.usedLots,book).total}/100</strong>`:'A pontuação começa após sua primeira compra.'}</div>
     <p class="l1wb-hint">O resultado da rodada é apresentado após confirmar a compra. Margem bruta indicativa não é lucro realizado nem MTM.</p>`;
   return `<div class="l1wb-head"><div><span class="l1wb-overline">Trading Games · Level 1</span><h2>Originação | Rodada ${state.round} de ${level.rounds}</h2></div>
     <div class="l1wb-status"><span class="l1wb-chip">${vol(booked)} / ${vol(maxVol)} t</span><span class="l1wb-chip">Meta ≤ +${num(level.targetBasisCentBu,0)} ¢/bu</span></div></div>
@@ -1013,6 +1036,23 @@ function renderCampaignL1Workbench(layer,rd) {
   panel.innerHTML=html;
   attachCampaignL1WorkbenchEvents(panel,rd);
   layer.appendChild(panel);
+  // O fundo original é uma imagem com caderno/tabela desenhados nela.
+  // Essas máscaras são exclusivas do L1 e não alteram imagem, CSS ou hotspots compartilhados.
+  const shield = document.createElement('div');
+  shield.className='l1wb-legacy-shield';
+  shield.style.cssText += ';left:170px;top:580px;width:620px;height:430px;';
+  layer.appendChild(shield);
+  const snap=calculateCampaignBookSnapshot();
+  const max=Math.max(1,Number(snap.level.targetVolumeT||60000));
+  const side=document.createElement('aside');
+  side.className='l1wb-sideguide';
+  side.setAttribute('aria-label','Status resumido da carga');
+  side.innerHTML=`<h3>Plano de carga</h3><p>Uma decisão por rodada. Venda CFR China e porto Santos já definidos.</p>
+    <strong>${formatTon(snap.totalUsedT)} t</strong><p>de ${formatTon(max)} t originadas</p>
+    <div class="l1wb-sideguide-meter"><b style="width:${(100*campaignL1Clamp(snap.totalUsedT/max)).toFixed(1)}%"></b></div>
+    <p>Faltam <b>${formatTon(snap.missingT)} t</b> para completar o navio.</p>
+    <p>Você pode consultar a calculadora antes de cada compra. O resultado ficará disponível na aba Posição.</p>`;
+  layer.appendChild(side);
   document.getElementById('l1wb-dialog')?.remove();
   if(state.campaign.l1Focus){
     const backdrop=document.createElement('div');backdrop.id='l1wb-dialog';backdrop.className='l1wb-focus-backdrop';
@@ -1105,6 +1145,7 @@ function buildCampaignRoundSummaryHtml(roundNum = state.round) {
   const lot = calculateCampaignOfferBasisSnapshot(exw, roundNum);
   const book = calculateCampaignBookSnapshot();
   const introHtml = `A origem foi contratada com basis de <strong>${formatCampaignSigned(lot.basisCentBu, 1, ' c/bu')}</strong>. Reveja a conversão do preço, a logística até Santos e o custo CFR para compreender sua margem.`;
+  const feedback = campaignL1RoundFeedbackMarkup(roundNum,lot,book);
   const cfrValueHtml = `${lot.cfrCostCentBu.toFixed(1)} c/bu`;
   const basisLineHtml = `Basis do lote: <strong>${lot.cfrCostCentBu.toFixed(1)} − ${lot.cbotCentBu.toFixed(1)} = ${formatCampaignSigned(lot.basisCentBu, 1, ' c/bu')}</strong>`;
   const mtmLineHtml = `Diferença contra a venda CFR a <strong>${formatCampaignSigned(lot.saleBasisCentBu, 0, ' c/bu')}</strong>: <strong>${formatCampaignSigned(lot.marginCentBu, 1, ' c/bu')}</strong>, ou <strong>${formatCampaignUsd(lot.pnlUsdT, 2)}/t</strong> de margem bruta teórica.`;
@@ -1113,9 +1154,9 @@ function buildCampaignRoundSummaryHtml(roundNum = state.round) {
   return `
     <div class="campaign-round-summary">
       <div class="campaign-round-kicker">Resumo da rodada ${Number(roundNum || 1)}</div>
-      <h3>${escapeHtml(lot.origin)}</h3>
-      <p>${introHtml}</p>
+      ${feedback}
       ${partialNotice}
+      <details class="l1-result-details"><summary>Como o basis e a margem foram calculados</summary><p>${introHtml}</p>
       <p>Preço EXW: R$ ${lot.priceBrlSc.toFixed(2)}/sc · dólar Mar/27: R$ ${lot.fx.toFixed(4)} · CBOT H27: ${lot.cbotCentBu.toFixed(2)} c/bu · frete Santos: US$ ${lot.inlandUsdT.toFixed(2)}/t.</p>
       <div class="campaign-formula-box">
         <div><span>Soja interior</span><strong>${lot.interiorCentBu.toFixed(1)} c/bu</strong></div>
@@ -1125,13 +1166,125 @@ function buildCampaignRoundSummaryHtml(roundNum = state.round) {
         <div class="total"><span>Custo CFR equivalente</span><strong>${cfrValueHtml}</strong></div>
       </div>
       <div class="campaign-basis-line">${basisLineHtml}</div>
-      <div class="campaign-mtm-line">${mtmLineHtml}</div>
+      <div class="campaign-mtm-line">${mtmLineHtml}</div></details>
       <div class="campaign-summary-grid">
         <div><span>Volume acumulado</span><strong>${formatTon(book.totalUsedT)} / ${formatTon(book.level.targetVolumeT || 0)} t</strong></div>
         <div><span>Basis médio</span><strong>${formatCampaignSigned(book.basisAvg, 1, ' c/bu')}</strong></div>
         <div><span>Margem bruta indicada</span><strong>${formatCampaignUsd(book.pnlUsd, 0)}</strong></div>
       </div>
     </div>`;
+}
+
+/* ==========================================================================
+   CAMPANHA L1 — SCORECARD DIDÁTICO V2 (ESCOPADO AO LEVEL 1)
+   Sempre usa o mesmo cálculo CFR/basis da origem. Não é P&L realizado.
+   Originação 35 + margem 30 + ocupação 20 + disciplina 15 = 100 pontos.
+   ========================================================================== */
+const CAMPAIGN_L1_RECORD_KEY = 'tg_campaign_l1_scorecard_v2';
+const CAMPAIGN_L1_MIN_SCORE = 70;
+const CAMPAIGN_L1_MARGIN_FULL_SCORE_CENT_BU = 40;
+const CAMPAIGN_L1_ORIGIN_REGRET_CENT_BU = 45;
+
+function campaignL1Clamp(value, min=0, max=1) {
+  return Math.min(max, Math.max(min, Number(value) || 0));
+}
+
+function readCampaignL1Record() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(CAMPAIGN_L1_RECORD_KEY) || 'null');
+    return raw && raw.version === 2 && Number.isFinite(Number(raw.bestScore)) ? raw : null;
+  } catch (_) { return null; }
+}
+
+function saveCampaignL1Record(result) {
+  if (!result || !result.scorecard || Number(state.campaign?.levelId) !== 1) return;
+  const last = readCampaignL1Record();
+  const bestScore = Math.max(0, Number(last?.bestScore || 0), Number(result.scorecard.total || 0));
+  const record = {
+    version: 2, bestScore,
+    approved: Boolean(last?.approved || result.approved),
+    lastScore: Number(result.scorecard.total || 0),
+    lastApproved: Boolean(result.approved),
+    completedAt: new Date().toISOString()
+  };
+  try { localStorage.setItem(CAMPAIGN_L1_RECORD_KEY, JSON.stringify(record)); } catch (_) {}
+}
+
+function campaignL1RoundCheapestBasis(round) {
+  const rd = getRoundData(round) || {};
+  const offers = Array.isArray(rd.offers_exw) ? rd.offers_exw : [];
+  const basisValues = offers.map(o => {
+    const draft = { ...o, ref_cbot_cent_bu: Number(rd.cbot_cent_bu || 0), ref_cambio: Number(rd.usd || 0) };
+    return calculateCampaignOfferBasisSnapshot(draft, round).basisCentBu;
+  }).filter(Number.isFinite);
+  return basisValues.length ? Math.min(...basisValues) : null;
+}
+
+function calculateCampaignL1Score(usedLots, book, excessT=0) {
+  const level = getCampaignLevel(1);
+  const lots = Array.isArray(usedLots) ? usedLots : [];
+  const volumeT = lots.reduce((sum,l) => sum + Math.max(0, Number(l.usedVolumeT || 0)), 0);
+  const targetT = Math.max(1, Number(level.targetVolumeT || 60000));
+  const basisAvg = volumeT > 0 ? campaignWeightedAverage(lots,'basisCentBu') : 0;
+  const saleBasis = Number(level.fixedSaleBasisCentBu ?? level.targetBasisCentBu ?? 0);
+  const marginCentBu = volumeT > 0 ? saleBasis - basisAvg : 0;
+  let totalRegret = 0, positiveMarginT = 0, compliantT = 0;
+  for (const lot of lots) {
+    const vol = Math.max(0, Number(lot.usedVolumeT || 0));
+    const benchmark = campaignL1RoundCheapestBasis(lot.round);
+    totalRegret += (benchmark === null ? 0 : Math.max(0, Number(lot.basisCentBu) - benchmark)) * vol;
+    if (Number(lot.marginCentBu) >= -1e-8) positiveMarginT += vol;
+    if (Number(lot.basisCentBu) <= Number(level.targetBasisCentBu) + 1e-8) compliantT += vol;
+  }
+  const avgRegret = volumeT > 0 ? totalRegret / volumeT : 0;
+  // O benchmark é a menor oferta de cada sessão efetivamente utilizada, não um preço nacional executável.
+  const origination = volumeT > 0 ? Math.round(35 * campaignL1Clamp(1-avgRegret/CAMPAIGN_L1_ORIGIN_REGRET_CENT_BU)) : 0;
+  const margin = volumeT > 0 ? Math.round(30 * campaignL1Clamp(marginCentBu/CAMPAIGN_L1_MARGIN_FULL_SCORE_CENT_BU)) : 0;
+  const utilization = Math.round(20 * campaignL1Clamp(volumeT/targetT));
+  const discipline = volumeT > 0 ? Math.round(
+    (excessT <= 1e-8 ? 5 : 0) + 5 * positiveMarginT/volumeT + 5 * compliantT/volumeT
+  ) : 0;
+  const total = origination + margin + utilization + discipline;
+  return {
+    version:2, total, minScore:CAMPAIGN_L1_MIN_SCORE,
+    origination, margin, utilization, discipline, avgRegret, marginCentBu,
+    weights:{origination:35,margin:30,utilization:20,discipline:15},
+    targetVolumeT:targetT, volumeT, basisAvg,
+    qualifyingScore:total>=CAMPAIGN_L1_MIN_SCORE
+  };
+}
+
+function campaignL1ScoreMarkup(score) {
+  const metrics = [
+    ['Originação',score.origination,35],['Margem',score.margin,30],
+    ['Ocupação',score.utilization,20],['Disciplina',score.discipline,15]
+  ];
+  return `<div class="l1-scorecard" aria-label="Avaliação de desempenho do Level 1">
+      <div class="l1-scorecard-head"><span>AVALIAÇÃO DE DESEMPENHO</span><strong>${score.total}<small> / 100 pontos</small></strong></div>
+      <div class="l1-scorecard-grid">${metrics.map(([name,value,max])=>`<div class="l1-score-item"><div><span>${name}</span><strong>${value}/${max}</strong></div><i><b style="width:${(100*value/max).toFixed(1)}%"></b></i></div>`).join('')}</div>
+      <p class="l1-score-note">Pontuação didática: originação versus menor basis das ofertas das sessões compradas; margem bruta indicativa, ocupação e disciplina. Aprovação exige nota ≥ ${score.minScore}, 60.000 t, basis médio dentro da meta, margem não negativa e ausência de excesso.</p>
+    </div>`;
+}
+
+function campaignL1RoundFeedbackMarkup(roundNum, lot, book) {
+  const usedBefore = book.usedLots.filter(l => Number(l.round) < Number(roundNum));
+  const prevT = usedBefore.reduce((sum,l)=>sum+Number(l.usedVolumeT||0),0);
+  const prevBasis = prevT ? campaignWeightedAverage(usedBefore,'basisCentBu') : null;
+  const signedBasis = formatCampaignSigned(lot.basisCentBu,1,' ¢/bu');
+  const cap = Number(book.level.targetVolumeT || 60000);
+  const delta = prevBasis === null ? 'Primeira origem do book' :
+    `${lot.basisCentBu <= prevBasis ? 'Melhorou' : 'Elevou'} o basis médio em ${Math.abs(book.basisAvg-prevBasis).toFixed(1)} ¢/bu`;
+  const status = lot.marginCentBu >= 0 ? 'Margem bruta positiva no lote' : 'Margem bruta negativa no lote';
+  const good = lot.basisCentBu <= Number(book.level.targetBasisCentBu);
+  return `<div class="l1-feedback ${good && lot.marginCentBu>=0?'is-positive':'is-warning'}">
+    <div class="l1-feedback-title">${good ? 'Boa execução de origem' : 'Atenção à competitividade'} · ${escapeHtml(lot.origin)}</div>
+    <div class="l1-feedback-metrics">
+      <span>Contratado <b>${formatTon(lot.volumeT)} t</b></span>
+      <span>Basis do lote <b>${signedBasis}</b></span>
+      <span>Book <b>${formatTon(book.totalUsedT)} / ${formatTon(cap)} t</b></span>
+    </div>
+    <p>${delta}. ${status}; confira o efeito na margem e na ocupação antes de avançar.</p>
+  </div>`;
 }
 
 function buildCampaignLevel1Result() {
@@ -1145,8 +1298,10 @@ function buildCampaignLevel1Result() {
   const grossMarginUsd = usedLots.reduce((acc, lot) => acc + Number(lot.pnlUsedUsd || 0), 0);
   const missingT = Math.max(0, Number(level.targetVolumeT || 0) - totalUsedT);
   const excessT = Math.max(0, totalBoughtT - Number(level.targetVolumeT || 0));
-  const approved = missingT <= 1e-9 && excessT <= 1e-9 && basisAvg <= Number(level.targetBasisCentBu || 0) + 1e-9 && grossMarginUsd >= -1e-6;
-  return { level, lots:usedLots, usedLots, totalBoughtT, totalUsedT, missingT, excessT, basisAvg, cfrAvg, grossMarginUsd, approved };
+  const economicApproved = missingT <= 1e-9 && excessT <= 1e-9 && basisAvg <= Number(level.targetBasisCentBu || 0) + 1e-9 && grossMarginUsd >= -1e-6;
+  const scorecard = calculateCampaignL1Score(usedLots, { level, totalUsedT, basisAvg, grossMarginUsd }, excessT);
+  const approved = economicApproved && scorecard.qualifyingScore;
+  return { level, lots:usedLots, usedLots, totalBoughtT, totalUsedT, missingT, excessT, basisAvg, cfrAvg, grossMarginUsd, economicApproved, scorecard, approved };
 }
 
 function positionAccessModalOnCanvas() {
@@ -2135,6 +2290,7 @@ const totalRounds = state.totalRounds || getActiveRules()?.rounds || 5;
       const fixedSplash = document.getElementById('campaignRoundSplashFixed');
       if (fixedSplash) fixedSplash.remove();
       const result = buildCampaignLevel1Result();
+      if (Number(state.campaign?.levelId) === 1) saveCampaignL1Record(result);
       if (result.approved) unlockNextCampaignLevel(state.campaign.levelId || 1);
       setStage("campaign_result");
     } else {
@@ -2259,6 +2415,10 @@ function renderCampaignResultScreen() {
           : `Navio completo, basis médio dentro da meta e margem bruta positiva frente à venda CFR simulada.`;
   const nextLevel = getCampaignLevelData(2);
   const nextReady = !!(nextLevel?.scenario?.rounds?.length);
+  const score = result.scorecard;
+  const approvedText = result.approved
+    ? (nextReady ? 'Level 2 desbloqueado. Você já pode acessar a próxima missão.' : 'Level 2 desbloqueado no progresso. A missão seguinte ainda está em desenvolvimento.')
+    : (result.economicApproved ? `Condições econômicas atendidas, mas a nota ${score.total} está abaixo da mínima ${score.minScore}. Revise a qualidade da originação.` : 'Revise as condições econômicas obrigatórias e tente novamente.');
   screen.innerHTML = `
     <section class="campaign-shell">
       <div class="campaign-card campaign-card-xl">
@@ -2273,12 +2433,14 @@ function renderCampaignResultScreen() {
           <div class="metric-box"><span>Margem bruta indicativa</span><strong>${formatCampaignUsd(result.grossMarginUsd, 0)}</strong></div>
         </div>
         <div class="campaign-diagnosis">${diagnosis}</div>
-        <div class="campaign-table-wrap">
+        ${campaignL1ScoreMarkup(score)}
+        <div class="campaign-diagnosis">${approvedText}</div>
+        <details class="l1-result-details"><summary>Auditar os lotes e a formação do custo CFR equivalente</summary><div class="campaign-table-wrap">
           <table class="campaign-table">
             <thead><tr><th>Rodada</th><th>Origem</th><th>Volume</th><th>Soja interior</th><th>Rodoviário</th><th>Fobbing</th><th>Marítimo</th><th>Custo CFR eq.</th><th>Basis</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
-        </div>
+        </div></details>
         <p class="campaign-lead" style="font-size:13px;margin-top:10px">Valores em c/bu, salvo volume. P&L indicado = spread bruto do exercício; não considera hedge executado, capital, custos financeiros, impostos, execução, diferenças de janela ou marcação a mercado. Preços/fretes são referências BRZ; volumes e venda são simulados.</p>
         <div class="campaign-actions">
           <button class="campaign-btn campaign-btn-light" onclick="window.restartCampaignLevel()">Repetir level</button>
@@ -2937,9 +3099,10 @@ function renderOverlaysForScreen(screenId, rd) {
     const levelCards = CAMPAIGN_LEVELS.map(level => {
       const isUnlocked = Number(level.id) <= Number(unlocked);
       const lockedTip = isUnlocked ? '' : 'Desbloqueie os próximos níveis';
+      const record = level.id === 1 ? readCampaignL1Record() : null;
       const actions = level.id === 1
-        ? `<button class="campaign-btn campaign-btn-dark" ${isUnlocked ? `onclick="window.startCampaignLevel(${level.id})"` : ''}>Iniciar</button>`
-        : `<button class="campaign-btn campaign-btn-light" type="button">Em breve</button>`;
+        ? `<button class="campaign-btn campaign-btn-dark" ${isUnlocked ? `onclick="window.startCampaignLevel(${level.id})"` : ''}>Iniciar</button>${record?`<span class="l1-best-score">Melhor nota: ${record.bestScore}/100 ${record.approved?'· aprovado':'· não aprovado'}</span>`:''}`
+        : `<button class="campaign-btn campaign-btn-light" type="button" disabled>${isUnlocked?'Desbloqueado · em preparação':'Em breve'}</button>`;
       return `
         <article class="campaign-level-card2 ${isUnlocked ? '' : 'is-locked'}">
           <div class="campaign-level-top">
@@ -3845,7 +4008,7 @@ function positionTradeDetailOnCanvas() {
   if (
     sc.text_note &&
     (
-      screenId === "r1_exw" ||
+      (screenId === "r1_exw" && !isCampaignLevel1Exw()) ||
       screenId === "r1_frete" ||
       screenId === "r1_cfr" ||
       screenId === "partials_pl"
@@ -3870,7 +4033,7 @@ function positionTradeDetailOnCanvas() {
 
   // ✅ EXW: tabela fixa com as 5 ofertas (sem depender de clique no mapa)
   // Isso desenha APENAS o texto dentro do quadro "LISTA DE OFERTAS EXW" da imagem.
-  if (screenId === "r1_exw" && sc.text_exw_offers) {
+  if (screenId === "r1_exw" && sc.text_exw_offers && !isCampaignLevel1Exw()) {
     const box = sc.text_exw_offers;
     const el = document.createElement("div");
     el.className = "noteText";
