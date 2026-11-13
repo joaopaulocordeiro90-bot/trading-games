@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Trading Game • Admin</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#ffffff;
+      --muted:#64748b;
+      --line:#dbe2ea;
+      --primary:#0f766e;
+      --primary-2:#115e59;
+      --danger:#b91c1c;
+      --soft:#f8fafc;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#e2e8f0;color:#0f172a}
+    .topbar{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 18px;background:var(--bg);color:#fff}
+    .brand{font-size:20px;font-weight:800}
+    .sub{font-size:12px;opacity:.8}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    button,a.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-2)}
+    .btn-light{background:#fff;color:#111;border:1px solid rgba(255,255,255,.25)}
+    .btn-danger{background:var(--danger);color:#fff}
+    .wrap{max-width:1380px;margin:20px auto;padding:0 16px 32px}
+    .notice{padding:14px 16px;border-radius:14px;background:#ecfeff;border:1px solid #a5f3fc;margin-bottom:16px}
+    .grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
+    .panel{background:var(--panel);border-radius:18px;padding:18px;box-shadow:0 12px 30px rgba(15,23,42,.08)}
+    h2,h3{margin:0 0 12px}
+    .panel h2{font-size:18px}
+    .panel h3{font-size:16px}
+    .muted{color:var(--muted)}
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+    .field label{font-size:13px;font-weight:700}
+    input,textarea,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);font:inherit;background:#fff}
+    textarea{min-height:92px;resize:vertical}
+    .row-2,.row-3{display:grid;gap:10px}
+    .row-2{grid-template-columns:1fr 1fr}
+    .row-3{grid-template-columns:repeat(3,1fr)}
+    .round-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+    .round-tab{padding:8px 12px;border-radius:999px;background:#e2e8f0;color:#111;border:0;font-weight:700}
+    .round-tab.active{background:#111827;color:#fff}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+    table{width:100%;border-collapse:collapse;min-width:760px;background:#fff}
+    th,td{padding:8px 10px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:13px;vertical-align:top}
+    th{background:#f8fafc;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+    td input, td textarea{padding:8px 10px;font-size:13px}
+    td textarea{min-height:56px}
+    .stack{display:flex;flex-direction:column;gap:18px}
+    .json-box{min-height:280px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:#0b1220;color:#e2e8f0}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#dcfce7;color:#166534;font-size:12px;font-weight:700}
+    .footer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    .campaign-only{display:none}
+    body.editing-campaign .campaign-only{display:block}
+    body.editing-campaign .scenario-only{display:none}
+    body.editing-campaign #generalPanel{display:none}
+    .admin-mini-note{font-size:12px;color:#64748b;margin-top:4px}
+    .readonly-note{padding:10px 12px;border-radius:12px;background:#fef3c7;border:1px solid #fde68a;color:#92400e;font-size:13px;margin-bottom:12px}
+    @media (max-width: 1024px){.grid{grid-template-columns:1fr}.row-3{grid-template-columns:1fr}.row-2{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <div class="brand">Trading Game • Admin</div>
+      <div class="sub">Edite parâmetros sem mexer no código. As alterações são salvas no navegador/site via localStorage.</div>
+    </div>
+    <div class="actions">
+      <a class="btn btn-light" href="./index.html">Voltar ao jogo</a>
+      <button class="btn-primary" id="btnSaveTop" type="button">Salvar alterações</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="notice">
+      <strong>Como funciona:</strong> esta tela carrega os JSONs separados em <code>data/</code> e salva ajustes separados por modo de jogo. Iniciante, Expert e Campanha passam a ter cenários, ofertas, fretes, bids e regras independentes.
+    </div>
+
+    <div class="grid">
+      <div class="stack">
+        <div class="panel">
+          <h2>Modo de jogo</h2>
+          <p class="muted">Edite cada modo em uma base separada. Alterações feitas em um modo não afetam os demais.</p>
+          <div class="field">
+            <label for="modePicker">Modo em edição</label>
+            <select id="modePicker">
+              <option value="guided">Jogo Guiado / Iniciante</option>
+              <option value="expert">Jogo Expert</option>
+              <option value="campaign">Modo Campanha</option>
+            </select>
+          </div>
+
+          <div id="campaignLevelPanel" class="campaign-only">
+            <div class="readonly-note"><strong>Campanha por Level:</strong> alterações feitas aqui ficam restritas ao level selecionado. O L1 já usa 5 rodadas e os parâmetros oficiais do desafio.</div>
+            <div class="field">
+              <label for="campaignLevelPicker">Level em edição</label>
+              <select id="campaignLevelPicker"></select>
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <label for="campaignLevelName">Nome do level</label>
+                <input id="campaignLevelName" type="text" />
+              </div>
+              <div class="field">
+                <label for="campaignLevelStatus">Status</label>
+                <select id="campaignLevelStatus">
+                  <option value="active">Ativo</option>
+                  <option value="locked">Bloqueado / futuro</option>
+                </select>
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <label for="campaignTargetVolume">Volume alvo (t)</label>
+                <input id="campaignTargetVolume" type="number" min="0" step="1000" />
+              </div>
+              <div class="field">
+                <label for="campaignTargetBasis">Meta basis médio (¢/bu)</label>
+                <input id="campaignTargetBasis" type="number" step="0.1" />
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <label for="campaignFixedFreight">Frete marítimo fixo (US$/t)</label>
+                <input id="campaignFixedFreight" type="number" step="0.01" />
+              </div>
+              <div class="field">
+                <label for="campaignFixedSaleBasis">Venda CFR China (¢/bu)</label>
+                <input id="campaignFixedSaleBasis" type="number" step="0.1" />
+              </div>
+            </div>
+            <div class="row-3">
+              <div class="field">
+                <label for="campaignFixedPort">Porto chave</label>
+                <input id="campaignFixedPort" type="text" />
+              </div>
+              <div class="field">
+                <label for="campaignFixedPortLabel">Porto exibido</label>
+                <input id="campaignFixedPortLabel" type="text" />
+              </div>
+              <div class="field">
+                <label for="campaignShipmentMonth">Embarque</label>
+                <input id="campaignShipmentMonth" type="text" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="campaignFixedDestination">Destino</label>
+              <input id="campaignFixedDestination" type="text" />
+            </div>
+            <div class="field">
+              <label for="campaignContextGeneral">Contexto geral</label>
+              <textarea id="campaignContextGeneral"></textarea>
+            </div>
+            <div class="field">
+              <label for="campaignMission">Missão</label>
+              <textarea id="campaignMission"></textarea>
+            </div>
+            <div class="field">
+              <label for="campaignGoal">Meta</label>
+              <textarea id="campaignGoal"></textarea>
+            </div>
+            <div class="field">
+              <label for="campaignParityFormula">Fórmula de paridade</label>
+              <textarea id="campaignParityFormula"></textarea>
+            </div>
+          </div>
+
+          <div class="footer-actions scenario-only" style="margin-top:0;margin-bottom:14px">
+            <button class="btn-light" id="btnCopyExpertToMode" type="button">Copiar Expert para este modo</button>
+          </div>
+          <div class="scenario-only">
+            <h2>Cenários</h2>
+            <p class="muted">Crie vários cenários para o modo selecionado. Cada modo possui cenários, ofertas, fretes, bids e regras próprias.</p>
+            <div class="field">
+              <label for="scenarioPicker">Cenário em edição</label>
+              <select id="scenarioPicker"></select>
+            </div>
+            <div class="row-2">
+              <button class="btn-primary" id="btnScenarioNew" type="button">Novo cenário</button>
+              <button class="btn-light" id="btnScenarioDuplicate" type="button">Duplicar cenário</button>
+            </div>
+            <div class="footer-actions">
+              <button class="btn-danger" id="btnScenarioDelete" type="button">Excluir cenário atual</button>
+            </div>
+            <div class="muted" style="margin-top:10px">O jogo continuará sorteando automaticamente um cenário a cada nova partida.</div>
+          </div>
+        </div>
+
+        <div class="panel" id="generalPanel">
+          <h2>Configuração geral</h2>
+          <div class="field">
+            <label for="scenarioName">Nome do cenário</label>
+            <input id="scenarioName" type="text" />
+          </div>
+          <div class="row-3">
+            <div class="field">
+              <label for="timeControlEnabled">Controle de tempo</label>
+              <select id="timeControlEnabled">
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="timePerRound">Tempo por rodada (segundos)</label>
+              <input id="timePerRound" type="number" min="10" step="10" />
+            </div>
+            <div class="field">
+              <label for="rulesRounds">Total de rodadas</label>
+              <input id="rulesRounds" type="number" min="1" step="1" />
+            </div>
+          </div>
+          <div class="row-3">
+            <div class="field">
+              <label for="shipSize1">Navio 1 (t)</label>
+              <input id="shipSize1" type="number" min="0" step="1000" />
+            </div>
+            <div class="field">
+              <label for="shipSize2">Navio 2 (t)</label>
+              <input id="shipSize2" type="number" min="0" step="1000" />
+            </div>
+            <div class="field">
+              <label for="sacaToT">Conversão saca → t</label>
+              <input id="sacaToT" type="number" min="0" step="0.001" />
+            </div>
+          </div>
+          <div class="row-3">
+            <div class="field">
+              <label for="convCent">Conversão ¢/bu → USD/t</label>
+              <input id="convCent" type="number" min="0" step="0.000001" />
+            </div>
+            <div class="field">
+              <label for="penSaleCancel">Penalidade cancelamento venda</label>
+              <input id="penSaleCancel" type="number" min="0" step="1000" />
+            </div>
+            <div class="field">
+              <label for="penUnusedFreight">Penalidade frete ocioso</label>
+              <input id="penUnusedFreight" type="number" min="0" step="1000" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="penOverBuy">Penalidade excesso por tonelada</label>
+            <input id="penOverBuy" type="number" min="0" step="1" />
+          </div>
+          <div class="footer-actions">
+            <button class="btn-primary" id="btnSaveSide" type="button">Salvar alterações</button>
+            <button class="btn-danger" id="btnReset" type="button">Voltar ao padrão</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Importar / Exportar</h2>
+          <p class="muted">Use isso para copiar uma configuração entre ambientes, fazer backup ou editar de forma avançada.</p>
+          <p class="muted"><strong>Arquivo atual:</strong> <code id="currentJsonPath">-</code></p>
+          <div class="footer-actions">
+            <button class="btn-primary" id="btnExport" type="button">Exportar JSON</button>
+            <label class="btn btn-light" for="importFile" style="cursor:pointer;">Importar JSON</label>
+            <input id="importFile" type="file" accept="application/json" hidden />
+          </div>
+          <div style="margin-top:12px"><span id="statusPill" class="pill">Sem alterações salvas</span></div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="panel">
+          <h2>Rodadas</h2>
+          <div class="muted" style="margin-bottom:10px">Edite notícias, mercado, ofertas EXW, fretes marítimos e bids da China por rodada.</div>
+          <div id="roundTabs" class="round-tabs"></div>
+          <div id="roundEditor"></div>
+        </div>
+
+        <div class="panel">
+          <h2>JSON avançado</h2>
+          <p class="muted">Mostra exatamente o JSON do arquivo físico selecionado acima. Exporte e substitua o arquivo indicado no projeto.</p>
+          <p class="muted"><strong>Substituir no código:</strong> <code id="jsonPreviewPath">-</code></p>
+          <textarea id="jsonPreview" class="json-box" spellcheck="false" readonly></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'tradingGame.adminOverrides.v2';
+    const MODE_KEYS = ['guided', 'expert', 'campaign'];
+    const MODE_LABELS = {
+      guided: 'Jogo Guiado / Iniciante',
+      expert: 'Jogo Expert',
+      campaign: 'Modo Campanha'
+    };
+
+    let baseData = null;
+    let workingData = null;
+    let activeModeKey = 'expert';
+    let activeScenarioIndex = 0;
+    let activeRoundIndex = 0;
+    let activeCampaignLevelId = 1;
+
+    function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+    function setStatus(msg, ok=true){
+      const el = document.getElementById('statusPill');
+      el.textContent = msg;
+      el.style.background = ok ? '#dcfce7' : '#fee2e2';
+      el.style.color = ok ? '#166534' : '#991b1b';
+    }
+    function num(v, fallback=0){ const n = Number(v); return Number.isFinite(n) ? n : fallback; }
+
+    async function fetchJsonNoStore(path){
+      const res = await fetch(path, { cache:'no-store' });
+      if (!res.ok) throw new Error(`${path}: ${res.status}`);
+      return await res.json();
+    }
+
+    async function loadSplitGameDataFiles(){
+      const manifest = await fetchJsonNoStore('./data/gameData.manifest.json');
+      const guided = await fetchJsonNoStore(manifest.guided || './data/guided/gameData.json');
+      const expert = await fetchJsonNoStore(manifest.expert || './data/expert/gameData.json');
+      const campaignBase = await fetchJsonNoStore(manifest.campaign || './data/campaign/campaignData.json');
+      const levels = [];
+      for (const levelPath of (Array.isArray(manifest.campaignLevels) ? manifest.campaignLevels : [])) {
+        try { levels.push(await fetchJsonNoStore(levelPath)); }
+        catch (err) { console.warn('[admin] falha ao carregar level', levelPath, err); }
+      }
+      levels.sort((a,b) => Number(a?.id || 0) - Number(b?.id || 0));
+      const campaign = { ...(campaignBase || {}), levels };
+      delete campaign.levelIndex;
+      return {
+        scenarios: clone(expert?.scenarios || []),
+        rules: clone(expert?.rules || {}),
+        corridorList: clone(expert?.corridorList || []),
+        modes: { guided: guided || {}, expert: expert || {}, campaign }
+      };
+    }
+
+    async function loadBaseGameDataFiles(){
+      try {
+        return await loadSplitGameDataFiles();
+      } catch (splitErr) {
+        console.warn('[admin] estrutura separada indisponível; usando gameData.json como fallback', splitErr);
+        const res = await fetch('./gameData.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Não consegui carregar gameData.json');
+        return await res.json();
+      }
+    }
+
+    function legacySeed(data){
+      return {
+        scenarios: clone(Array.isArray(data?.scenarios) ? data.scenarios : []),
+        rules: clone(data?.rules || {}),
+        corridorList: clone(Array.isArray(data?.corridorList) ? data.corridorList : [])
+      };
+    }
+
+    function makeCampaignLevelSeed(id, sourceScenario, sourceRules){
+      const baseScenario = normalizeScenario(clone(sourceScenario || { id, name: `L${id} — Novo level`, active: id === 1, rounds: [] }));
+      baseScenario.id = id;
+      if (id === 1) {
+        baseScenario.name = 'L1 — Originação pura';
+        baseScenario.rounds = (baseScenario.rounds || []).slice(0, 5).map((rd, idx) => ({ ...rd, round: idx + 1 }));
+      }
+      const rules = clone(sourceRules || {});
+      if (id === 1) {
+        rules.rounds = 5;
+        rules.time_control_enabled = false;
+        rules.ship_sizes_t = [60000, 120000];
+      }
+      const defaults = {
+        1: { code:'L1', name:'Originação pura', status:'active', rounds:5, targetVolumeT:60000, targetBasisCentBu:110, fixedPort:'santos', fixedPortLabel:'Santos', fixedDestination:'N. China', fixedFreightUsdT:37, fixedSaleBasisCentBu:110, shipmentMonth:'Março', startStage:'r1_home', summary:'Book vendido CFR China e frete marítimo fixado. O foco do L1 é originar soja no interior, controlar o custo CFR equivalente e manter o basis médio dentro da meta.' },
+        2: { code:'L2', name:'Mais alternativas logísticas', status:'locked', rounds:0, summary:'Disponível quando você concluir o Level 1.' },
+        3: { code:'L3', name:'Janelas de embarque', status:'locked', rounds:0, summary:'Disponível quando você concluir os níveis anteriores.' }
+      };
+      return { id, ...(defaults[id] || { code:`L${id}`, name:`Level ${id}`, status:'locked', rounds:0 }), rules, scenario: baseScenario };
+    }
+
+    function normalizeCampaignLevel(level, fallbackScenario, fallbackRules){
+      const id = Number(level?.id) || 1;
+      const seed = makeCampaignLevelSeed(id, fallbackScenario, fallbackRules);
+      const out = { ...seed, ...(level && typeof level === 'object' ? level : {}) };
+      out.id = id;
+      out.code = String(out.code || `L${id}`);
+      out.name = String(out.name || seed.name || `Level ${id}`);
+      out.status = String(out.status || (id === 1 ? 'active' : 'locked'));
+      out.rules = (out.rules && typeof out.rules === 'object') ? out.rules : clone(seed.rules || {});
+      out.scenario = normalizeScenario(out.scenario || seed.scenario);
+      if (id === 1) {
+        out.rules.rounds = 5;
+        out.rounds = 5;
+        out.scenario.rounds = (out.scenario.rounds || []).slice(0, 5).map((rd, idx) => ({ ...rd, round: idx + 1 }));
+      } else {
+        out.rounds = Number(out.rounds || out.rules.rounds || out.scenario.rounds?.length || 0);
+      }
+      return out;
+    }
+
+    function ensureCampaignLevels(modeData, fallback){
+      const sourceScenario = modeData?.scenarios?.[0] || fallback?.scenarios?.[0] || null;
+      const sourceRules = modeData?.rules || fallback?.rules || {};
+      let levels = Array.isArray(modeData?.levels) ? modeData.levels : [];
+      if (!levels.length) levels = [1,2,3].map(id => makeCampaignLevelSeed(id, sourceScenario, sourceRules));
+      levels = levels.map(level => normalizeCampaignLevel(level, sourceScenario, sourceRules));
+      [1,2,3].forEach(id => {
+        if (!levels.some(level => Number(level.id) === id)) levels.push(makeCampaignLevelSeed(id, sourceScenario, sourceRules));
+      });
+      levels.sort((a,b) => Number(a.id) - Number(b.id));
+      modeData.levels = levels;
+      const l1 = levels.find(level => Number(level.id) === 1) || levels[0];
+      if (l1) {
+        modeData.rules = clone(l1.rules || modeData.rules || {});
+        modeData.scenarios = [clone(l1.scenario || sourceScenario || {})].filter(Boolean).map(normalizeScenario);
+      }
+      return modeData;
+    }
+
+    function ensureModeShape(modeData, fallback, modeKey){
+      const fb = fallback || { scenarios: [], rules: {}, corridorList: [] };
+      const out = (modeData && typeof modeData === 'object') ? modeData : {};
+      out.scenarios = Array.isArray(out.scenarios) ? out.scenarios : clone(fb.scenarios || []);
+      out.rules = (out.rules && typeof out.rules === 'object') ? out.rules : clone(fb.rules || {});
+      out.corridorList = Array.isArray(out.corridorList) ? out.corridorList : clone(fb.corridorList || []);
+      out.scenarios = out.scenarios.map(normalizeScenario);
+      if (!out.scenarios.length && fb.scenarios?.length) out.scenarios = clone(fb.scenarios).map(normalizeScenario);
+      if (modeKey === 'campaign') ensureCampaignLevels(out, fb);
+      return out;
+    }
+
+    function syncLegacyTopLevel(data){
+      const expert = data?.modes?.expert || data?.modes?.guided || data?.modes?.campaign;
+      if (expert) {
+        data.scenarios = clone(expert.scenarios || []);
+        data.rules = clone(expert.rules || {});
+        data.corridorList = clone(expert.corridorList || []);
+      }
+      return data;
+    }
+
+    function ensureDataShape(data){
+      const safe = (data && typeof data === 'object') ? data : {};
+      const seed = legacySeed(safe.scenarios || safe.rules || safe.corridorList ? safe : baseData || {});
+      safe.modes = (safe.modes && typeof safe.modes === 'object') ? safe.modes : {};
+      MODE_KEYS.forEach((key) => {
+        safe.modes[key] = ensureModeShape(safe.modes[key], seed, key);
+      });
+      return syncLegacyTopLevel(safe);
+    }
+
+    function getModeData(modeKey = activeModeKey){
+      workingData.modes = workingData.modes || {};
+      if (!workingData.modes[modeKey]) workingData.modes[modeKey] = ensureModeShape(null, legacySeed(baseData || workingData), modeKey);
+      return workingData.modes[modeKey];
+    }
+    function getCampaignLevelData(levelId = activeCampaignLevelId){
+      const mode = getModeData('campaign');
+      ensureCampaignLevels(mode, legacySeed(baseData || workingData));
+      return mode.levels.find(level => Number(level.id) === Number(levelId)) || mode.levels[0];
+    }
+    function getScenario(index = activeScenarioIndex){
+      if (activeModeKey === 'campaign') return getCampaignLevelData()?.scenario || null;
+      return getModeData().scenarios?.[index] || null;
+    }
+    function getRules(){
+      if (activeModeKey === 'campaign') return getCampaignLevelData()?.rules || null;
+      return getModeData().rules || null;
+    }
+    function syncCampaignScenarioMirror(){
+      const campaign = getModeData('campaign');
+      if (!campaign || !Array.isArray(campaign.levels)) return;
+      campaign.scenarios = campaign.levels
+        .filter(level => level && level.scenario && Array.isArray(level.scenario.rounds))
+        .map(level => clone({
+          ...level.scenario,
+          id: Number(level.scenario.id || level.scenarioId || level.id || 1),
+          name: level.scenario.name || `${level.code || `L${level.id}`} — ${level.name || 'Level'}`
+        }));
+    }
+
+    function getCurrentJsonTarget(){
+      if (activeModeKey === 'campaign') {
+        const level = getCampaignLevelData(activeCampaignLevelId);
+        const id = Number(level?.id || activeCampaignLevelId || 1);
+        return {
+          type: 'campaignLevel',
+          path: `data/campaign/levels/level${id}.json`,
+          downloadName: `level${id}.json`,
+          payload: clone(level || {})
+        };
+      }
+      const mode = getModeData(activeModeKey);
+      return {
+        type: activeModeKey,
+        path: `data/${activeModeKey === 'guided' ? 'guided' : 'expert'}/gameData.json`,
+        downloadName: `${activeModeKey === 'guided' ? 'guided' : 'expert'}_gameData.json`,
+        payload: clone({
+          scenarios: mode?.scenarios || [],
+          rules: mode?.rules || {},
+          corridorList: mode?.corridorList || []
+        })
+      };
+    }
+
+    function updateCurrentJsonPathUi(target){
+      const t = target || getCurrentJsonTarget();
+      const pathEls = [document.getElementById('currentJsonPath'), document.getElementById('jsonPreviewPath')];
+      pathEls.forEach(el => { if (el) el.textContent = t.path; });
+    }
+
+    function refreshJson(){
+      if (workingData?.modes?.campaign) ensureCampaignLevels(workingData.modes.campaign, legacySeed(baseData || workingData));
+      syncCampaignScenarioMirror();
+      const target = getCurrentJsonTarget();
+      updateCurrentJsonPathUi(target);
+      document.getElementById('jsonPreview').value = JSON.stringify(target.payload, null, 2);
+    }
+    function nextScenarioId(){
+      const ids = (getModeData().scenarios || []).map(s => Number(s?.id) || 0);
+      return (ids.length ? Math.max(...ids) : 0) + 1;
+    }
+    function normalizeScenario(scenario){
+      const s = scenario || {};
+      s.id = Number(s.id) || 1;
+      s.name = String(s.name || `Cenário ${s.id}`);
+      s.rounds = Array.isArray(s.rounds) ? s.rounds : [];
+      s.rounds.forEach((rd, idx) => { if (!rd.round) rd.round = idx + 1; });
+      return s;
+    }
+
+    async function loadBase(){
+      baseData = ensureDataShape(await loadBaseGameDataFiles());
+      const saved = localStorage.getItem(STORAGE_KEY);
+      workingData = ensureDataShape(saved ? JSON.parse(saved) : clone(baseData));
+      activeModeKey = 'expert';
+      activeScenarioIndex = 0;
+      activeRoundIndex = 0;
+      activeCampaignLevelId = 1;
+      renderAll();
+      setStatus(saved ? 'Usando configuração salva no site por modo de jogo' : 'Base carregada dos JSONs separados em data/');
+    }
+
+    function renderModePicker(){
+      const sel = document.getElementById('modePicker');
+      if (!sel) return;
+      sel.value = activeModeKey;
+      document.body.classList.toggle('editing-campaign', activeModeKey === 'campaign');
+    }
+
+    function renderCampaignLevelPicker(){
+      const sel = document.getElementById('campaignLevelPicker');
+      if (!sel) return;
+      sel.innerHTML = '';
+      const mode = getModeData('campaign');
+      ensureCampaignLevels(mode, legacySeed(baseData || workingData));
+      (mode.levels || []).forEach(level => {
+        const opt = document.createElement('option');
+        opt.value = String(level.id);
+        opt.textContent = `${level.code || `L${level.id}`} — ${level.name || 'Sem nome'}${level.status === 'locked' ? ' (futuro)' : ''}`;
+        sel.appendChild(opt);
+      });
+      if (!getCampaignLevelData(activeCampaignLevelId)) activeCampaignLevelId = 1;
+      sel.value = String(activeCampaignLevelId);
+    }
+
+    function bindCampaignLevelConfig(){
+      if (activeModeKey !== 'campaign') return;
+      const level = getCampaignLevelData();
+      if (!level) return;
+      document.getElementById('campaignLevelName').value = level.name || '';
+      document.getElementById('campaignLevelStatus').value = level.status || (Number(level.id) === 1 ? 'active' : 'locked');
+      document.getElementById('campaignTargetVolume').value = level.targetVolumeT ?? 60000;
+      document.getElementById('campaignTargetBasis').value = level.targetBasisCentBu ?? 110;
+      document.getElementById('campaignFixedFreight').value = level.fixedFreightUsdT ?? 37;
+      document.getElementById('campaignFixedSaleBasis').value = level.fixedSaleBasisCentBu ?? 110;
+      document.getElementById('campaignFixedPort').value = level.fixedPort || 'santos';
+      document.getElementById('campaignFixedPortLabel').value = level.fixedPortLabel || 'Santos';
+      document.getElementById('campaignShipmentMonth').value = level.shipmentMonth || 'Março';
+      document.getElementById('campaignFixedDestination').value = level.fixedDestination || 'N. China';
+      document.getElementById('campaignContextGeneral').value = level.adminContextGeneral || level.summary || '';
+      document.getElementById('campaignMission').value = level.adminMission || 'Originar soja no interior, travar lotes competitivos e controlar o custo CFR equivalente do navio.';
+      document.getElementById('campaignGoal').value = level.adminGoal || `Completar ${level.targetVolumeT || 60000} t em ${level.rounds || 5} rodadas com basis médio final ≤ +${level.targetBasisCentBu || 110} c/bu.`;
+      document.getElementById('campaignParityFormula').value = level.marketContext?.formula || level.parityFormula || 'Paridade EXW = [(CBOT × 0,3674) + Prêmio FOB] × Câmbio ÷ 1000 × 60 − Frete − Margem originador';
+    }
+
+    function readCampaignLevelConfig(){
+      if (activeModeKey !== 'campaign') return;
+      const level = getCampaignLevelData();
+      if (!level) return;
+      level.name = document.getElementById('campaignLevelName').value.trim() || level.name || `Level ${level.id}`;
+      level.status = document.getElementById('campaignLevelStatus').value || (Number(level.id) === 1 ? 'active' : 'locked');
+      level.targetVolumeT = num(document.getElementById('campaignTargetVolume').value, 60000);
+      level.targetBasisCentBu = num(document.getElementById('campaignTargetBasis').value, 110);
+      level.fixedFreightUsdT = num(document.getElementById('campaignFixedFreight').value, 37);
+      level.fixedSaleBasisCentBu = num(document.getElementById('campaignFixedSaleBasis').value, 110);
+      level.fixedPort = document.getElementById('campaignFixedPort').value.trim() || 'santos';
+      level.fixedPortLabel = document.getElementById('campaignFixedPortLabel').value.trim() || 'Santos';
+      level.shipmentMonth = document.getElementById('campaignShipmentMonth').value.trim() || 'Março';
+      level.fixedDestination = document.getElementById('campaignFixedDestination').value.trim() || 'N. China';
+      level.adminContextGeneral = document.getElementById('campaignContextGeneral').value.trim();
+      level.adminMission = document.getElementById('campaignMission').value.trim();
+      level.adminGoal = document.getElementById('campaignGoal').value.trim();
+      const parityFormula = document.getElementById('campaignParityFormula').value.trim();
+      level.marketContext = level.marketContext || {};
+      level.marketContext.formula = parityFormula;
+      level.parityFormula = parityFormula;
+      if (level.adminContextGeneral) level.summary = level.adminContextGeneral;
+      if (Number(level.id) === 1) {
+        level.rounds = 5;
+        level.rules = level.rules || {};
+        level.rules.rounds = 5;
+        level.rules.time_control_enabled = false;
+        if (level.scenario?.rounds) level.scenario.rounds = level.scenario.rounds.slice(0, 5).map((rd, idx) => ({ ...rd, round: idx + 1 }));
+      }
+      refreshJson();
+    }
+
+    function renderScenarioPicker(){
+      const sel = document.getElementById('scenarioPicker');
+      sel.innerHTML = '';
+      (getModeData().scenarios || []).forEach((scenario, idx) => {
+        const opt = document.createElement('option');
+        opt.value = String(idx);
+        opt.textContent = `${scenario.name || 'Sem nome'} (ID ${scenario.id})`;
+        sel.appendChild(opt);
+      });
+      sel.value = String(activeScenarioIndex);
+    }
+
+    function syncTimeControlUi(){
+      const enabled = document.getElementById('timeControlEnabled').value === 'true';
+      const timeInput = document.getElementById('timePerRound');
+      timeInput.disabled = !enabled;
+      timeInput.style.opacity = enabled ? '1' : '0.55';
+    }
+
+    function bindGeneral(){
+      const scenario = getScenario();
+      const rules = getRules();
+      document.getElementById('scenarioName').value = scenario?.name || '';
+      document.getElementById('timeControlEnabled').value = String(rules?.time_control_enabled !== false);
+      document.getElementById('timePerRound').value = rules?.time_per_round_s ?? 300;
+      document.getElementById('rulesRounds').value = rules?.rounds ?? (scenario?.rounds?.length || 0);
+      document.getElementById('shipSize1').value = rules?.ship_sizes_t?.[0] ?? 60000;
+      document.getElementById('shipSize2').value = rules?.ship_sizes_t?.[1] ?? 120000;
+      document.getElementById('sacaToT').value = rules?.conversion?.saca_to_t_default ?? 0.06;
+      document.getElementById('convCent').value = rules?.conversion?.centbu_to_usd_t_default ?? 0.367454;
+      document.getElementById('penSaleCancel').value = rules?.penalties?.sale_cancel_no_full_ship_usd ?? 5000000;
+      document.getElementById('penUnusedFreight').value = rules?.penalties?.unused_ocean_freight_penalty_usd ?? 1500000;
+      document.getElementById('penOverBuy').value = rules?.penalties?.single_ship_overbuy_usd_per_t ?? 500;
+      syncTimeControlUi();
+      bindCampaignLevelConfig();
+    }
+
+    function readGeneral(){
+      readRoundEditorValues();
+      const scenario = getScenario();
+      const rules = getRules();
+      if (!scenario || !rules) return;
+      scenario.name = document.getElementById('scenarioName').value.trim() || `Cenário ${scenario.id}`;
+      rules.time_control_enabled = document.getElementById('timeControlEnabled').value === 'true';
+      rules.time_per_round_s = num(document.getElementById('timePerRound').value, 300);
+      rules.rounds = num(document.getElementById('rulesRounds').value, scenario.rounds.length);
+      rules.ship_sizes_t = [num(document.getElementById('shipSize1').value, 60000), num(document.getElementById('shipSize2').value, 120000)];
+      rules.conversion = rules.conversion || {};
+      rules.conversion.saca_to_t_default = num(document.getElementById('sacaToT').value, 0.06);
+      rules.conversion.centbu_to_usd_t_default = num(document.getElementById('convCent').value, 0.367454);
+      rules.penalties = rules.penalties || {};
+      rules.penalties.sale_cancel_no_full_ship_usd = num(document.getElementById('penSaleCancel').value, 5000000);
+      rules.penalties.unused_ocean_freight_penalty_usd = num(document.getElementById('penUnusedFreight').value, 1500000);
+      rules.penalties.single_ship_overbuy_usd_per_t = num(document.getElementById('penOverBuy').value, 500);
+      if (activeModeKey === 'campaign') {
+        readCampaignLevelConfig();
+        if (Number(activeCampaignLevelId) === 1) {
+          rules.rounds = 5;
+          rules.time_control_enabled = false;
+          if (scenario.rounds) scenario.rounds = scenario.rounds.slice(0, 5).map((rd, idx) => ({ ...rd, round: idx + 1 }));
+        }
+      }
+      refreshJson();
+    }
+
+    function renderTabs(){
+      const scenario = getScenario();
+      const wrap = document.getElementById('roundTabs');
+      wrap.innerHTML = '';
+      (scenario?.rounds || []).forEach((rd, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'round-tab' + (idx === activeRoundIndex ? ' active' : '');
+        btn.textContent = 'Rodada ' + rd.round;
+        btn.onclick = () => { try { readRoundEditorValues(); refreshJson(); } catch(e){ setStatus(e.message, false); return; } activeRoundIndex = idx; renderTabs(); renderRoundEditor(); };
+        wrap.appendChild(btn);
+      });
+    }
+
+    function isCampaignL1Admin(){
+      return activeModeKey === 'campaign' && Number(activeCampaignLevelId || 1) === 1;
+    }
+
+    function getCampaignFixedPortKey(){
+      const level = getCampaignLevelData();
+      return String(level?.fixedPort || 'santos').trim() || 'santos';
+    }
+
+    function freightBrlScToUsdT(brlSc, fx){
+      const f = Number(brlSc || 0);
+      const u = Number(fx || 0);
+      if (!Number.isFinite(f) || !Number.isFinite(u) || u <= 0) return 0;
+      return Math.round((f / 0.06 / u) * 100) / 100;
+    }
+
+    function inferFreightBrlScFromOffer(offer, rd){
+      if (offer?.freight_brl_saca_santos != null) return Number(offer.freight_brl_saca_santos) || 0;
+      const usdT = Number(offer?.freight_inland_usd_t ?? offer?.inland_usd_t ?? 0) || 0;
+      const fx = Number(rd?.usd || 0) || 0;
+      return Math.round((usdT * fx * 0.06) * 100) / 100;
+    }
+
+    function syncCampaignOfferFreight(offer, rd){
+      if (!offer || !rd) return;
+      const fixedPort = getCampaignFixedPortKey();
+      const brlSc = Number(offer.freight_brl_saca_santos || 0);
+      const usdT = freightBrlScToUsdT(brlSc, rd.usd);
+      offer.freight_inland_usd_t = usdT;
+      offer.inland_usd_t = usdT;
+      offer.inland_by_corridor = offer.inland_by_corridor || {};
+      offer.inland_by_corridor[fixedPort] = usdT;
+    }
+
+    function campaignL1OffersTable(offers, rd){
+      const fixedPort = getCampaignFixedPortKey();
+      return `<div class="table-wrap"><table><thead><tr><th>Oferta</th><th>Mapa</th><th>Preço EXW (R$/sc)</th><th>Volume (t)</th><th>Frete Santos (R$/sc)</th><th>Frete Santos (US$/t)</th><th>Comentário</th></tr></thead><tbody>${(offers || []).map((o, idx) => {
+        const brlFreight = inferFreightBrlScFromOffer(o, rd);
+        const usdFreight = freightBrlScToUsdT(brlFreight, rd?.usd);
+        return `<tr>
+          <td><input data-path="offers_exw.${idx}.label" value="${escapeAttr(o.label || '')}"><div class="admin-mini-note">Preserve o nome se o saco já estiver calibrado.</div></td>
+          <td><input data-path="offers_exw.${idx}.map_label" value="${escapeAttr(o.map_label || '')}"></td>
+          <td><input type="number" step="0.01" data-path="offers_exw.${idx}.price_brl_saca" value="${o.price_brl_saca ?? 0}"></td>
+          <td><input type="number" step="1" data-path="offers_exw.${idx}.volume_t" value="${o.volume_t ?? 0}"></td>
+          <td><input type="number" step="0.01" data-freight-brl-idx="${idx}" value="${brlFreight}"></td>
+          <td><input readonly data-freight-usd-idx="${idx}" value="${usdFreight}"><div class="admin-mini-note">Calculado para ${escapeHtml(fixedPort)} pelo câmbio da rodada.</div></td>
+          <td><textarea data-path="offers_exw.${idx}.market_comment">${escapeHtml(o.market_comment || '')}</textarea></td>
+        </tr>`;
+      }).join('')}</tbody></table></div>`;
+    }
+
+    function renderCampaignL1RoundEditor(rd){
+      const fob = rd?.basis_porto?.santos ?? rd?.fob_santos_premium_cent_bu ?? 0;
+      return `<div class="stack">
+        <div class="readonly-note"><strong>Level 1:</strong> edite apenas as variáveis usadas no desafio. Frete marítimo, bids China e fluxo livre ficam fora deste level.</div>
+        <div class="row-3">
+          <div class="field"><label>Rodada</label><input type="number" value="${rd.round}" data-path="round"></div>
+          <div class="field"><label>Câmbio (R$/US$)</label><input type="number" step="0.01" value="${rd.usd}" data-path="usd"></div>
+          <div class="field"><label>CBOT (¢/bu)</label><input type="number" step="1" value="${rd.cbot_cent_bu}" data-path="cbot_cent_bu"></div>
+        </div>
+        <div class="row-3">
+          <div class="field"><label>Prêmio FOB Santos (¢/bu)</label><input type="number" step="1" value="${fob}" data-fob-santos="true"></div>
+          <div class="field"><label>Paridade FOB equivalente (US$/t)</label><input type="number" step="0.01" value="${rd.parity_fob_usd_t ?? ''}" data-path="parity_fob_usd_t"></div>
+          <div class="field"><label>Conversão ¢/bu → USD/t</label><input type="number" step="0.000001" value="${rd.conv_centbu_to_usd_t ?? 0.367454}" data-path="conv_centbu_to_usd_t"></div>
+        </div>
+        <div class="field"><label>Radar / manchete vigente</label><textarea data-path="market_headline">${escapeHtml(rd.market_headline || rd.news || '')}</textarea></div>
+        <div class="field"><label>Nota de mesa</label><textarea data-path="market_note">${escapeHtml(rd.market_note || '')}</textarea></div>
+        <div class="field"><label>Fórmula de paridade</label><textarea data-path="parity_formula">${escapeHtml(rd.parity_formula || getCampaignLevelData()?.marketContext?.formula || '')}</textarea></div>
+        <div><h3>Ofertas EXW — Level 1</h3>${campaignL1OffersTable(rd.offers_exw || [], rd)}</div>
+      </div>`;
+    }
+
+    function tableOffers(offers){
+      return `<div class="table-wrap"><table><thead><tr><th>Oferta</th><th>Preço (R$/saca)</th><th>Volume (t)</th><th>Inland base</th><th>Corredores (JSON)</th></tr></thead><tbody>${(offers || []).map((o, idx) => `<tr><td><input data-path="offers_exw.${idx}.label" value="${escapeAttr(o.label || '')}"></td><td><input type="number" step="0.01" data-path="offers_exw.${idx}.price_brl_saca" value="${o.price_brl_saca ?? 0}"></td><td><input type="number" step="1" data-path="offers_exw.${idx}.volume_t" value="${o.volume_t ?? 0}"></td><td><input type="number" step="0.01" data-path="offers_exw.${idx}.freight_inland_usd_t" value="${o.freight_inland_usd_t ?? 0}"></td><td><textarea data-json-path="offers_exw.${idx}.inland_by_corridor">${escapeHtml(JSON.stringify(o.inland_by_corridor || {}, null, 2))}</textarea></td></tr>`).join('')}</tbody></table></div>`;
+    }
+    function tableOcean(items){
+      return `<div class="table-wrap"><table><thead><tr><th>Frete</th><th>USD/t</th><th>Demurrage / rodada</th></tr></thead><tbody>${(items || []).map((o, idx) => `<tr><td><input data-path="ocean_freight.${idx}.label" value="${escapeAttr(o.label || '')}"></td><td><input type="number" step="0.01" data-path="ocean_freight.${idx}.usd_t" value="${o.usd_t ?? 0}"></td><td><input type="number" step="0.01" data-path="ocean_freight.${idx}.demurrage_usd_round" value="${o.demurrage_usd_round ?? 0}"></td></tr>`).join('')}</tbody></table></div>`;
+    }
+    function tableChina(items){
+      return `<div class="table-wrap"><table><thead><tr><th>BID</th><th>Basis (¢/bu)</th></tr></thead><tbody>${(items || []).map((o, idx) => `<tr><td><input data-path="china_offers.${idx}.label" value="${escapeAttr(o.label || '')}"></td><td><input type="number" step="1" data-path="china_offers.${idx}.basis_cent_bu" value="${o.basis_cent_bu ?? 0}"></td></tr>`).join('')}</tbody></table></div>`;
+    }
+
+    function renderRoundEditor(){
+      const scenario = getScenario();
+      const rd = scenario?.rounds?.[activeRoundIndex];
+      const wrap = document.getElementById('roundEditor');
+      if (!rd) { wrap.innerHTML = '<p class="muted">Nenhuma rodada cadastrada neste modo/cenário.</p>'; return; }
+      if (isCampaignL1Admin()) {
+        wrap.innerHTML = renderCampaignL1RoundEditor(rd);
+      } else {
+        wrap.innerHTML = `<div class="stack"><div class="row-3"><div class="field"><label>Rodada</label><input type="number" value="${rd.round}" data-path="round"></div><div class="field"><label>Dólar</label><input type="number" step="0.01" value="${rd.usd}" data-path="usd"></div><div class="field"><label>CBOT (¢/bu)</label><input type="number" step="1" value="${rd.cbot_cent_bu}" data-path="cbot_cent_bu"></div></div><div class="row-2"><div class="field"><label>Conversão ¢/bu → USD/t</label><input type="number" step="0.000001" value="${rd.conv_centbu_to_usd_t}" data-path="conv_centbu_to_usd_t"></div><div class="field"><label>Conversão saca → t</label><input type="number" step="0.001" value="${rd.saca_to_t}" data-path="saca_to_t"></div></div><div class="field"><label>Notícia da rodada</label><textarea data-path="news">${escapeHtml(rd.news || '')}</textarea></div><div class="field"><label>Basis por porto (JSON)</label><textarea data-json-path="basis_porto">${escapeHtml(JSON.stringify(rd.basis_porto || {}, null, 2))}</textarea></div><div><h3>Ofertas EXW — ${MODE_LABELS[activeModeKey]}</h3>${tableOffers(rd.offers_exw || [])}</div><div><h3>Fretes marítimos — ${MODE_LABELS[activeModeKey]}</h3>${tableOcean(rd.ocean_freight || [])}</div><div><h3>BIDs China — ${MODE_LABELS[activeModeKey]}</h3>${tableChina(rd.china_offers || [])}</div></div>`;
+      }
+      bindRoundInputs();
+    }
+
+    function escapeHtml(v){ return String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+    function escapeAttr(v){ return String(v).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;'); }
+    function setByPath(obj, path, value){
+      const parts = path.split('.');
+      let cur = obj;
+      for (let i=0; i<parts.length-1; i++) cur = cur[isFinite(parts[i]) ? Number(parts[i]) : parts[i]];
+      cur[isFinite(parts.at(-1)) ? Number(parts.at(-1)) : parts.at(-1)] = value;
+    }
+    function readRoundEditorValues(){
+      const rd = getScenario()?.rounds?.[activeRoundIndex];
+      if (!rd) return;
+      document.querySelectorAll('#roundEditor [data-path]').forEach((el) => {
+        let value = el.value;
+        if (el.type === 'number') value = Number(value);
+        setByPath(rd, el.dataset.path, value);
+        if (isCampaignL1Admin() && el.dataset.path === 'market_headline') rd.news = value;
+      });
+      document.querySelectorAll('#roundEditor [data-json-path]').forEach((el) => {
+        try {
+          setByPath(rd, el.dataset.jsonPath, JSON.parse(el.value || '{}'));
+          el.style.borderColor = '#dbe2ea';
+        } catch (e) {
+          el.style.borderColor = '#b91c1c';
+          throw new Error('JSON inválido em um dos campos da rodada');
+        }
+      });
+      if (isCampaignL1Admin()) {
+        document.querySelectorAll('#roundEditor [data-fob-santos]').forEach((el) => {
+          const value = Number(el.value);
+          rd.basis_porto = rd.basis_porto || {};
+          rd.basis_porto.santos = value;
+          rd.fob_santos_premium_cent_bu = value;
+        });
+        document.querySelectorAll('#roundEditor [data-freight-brl-idx]').forEach((el) => {
+          const idx = Number(el.dataset.freightBrlIdx);
+          const offer = rd.offers_exw?.[idx];
+          if (!offer) return;
+          offer.freight_brl_saca_santos = Number(el.value);
+          syncCampaignOfferFreight(offer, rd);
+        });
+      }
+    }
+
+    function bindRoundInputs(){
+      const rd = getScenario()?.rounds?.[activeRoundIndex];
+      if (!rd) return;
+      document.querySelectorAll('#roundEditor [data-path]').forEach((el) => {
+        el.addEventListener('input', () => {
+          let value = el.value;
+          if (el.type === 'number') value = Number(value);
+          setByPath(rd, el.dataset.path, value);
+          if (isCampaignL1Admin() && el.dataset.path === 'market_headline') rd.news = value;
+          if (isCampaignL1Admin() && el.dataset.path === 'usd') {
+            (rd.offers_exw || []).forEach((offer, idx) => {
+              syncCampaignOfferFreight(offer, rd);
+              const usdEl = document.querySelector(`#roundEditor [data-freight-usd-idx="${idx}"]`);
+              if (usdEl) usdEl.value = offer.freight_inland_usd_t;
+            });
+          }
+          refreshJson();
+        });
+      });
+      if (isCampaignL1Admin()) {
+        document.querySelectorAll('#roundEditor [data-fob-santos]').forEach((el) => {
+          el.addEventListener('input', () => {
+            rd.basis_porto = rd.basis_porto || {};
+            const value = Number(el.value);
+            rd.basis_porto.santos = value;
+            rd.fob_santos_premium_cent_bu = value;
+            refreshJson();
+          });
+        });
+        document.querySelectorAll('#roundEditor [data-freight-brl-idx]').forEach((el) => {
+          el.addEventListener('input', () => {
+            const idx = Number(el.dataset.freightBrlIdx);
+            const offer = rd.offers_exw?.[idx];
+            if (!offer) return;
+            offer.freight_brl_saca_santos = Number(el.value);
+            syncCampaignOfferFreight(offer, rd);
+            const usdEl = document.querySelector(`#roundEditor [data-freight-usd-idx="${idx}"]`);
+            if (usdEl) usdEl.value = offer.freight_inland_usd_t;
+            refreshJson();
+          });
+        });
+      }
+      document.querySelectorAll('#roundEditor [data-json-path]').forEach((el) => {
+        el.addEventListener('change', () => {
+          try {
+            setByPath(rd, el.dataset.jsonPath, JSON.parse(el.value || '{}'));
+            el.style.borderColor = '#dbe2ea';
+            refreshJson();
+          } catch (e) {
+            el.style.borderColor = '#b91c1c';
+            setStatus('JSON inválido em um dos campos da rodada', false);
+          }
+        });
+      });
+    }
+
+    function renderAll(){
+      renderModePicker();
+      renderCampaignLevelPicker();
+      renderScenarioPicker();
+      bindGeneral();
+      renderTabs();
+      renderRoundEditor();
+      refreshJson();
+    }
+
+    function saveAll(){
+      try {
+        readGeneral();
+        syncCampaignScenarioMirror();
+        const payload = syncLegacyTopLevel(clone(workingData));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        const targetForAudit = getCurrentJsonTarget();
+        localStorage.setItem('tradingGame.lastExportTarget.v1', JSON.stringify({ path: targetForAudit.path, payload: targetForAudit.payload, savedAt: new Date().toISOString() }));
+        workingData = ensureDataShape(payload);
+        refreshJson();
+        setStatus(`Alterações salvas no navegador. Recarregue o jogo para aplicar. Modo atual: ${MODE_LABELS[activeModeKey]}.`);
+      } catch (e) {
+        console.error(e);
+        setStatus('Não foi possível salvar as alterações', false);
+      }
+    }
+
+    function exportJson(){
+      try {
+        readGeneral();
+        syncCampaignScenarioMirror();
+        const target = getCurrentJsonTarget();
+        const blob = new Blob([JSON.stringify(target.payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = target.downloadName;
+        a.click();
+        URL.revokeObjectURL(url);
+        setStatus(`JSON exportado. Substitua o arquivo: ${target.path}`);
+      } catch (e) {
+        console.error(e);
+        setStatus('Não foi possível exportar o JSON atual', false);
+      }
+    }
+
+    function resetDefaults(){
+      if (!confirm('Isso vai remover as alterações salvas e voltar ao padrão dos JSONs físicos em data/. Continuar?')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      workingData = ensureDataShape(clone(baseData));
+      activeModeKey = 'expert';
+      activeScenarioIndex = 0;
+      activeRoundIndex = 0;
+      activeCampaignLevelId = 1;
+      renderAll();
+      setStatus('Configuração padrão restaurada');
+    }
+
+    function applyImportedJsonToCurrentTarget(imported){
+      if (activeModeKey === 'campaign') {
+        const mode = getModeData('campaign');
+        ensureCampaignLevels(mode, legacySeed(baseData || workingData));
+        const levelId = Number(activeCampaignLevelId || imported?.id || 1);
+        const idx = mode.levels.findIndex(level => Number(level.id) === levelId);
+        const normalized = normalizeCampaignLevel({ ...imported, id: levelId }, null, null);
+        if (idx >= 0) mode.levels[idx] = normalized;
+        else mode.levels.push(normalized);
+        mode.levels.sort((a,b) => Number(a.id) - Number(b.id));
+        activeCampaignLevelId = levelId;
+        activeScenarioIndex = 0;
+        activeRoundIndex = 0;
+        return;
+      }
+      workingData.modes[activeModeKey] = ensureModeShape(imported, legacySeed(baseData || workingData), activeModeKey);
+      activeScenarioIndex = 0;
+      activeRoundIndex = 0;
+    }
+
+    function importJson(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(String(reader.result || '{}'));
+          applyImportedJsonToCurrentTarget(imported);
+          renderAll();
+          saveAll();
+          const target = getCurrentJsonTarget();
+          setStatus(`JSON importado para a base atual. Arquivo correspondente: ${target.path}`);
+        } catch (e) {
+          console.error(e);
+          setStatus('Falha ao importar JSON: ' + e.message, false);
+        }
+      };
+      reader.readAsText(file, 'utf-8');
+    }
+
+    function createScenario(fromDuplicate=false){
+      readGeneral();
+      const mode = getModeData();
+      const source = fromDuplicate ? getScenario() : (mode.scenarios[0] || baseData?.modes?.[activeModeKey]?.scenarios?.[0] || baseData?.modes?.expert?.scenarios?.[0]);
+      const newScenario = normalizeScenario(clone(source));
+      newScenario.id = nextScenarioId();
+      newScenario.name = fromDuplicate ? `${getScenario().name} (cópia)` : `Novo cenário ${newScenario.id}`;
+      mode.scenarios.push(newScenario);
+      activeScenarioIndex = mode.scenarios.length - 1;
+      activeRoundIndex = 0;
+      renderAll();
+      setStatus(fromDuplicate ? 'Cenário duplicado no modo atual. Ajuste o nome e salve.' : 'Novo cenário criado no modo atual. Ajuste os parâmetros e salve.');
+    }
+
+    function deleteScenario(){
+      const mode = getModeData();
+      if ((mode.scenarios || []).length <= 1) { setStatus('Você precisa manter pelo menos um cenário cadastrado neste modo.', false); return; }
+      const current = getScenario();
+      if (!confirm(`Excluir o cenário "${current.name}" somente do modo ${MODE_LABELS[activeModeKey]}?`)) return;
+      mode.scenarios.splice(activeScenarioIndex, 1);
+      activeScenarioIndex = Math.max(0, activeScenarioIndex - 1);
+      activeRoundIndex = 0;
+      renderAll();
+      setStatus('Cenário excluído somente do modo atual.');
+    }
+
+    function switchScenario(index){
+      readGeneral();
+      const max = Math.max(0, (getModeData().scenarios || []).length - 1);
+      activeScenarioIndex = Math.min(Math.max(0, Number(index) || 0), max);
+      activeRoundIndex = 0;
+      renderAll();
+      setStatus(`Cenário em edição alterado no modo ${MODE_LABELS[activeModeKey]}.`);
+    }
+
+    function switchMode(modeKey){
+      readGeneral();
+      activeModeKey = MODE_KEYS.includes(modeKey) ? modeKey : 'expert';
+      activeScenarioIndex = 0;
+      activeRoundIndex = 0;
+      if (activeModeKey === 'campaign') activeCampaignLevelId = 1;
+      renderAll();
+      setStatus(`Editando base independente: ${MODE_LABELS[activeModeKey]}.`);
+    }
+
+    function copyExpertToCurrentMode(){
+      if (activeModeKey === 'expert') { setStatus('Você já está no modo Expert.', false); return; }
+      if (!confirm(`Copiar toda a base do Expert para ${MODE_LABELS[activeModeKey]}? Isso substituirá cenários, regras, ofertas, fretes e bids deste modo.`)) return;
+      workingData.modes[activeModeKey] = ensureModeShape(clone(workingData.modes.expert), legacySeed(baseData), activeModeKey);
+      activeScenarioIndex = 0;
+      activeRoundIndex = 0;
+      renderAll();
+      setStatus(`Base do Expert copiada para ${MODE_LABELS[activeModeKey]}. Salve para aplicar.`);
+    }
+
+    function switchCampaignLevel(levelId){
+      readGeneral();
+      const mode = getModeData('campaign');
+      ensureCampaignLevels(mode, legacySeed(baseData || workingData));
+      const exists = mode.levels.some(level => Number(level.id) === Number(levelId));
+      activeCampaignLevelId = exists ? Number(levelId) : 1;
+      activeScenarioIndex = 0;
+      activeRoundIndex = 0;
+      renderAll();
+      const level = getCampaignLevelData();
+      setStatus(`Editando Campanha > ${level?.code || 'Level'} — ${level?.name || ''}.`);
+    }
+
+    document.getElementById('timeControlEnabled').addEventListener('change', syncTimeControlUi);
+    document.getElementById('modePicker').addEventListener('change', (ev) => switchMode(ev.target.value));
+    document.getElementById('campaignLevelPicker').addEventListener('change', (ev) => switchCampaignLevel(ev.target.value));
+    document.getElementById('scenarioPicker').addEventListener('change', (ev) => switchScenario(ev.target.value));
+    document.getElementById('btnCopyExpertToMode').onclick = copyExpertToCurrentMode;
+    document.getElementById('btnScenarioNew').onclick = () => createScenario(false);
+    document.getElementById('btnScenarioDuplicate').onclick = () => createScenario(true);
+    document.getElementById('btnScenarioDelete').onclick = deleteScenario;
+    document.getElementById('btnSaveTop').onclick = saveAll;
+    document.getElementById('btnSaveSide').onclick = saveAll;
+    document.getElementById('btnExport').onclick = exportJson;
+    document.getElementById('btnReset').onclick = resetDefaults;
+    document.getElementById('importFile').addEventListener('change', (ev) => {
+      const file = ev.target.files?.[0];
+      if (file) importJson(file);
+      ev.target.value = '';
+    });
+
+    loadBase().catch((err) => {
+      console.error(err);
+      document.body.innerHTML = '<div style="padding:24px;font-family:Arial">Erro ao carregar admin: ' + err.message + '</div>';
+    });
+  </script>
+</body>
+</html>

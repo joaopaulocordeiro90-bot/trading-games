@@ -1,0 +1,1811 @@
+{
+  "scenarios": [
+    {
+      "id": 1,
+      "name": "Cenário 9 (novo) + Cenário 10 (novo)",
+      "active": true,
+      "rounds": [
+        {
+          "round": 1,
+          "news": "Indústrias relatam margens apertadas e recomposição de estoques; negociações no físico ficam mais espaçadas.",
+          "usd": 6.2,
+          "cbot_cent_bu": 1018,
+          "conv_centbu_to_usd_t": 0.367454,
+          "saca_to_t": 0.06,
+          "basis_porto": {
+            "barcarena": 24,
+            "itaqui": 35,
+            "santos": 40,
+            "paranagua": 35,
+            "riogrande": 38
+          },
+          "offers_exw": [
+            {
+              "id": 1,
+              "label": "Querência MT - Produtor André",
+              "price_brl_saca": 100,
+              "volume_t": 2000,
+              "freight_inland_usd_t": 77,
+              "inland_by_corridor": {
+                "barcarena": 73,
+                "itaqui": 82,
+                "santos": 76,
+                "paranagua": 77,
+                "riogrande": 81
+              },
+              "city": "Querência",
+              "uf": "MT",
+              "map_label": "Querência MT",
+              "map_x": 1010,
+              "map_y": 350,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 2,
+              "label": "Sapezal MT - Produtor Rodolfo",
+              "price_brl_saca": 98,
+              "volume_t": 8000,
+              "freight_inland_usd_t": 79,
+              "inland_by_corridor": {
+                "barcarena": 60,
+                "itaqui": 27,
+                "santos": 89,
+                "paranagua": 100000,
+                "riogrande": 100000
+              },
+              "city": "Balsas",
+              "uf": "MA",
+              "map_label": "Balsas MA",
+              "map_x": 1215,
+              "map_y": 250,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 3,
+              "label": "Rio Verde GO - Produtor Leonardo",
+              "price_brl_saca": 112,
+              "volume_t": 18000,
+              "freight_inland_usd_t": 57,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 44,
+                "paranagua": 50,
+                "riogrande": 100000
+              },
+              "city": "Rio Verde",
+              "uf": "GO",
+              "map_label": "Rio Verde GO",
+              "map_x": 1170,
+              "map_y": 470,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 4,
+              "label": "Balsas MA - Produtor Guilherme",
+              "price_brl_saca": 121,
+              "volume_t": 12000,
+              "freight_inland_usd_t": 52,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 54,
+                "paranagua": 46,
+                "riogrande": 57
+              },
+              "city": "Rio Brilhante",
+              "uf": "MS",
+              "map_label": "Rio Brilhante MS",
+              "map_x": 1050,
+              "map_y": 575,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 5,
+              "label": "Londrina PR - Produtor Marcio",
+              "price_brl_saca": 116,
+              "volume_t": 6000,
+              "freight_inland_usd_t": 60,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 32,
+                "paranagua": 25,
+                "riogrande": 48
+              },
+              "city": "Londrina",
+              "uf": "PR",
+              "map_label": "Londrina PR",
+              "map_x": 1155,
+              "map_y": 665,
+              "map_w": 110,
+              "map_h": 96
+            }
+          ],
+          "ocean_freight": [
+            {
+              "id": 1,
+              "label": "FRETE 1",
+              "usd_t": 36.8,
+              "demurrage_usd_round": 8960
+            },
+            {
+              "id": 2,
+              "label": "FRETE 2",
+              "usd_t": 36.2,
+              "demurrage_usd_round": 9140
+            },
+            {
+              "id": 3,
+              "label": "FRETE 3",
+              "usd_t": 34.6,
+              "demurrage_usd_round": 9620
+            },
+            {
+              "id": 4,
+              "label": "FRETE 4",
+              "usd_t": 32.3,
+              "demurrage_usd_round": 10310
+            },
+            {
+              "id": 5,
+              "label": "FRETE 5",
+              "usd_t": 32.5,
+              "demurrage_usd_round": 10250
+            }
+          ],
+          "china_offers": [
+            {
+              "id": 1,
+              "label": "CHINA 1",
+              "basis_cent_bu": 155
+            },
+            {
+              "id": 2,
+              "label": "CHINA 2",
+              "basis_cent_bu": 160
+            },
+            {
+              "id": 3,
+              "label": "CHINA 3",
+              "basis_cent_bu": 150
+            },
+            {
+              "id": 4,
+              "label": "CHINA 4",
+              "basis_cent_bu": 145
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "news": "Movimentos técnicos ganham força após variação forte do dólar; participantes ajustam hedge e travas.",
+          "usd": 5.96,
+          "cbot_cent_bu": 1067,
+          "conv_centbu_to_usd_t": 0.367454,
+          "saca_to_t": 0.06,
+          "basis_porto": {
+            "barcarena": -1,
+            "itaqui": 10,
+            "santos": 15,
+            "paranagua": 10,
+            "riogrande": 12
+          },
+          "offers_exw": [
+            {
+              "id": 1,
+              "label": "Querência MT - Produtor André",
+              "price_brl_saca": 104,
+              "volume_t": 24000,
+              "freight_inland_usd_t": 80,
+              "inland_by_corridor": {
+                "barcarena": 76,
+                "itaqui": 86,
+                "santos": 79,
+                "paranagua": 80,
+                "riogrande": 84
+              },
+              "city": "Querência",
+              "uf": "MT",
+              "map_label": "Querência MT",
+              "map_x": 960,
+              "map_y": 330,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 2,
+              "label": "Balsas MA - Produtor Flavio",
+              "price_brl_saca": 118,
+              "volume_t": 2000,
+              "freight_inland_usd_t": 55,
+              "inland_by_corridor": {
+                "barcarena": 62,
+                "itaqui": 29,
+                "santos": 92,
+                "paranagua": 100000,
+                "riogrande": 100000
+              },
+              "city": "Balsas",
+              "uf": "MA",
+              "map_label": "Balsas MA",
+              "map_x": 1260,
+              "map_y": 285,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 3,
+              "label": "Rio Verde GO - Produtor Leonardo",
+              "price_brl_saca": 115,
+              "volume_t": 6000,
+              "freight_inland_usd_t": 50,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 45,
+                "paranagua": 52,
+                "riogrande": 100000
+              },
+              "city": "Rio Verde",
+              "uf": "GO",
+              "map_label": "Rio Verde GO",
+              "map_x": 1210,
+              "map_y": 505,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 4,
+              "label": "Rio Brilhante MS - Produtora Ana Paula",
+              "price_brl_saca": 110,
+              "volume_t": 12000,
+              "freight_inland_usd_t": 46,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 56,
+                "paranagua": 48,
+                "riogrande": 60
+              },
+              "city": "Rio Brilhante",
+              "uf": "MS",
+              "map_label": "Rio Brilhante MS",
+              "map_x": 1025,
+              "map_y": 610,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 5,
+              "label": "Londrina PR - Produtor Marcio",
+              "price_brl_saca": 118,
+              "volume_t": 18000,
+              "freight_inland_usd_t": 55,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 34,
+                "paranagua": 26,
+                "riogrande": 49
+              },
+              "city": "Londrina",
+              "uf": "PR",
+              "map_label": "Londrina PR",
+              "map_x": 1195,
+              "map_y": 700,
+              "map_w": 110,
+              "map_h": 96
+            }
+          ],
+          "ocean_freight": [
+            {
+              "id": 1,
+              "label": "FRETE 1",
+              "usd_t": 29.2,
+              "demurrage_usd_round": 11240
+            },
+            {
+              "id": 2,
+              "label": "FRETE 2",
+              "usd_t": 33.6,
+              "demurrage_usd_round": 9920
+            },
+            {
+              "id": 3,
+              "label": "FRETE 3",
+              "usd_t": 31.1,
+              "demurrage_usd_round": 10670
+            },
+            {
+              "id": 4,
+              "label": "FRETE 4",
+              "usd_t": 29.9,
+              "demurrage_usd_round": 11030
+            },
+            {
+              "id": 5,
+              "label": "FRETE 5",
+              "usd_t": 33.2,
+              "demurrage_usd_round": 10040
+            }
+          ],
+          "china_offers": [
+            {
+              "id": 1,
+              "label": "CHINA 1",
+              "basis_cent_bu": 244
+            },
+            {
+              "id": 2,
+              "label": "CHINA 2",
+              "basis_cent_bu": 247
+            },
+            {
+              "id": 3,
+              "label": "CHINA 3",
+              "basis_cent_bu": 272
+            },
+            {
+              "id": 4,
+              "label": "CHINA 4",
+              "basis_cent_bu": 288
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "news": "Clima favorável em parte do cinturão agrícola contrasta com preocupações regionais; mercado segue sensível a headlines.",
+          "usd": 6.24,
+          "cbot_cent_bu": 994,
+          "conv_centbu_to_usd_t": 0.367454,
+          "saca_to_t": 0.06,
+          "basis_porto": {
+            "barcarena": 35,
+            "itaqui": 46,
+            "santos": 51,
+            "paranagua": 46,
+            "riogrande": 49
+          },
+          "offers_exw": [
+            {
+              "id": 1,
+              "label": "Rondonópolis MT- Produtor Felipe",
+              "price_brl_saca": 99,
+              "volume_t": 12000,
+              "freight_inland_usd_t": 80,
+              "inland_by_corridor": {
+                "barcarena": 72,
+                "itaqui": 82,
+                "santos": 76,
+                "paranagua": 76,
+                "riogrande": 80
+              },
+              "city": "Querência",
+              "uf": "MT",
+              "map_label": "Querência MT",
+              "map_x": 1045,
+              "map_y": 385,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 2,
+              "label": "Pedro Afonso TO - Produtor Rildo",
+              "price_brl_saca": 112,
+              "volume_t": 6000,
+              "freight_inland_usd_t": 61,
+              "inland_by_corridor": {
+                "barcarena": 59,
+                "itaqui": 27,
+                "santos": 88,
+                "paranagua": 100000,
+                "riogrande": 100000
+              },
+              "city": "Balsas",
+              "uf": "MA",
+              "map_label": "Balsas MA",
+              "map_x": 1175,
+              "map_y": 225,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 3,
+              "label": "Quirinópolis GO - Produtor Sergio",
+              "price_brl_saca": 108,
+              "volume_t": 18000,
+              "freight_inland_usd_t": 59,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 43,
+                "paranagua": 50,
+                "riogrande": 100000
+              },
+              "city": "Rio Verde",
+              "uf": "GO",
+              "map_label": "Rio Verde GO",
+              "map_x": 1130,
+              "map_y": 520,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 4,
+              "label": "Ponta Grossa PR - Produtora Geovana",
+              "price_brl_saca": 116,
+              "volume_t": 48000,
+              "freight_inland_usd_t": 53,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 54,
+                "paranagua": 46,
+                "riogrande": 57
+              },
+              "city": "Rio Brilhante",
+              "uf": "MS",
+              "map_label": "Rio Brilhante MS",
+              "map_x": 1085,
+              "map_y": 635,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 5,
+              "label": "Snt. Araguaia PA - Produtor Paulo",
+              "price_brl_saca": 103,
+              "volume_t": 2000,
+              "freight_inland_usd_t": 58,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 10000,
+                "santos": 32,
+                "paranagua": 25,
+                "riogrande": 47
+              },
+              "city": "Londrina",
+              "uf": "PR",
+              "map_label": "Londrina PR",
+              "map_x": 1235,
+              "map_y": 675,
+              "map_w": 110,
+              "map_h": 96
+            }
+          ],
+          "ocean_freight": [
+            {
+              "id": 1,
+              "label": "FRETE 1",
+              "usd_t": 41.5,
+              "demurrage_usd_round": 7550
+            },
+            {
+              "id": 2,
+              "label": "FRETE 2",
+              "usd_t": 42.5,
+              "demurrage_usd_round": 7250
+            },
+            {
+              "id": 3,
+              "label": "FRETE 3",
+              "usd_t": 40.6,
+              "demurrage_usd_round": 7820
+            },
+            {
+              "id": 4,
+              "label": "FRETE 4",
+              "usd_t": 46.3,
+              "demurrage_usd_round": 6110
+            },
+            {
+              "id": 5,
+              "label": "FRETE 5",
+              "usd_t": 44.7,
+              "demurrage_usd_round": 6590
+            }
+          ],
+          "china_offers": [
+            {
+              "id": 1,
+              "label": "CHINA 1",
+              "basis_cent_bu": 200
+            },
+            {
+              "id": 2,
+              "label": "CHINA 2",
+              "basis_cent_bu": 229
+            },
+            {
+              "id": 3,
+              "label": "CHINA 3",
+              "basis_cent_bu": 240
+            },
+            {
+              "id": 4,
+              "label": "CHINA 4",
+              "basis_cent_bu": 248
+            }
+          ]
+        },
+        {
+          "round": 4,
+          "news": "Chuvas irregulares no Centro-Oeste reacendem discussões sobre ritmo de comercialização e prêmios no físico.",
+          "usd": 6.23,
+          "cbot_cent_bu": 982,
+          "conv_centbu_to_usd_t": 0.367454,
+          "saca_to_t": 0.06,
+          "basis_porto": {
+            "barcarena": 47,
+            "itaqui": 58,
+            "santos": 63,
+            "paranagua": 58,
+            "riogrande": 61
+          },
+          "offers_exw": [
+            {
+              "id": 1,
+              "label": "Querência MT - Produtor André",
+              "price_brl_saca": 100,
+              "volume_t": 48000,
+              "freight_inland_usd_t": 72,
+              "inland_by_corridor": {
+                "barcarena": 72,
+                "itaqui": 82,
+                "santos": 76,
+                "paranagua": 76,
+                "riogrande": 80
+              },
+              "city": "Querência",
+              "uf": "MT",
+              "map_label": "Querência MT",
+              "map_x": 985,
+              "map_y": 370,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 2,
+              "label": "Balsas MA - Produtor Flavio",
+              "price_brl_saca": 110,
+              "volume_t": 2000,
+              "freight_inland_usd_t": 55,
+              "inland_by_corridor": {
+                "barcarena": 59,
+                "itaqui": 27,
+                "santos": 88,
+                "paranagua": 100000,
+                "riogrande": 100000
+              },
+              "city": "Balsas",
+              "uf": "MA",
+              "map_label": "Balsas MA",
+              "map_x": 1285,
+              "map_y": 245,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 3,
+              "label": "Rio Verde GO - Produtor Leonardo",
+              "price_brl_saca": 115,
+              "volume_t": 18000,
+              "freight_inland_usd_t": 61,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 43,
+                "paranagua": 50,
+                "riogrande": 100000
+              },
+              "city": "Rio Verde",
+              "uf": "GO",
+              "map_label": "Rio Verde GO",
+              "map_x": 1185,
+              "map_y": 445,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 4,
+              "label": "Rio Brilhante MS - Produtora Ana Paula",
+              "price_brl_saca": 114,
+              "volume_t": 24000,
+              "freight_inland_usd_t": 57,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 54,
+                "paranagua": 46,
+                "riogrande": 57
+              },
+              "city": "Rio Brilhante",
+              "uf": "MS",
+              "map_label": "Rio Brilhante MS",
+              "map_x": 1005,
+              "map_y": 575,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 5,
+              "label": "Londrina PR - Produtor Marcio",
+              "price_brl_saca": 117,
+              "volume_t": 12000,
+              "freight_inland_usd_t": 52,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 10000,
+                "santos": 32,
+                "paranagua": 25,
+                "riogrande": 47
+              },
+              "city": "Londrina",
+              "uf": "PR",
+              "map_label": "Londrina PR",
+              "map_x": 1135,
+              "map_y": 715,
+              "map_w": 110,
+              "map_h": 96
+            }
+          ],
+          "ocean_freight": [
+            {
+              "id": 1,
+              "label": "FRETE 1",
+              "usd_t": 41.5,
+              "demurrage_usd_round": 7550
+            },
+            {
+              "id": 2,
+              "label": "FRETE 2",
+              "usd_t": 45.9,
+              "demurrage_usd_round": 6230
+            },
+            {
+              "id": 3,
+              "label": "FRETE 3",
+              "usd_t": 43.2,
+              "demurrage_usd_round": 7040
+            },
+            {
+              "id": 4,
+              "label": "FRETE 4",
+              "usd_t": 45,
+              "demurrage_usd_round": 6500
+            },
+            {
+              "id": 5,
+              "label": "FRETE 5",
+              "usd_t": 43.5,
+              "demurrage_usd_round": 6950
+            }
+          ],
+          "china_offers": [
+            {
+              "id": 1,
+              "label": "CHINA 1",
+              "basis_cent_bu": 203
+            },
+            {
+              "id": 2,
+              "label": "CHINA 2",
+              "basis_cent_bu": 209
+            },
+            {
+              "id": 3,
+              "label": "CHINA 3",
+              "basis_cent_bu": 243
+            },
+            {
+              "id": 4,
+              "label": "CHINA 4",
+              "basis_cent_bu": 253
+            }
+          ]
+        },
+        {
+          "round": 5,
+          "news": "Relatórios de embarques e line-up indicam disputa por capacidade logística e maior seletividade nos negócios.",
+          "usd": 6.08,
+          "cbot_cent_bu": 1006,
+          "conv_centbu_to_usd_t": 0.367454,
+          "saca_to_t": 0.06,
+          "basis_porto": {
+            "barcarena": 37,
+            "itaqui": 48,
+            "santos": 53,
+            "paranagua": 48,
+            "riogrande": 51
+          },
+          "offers_exw": [
+            {
+              "id": 1,
+              "label": "PMV do Leste MT- Produtor Silvio",
+              "price_brl_saca": 109,
+              "volume_t": 6000,
+              "freight_inland_usd_t": 80,
+              "inland_by_corridor": {
+                "barcarena": 74,
+                "itaqui": 84,
+                "santos": 77,
+                "paranagua": 78,
+                "riogrande": 82
+              },
+              "city": "Querência",
+              "uf": "MT",
+              "map_label": "Querência MT",
+              "map_x": 1065,
+              "map_y": 340,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 2,
+              "label": "Chapadão do Céu GO - Produtor Sebartiao",
+              "price_brl_saca": 118,
+              "volume_t": 36000,
+              "freight_inland_usd_t": 70,
+              "inland_by_corridor": {
+                "barcarena": 61,
+                "itaqui": 28,
+                "santos": 90,
+                "paranagua": 100000,
+                "riogrande": 100000
+              },
+              "city": "Balsas",
+              "uf": "MA",
+              "map_label": "Balsas MA",
+              "map_x": 1225,
+              "map_y": 295,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 3,
+              "label": "Cristalina GO - Produtor Pedro",
+              "price_brl_saca": 116,
+              "volume_t": 2000,
+              "freight_inland_usd_t": 58,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 44,
+                "paranagua": 51,
+                "riogrande": 100000
+              },
+              "city": "Rio Verde",
+              "uf": "GO",
+              "map_label": "Rio Verde GO",
+              "map_x": 1240,
+              "map_y": 485,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 4,
+              "label": "Campo Grande MS - Produtor Hugo",
+              "price_brl_saca": 113,
+              "volume_t": 12000,
+              "freight_inland_usd_t": 54,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 55,
+                "paranagua": 47,
+                "riogrande": 58
+              },
+              "city": "Rio Brilhante",
+              "uf": "MS",
+              "map_label": "Rio Brilhante MS",
+              "map_x": 1075,
+              "map_y": 560,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 5,
+              "label": "Capão Bonito SP - Produtora Eliabe",
+              "price_brl_saca": 118,
+              "volume_t": 18000,
+              "freight_inland_usd_t": 55,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 33,
+                "paranagua": 25,
+                "riogrande": 49
+              },
+              "city": "Londrina",
+              "uf": "PR",
+              "map_label": "Londrina PR",
+              "map_x": 1165,
+              "map_y": 640,
+              "map_w": 110,
+              "map_h": 96
+            }
+          ],
+          "ocean_freight": [
+            {
+              "id": 1,
+              "label": "FRETE 1",
+              "usd_t": 43.9,
+              "demurrage_usd_round": 6830
+            },
+            {
+              "id": 2,
+              "label": "FRETE 2",
+              "usd_t": 43,
+              "demurrage_usd_round": 7100
+            },
+            {
+              "id": 3,
+              "label": "FRETE 3",
+              "usd_t": 42.6,
+              "demurrage_usd_round": 7220
+            },
+            {
+              "id": 4,
+              "label": "FRETE 4",
+              "usd_t": 46,
+              "demurrage_usd_round": 6200
+            },
+            {
+              "id": 5,
+              "label": "FRETE 5",
+              "usd_t": 41.8,
+              "demurrage_usd_round": 7460
+            }
+          ],
+          "china_offers": [
+            {
+              "id": 1,
+              "label": "CHINA 1",
+              "basis_cent_bu": 241
+            },
+            {
+              "id": 2,
+              "label": "CHINA 2",
+              "basis_cent_bu": 241
+            },
+            {
+              "id": 3,
+              "label": "CHINA 3",
+              "basis_cent_bu": 259
+            },
+            {
+              "id": 4,
+              "label": "CHINA 4",
+              "basis_cent_bu": 272
+            }
+          ]
+        },
+        {
+          "round": 6,
+          "news": "Indústrias relatam margens apertadas e recomposição de estoques; negociações no físico ficam mais espaçadas.",
+          "usd": 5.45,
+          "cbot_cent_bu": 1060,
+          "conv_centbu_to_usd_t": 0.367454,
+          "saca_to_t": 0.06,
+          "basis_porto": {
+            "barcarena": 17,
+            "itaqui": 28,
+            "santos": 33,
+            "paranagua": 28,
+            "riogrande": 31
+          },
+          "offers_exw": [
+            {
+              "id": 1,
+              "label": "Querência MT - Produtor André",
+              "price_brl_saca": 99.2,
+              "volume_t": 24000,
+              "freight_inland_usd_t": 75,
+              "inland_by_corridor": {
+                "barcarena": 83,
+                "itaqui": 94,
+                "santos": 86,
+                "paranagua": 87,
+                "riogrande": 92
+              },
+              "city": "Querência",
+              "uf": "MT",
+              "map_label": "Querência MT",
+              "map_x": 1010,
+              "map_y": 350,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 2,
+              "label": "Balsas MA - Produtor Flavio",
+              "price_brl_saca": 108.8,
+              "volume_t": 12000,
+              "freight_inland_usd_t": 55,
+              "inland_by_corridor": {
+                "barcarena": 68,
+                "itaqui": 31,
+                "santos": 101,
+                "paranagua": 100000,
+                "riogrande": 100000
+              },
+              "city": "Balsas",
+              "uf": "MA",
+              "map_label": "Balsas MA",
+              "map_x": 1215,
+              "map_y": 250,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 3,
+              "label": "Rio Verde GO - Produtor Leonardo",
+              "price_brl_saca": 109.4,
+              "volume_t": 18000,
+              "freight_inland_usd_t": 64,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 50,
+                "paranagua": 57,
+                "riogrande": 100000
+              },
+              "city": "Rio Verde",
+              "uf": "GO",
+              "map_label": "Rio Verde GO",
+              "map_x": 1170,
+              "map_y": 470,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 4,
+              "label": "Rio Brilhante MS - Produtora Ana Paula",
+              "price_brl_saca": 109.2,
+              "volume_t": 6000,
+              "freight_inland_usd_t": 56,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 61,
+                "paranagua": 52,
+                "riogrande": 65
+              },
+              "city": "Rio Brilhante",
+              "uf": "MS",
+              "map_label": "Rio Brilhante MS",
+              "map_x": 1050,
+              "map_y": 575,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 5,
+              "label": "Londrina PR - Produtor Marcio",
+              "price_brl_saca": 111.4,
+              "volume_t": 36000,
+              "freight_inland_usd_t": 59,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 37,
+                "paranagua": 28,
+                "riogrande": 54
+              },
+              "city": "Londrina",
+              "uf": "PR",
+              "map_label": "Londrina PR",
+              "map_x": 1155,
+              "map_y": 665,
+              "map_w": 110,
+              "map_h": 96
+            }
+          ],
+          "ocean_freight": [
+            {
+              "id": 1,
+              "label": "FRETE 1",
+              "usd_t": 43.8,
+              "demurrage_usd_round": 6860
+            },
+            {
+              "id": 2,
+              "label": "FRETE 2",
+              "usd_t": 44.8,
+              "demurrage_usd_round": 6560
+            },
+            {
+              "id": 3,
+              "label": "FRETE 3",
+              "usd_t": 42.7,
+              "demurrage_usd_round": 7190
+            },
+            {
+              "id": 4,
+              "label": "FRETE 4",
+              "usd_t": 42.9,
+              "demurrage_usd_round": 7130
+            },
+            {
+              "id": 5,
+              "label": "FRETE 5",
+              "usd_t": 48.8,
+              "demurrage_usd_round": 5360
+            }
+          ],
+          "china_offers": [
+            {
+              "id": 1,
+              "label": "CHINA 1",
+              "basis_cent_bu": 190
+            },
+            {
+              "id": 2,
+              "label": "CHINA 2",
+              "basis_cent_bu": 206
+            },
+            {
+              "id": 3,
+              "label": "CHINA 3",
+              "basis_cent_bu": 213
+            },
+            {
+              "id": 4,
+              "label": "CHINA 4",
+              "basis_cent_bu": 236
+            }
+          ]
+        },
+        {
+          "round": 7,
+          "news": "Atenção do mercado se volta para política de biocombustíveis e demanda por farelo, com ajustes no crush margin.",
+          "usd": 5.46,
+          "cbot_cent_bu": 1140,
+          "conv_centbu_to_usd_t": 0.367454,
+          "saca_to_t": 0.06,
+          "basis_porto": {
+            "barcarena": -23,
+            "itaqui": -12,
+            "santos": -7,
+            "paranagua": -12,
+            "riogrande": -9
+          },
+          "offers_exw": [
+            {
+              "id": 1,
+              "label": "Querência MT - Produtor André",
+              "price_brl_saca": 101.8,
+              "volume_t": 2000,
+              "freight_inland_usd_t": 76,
+              "inland_by_corridor": {
+                "barcarena": 83,
+                "itaqui": 94,
+                "santos": 86,
+                "paranagua": 87,
+                "riogrande": 92
+              },
+              "city": "Querência",
+              "uf": "MT",
+              "map_label": "Querência MT",
+              "map_x": 1010,
+              "map_y": 350,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 2,
+              "label": "Balsas MA - Produtor Flavio",
+              "price_brl_saca": 109.9,
+              "volume_t": 12000,
+              "freight_inland_usd_t": 55,
+              "inland_by_corridor": {
+                "barcarena": 68,
+                "itaqui": 31,
+                "santos": 101,
+                "paranagua": 100000,
+                "riogrande": 100000
+              },
+              "city": "Balsas",
+              "uf": "MA",
+              "map_label": "Balsas MA",
+              "map_x": 1215,
+              "map_y": 250,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 3,
+              "label": "Rio Verde GO - Produtor Leonardo",
+              "price_brl_saca": 104.5,
+              "volume_t": 24000,
+              "freight_inland_usd_t": 56,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 50,
+                "paranagua": 57,
+                "riogrande": 100000
+              },
+              "city": "Rio Verde",
+              "uf": "GO",
+              "map_label": "Rio Verde GO",
+              "map_x": 1170,
+              "map_y": 470,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 4,
+              "label": "Rio Brilhante MS - Produtora Ana Paula",
+              "price_brl_saca": 118.1,
+              "volume_t": 48000,
+              "freight_inland_usd_t": 50,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 61,
+                "paranagua": 52,
+                "riogrande": 65
+              },
+              "city": "Rio Brilhante",
+              "uf": "MS",
+              "map_label": "Rio Brilhante MS",
+              "map_x": 1050,
+              "map_y": 575,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 5,
+              "label": "Londrina PR - Produtor Marcio",
+              "price_brl_saca": 111.2,
+              "volume_t": 18000,
+              "freight_inland_usd_t": 46,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 37,
+                "paranagua": 28,
+                "riogrande": 54
+              },
+              "city": "Londrina",
+              "uf": "PR",
+              "map_label": "Londrina PR",
+              "map_x": 1155,
+              "map_y": 665,
+              "map_w": 110,
+              "map_h": 96
+            }
+          ],
+          "ocean_freight": [
+            {
+              "id": 1,
+              "label": "FRETE 1",
+              "usd_t": 36.3,
+              "demurrage_usd_round": 9110
+            },
+            {
+              "id": 2,
+              "label": "FRETE 2",
+              "usd_t": 34.5,
+              "demurrage_usd_round": 9650
+            },
+            {
+              "id": 3,
+              "label": "FRETE 3",
+              "usd_t": 37.6,
+              "demurrage_usd_round": 8720
+            },
+            {
+              "id": 4,
+              "label": "FRETE 4",
+              "usd_t": 34.9,
+              "demurrage_usd_round": 9530
+            },
+            {
+              "id": 5,
+              "label": "FRETE 5",
+              "usd_t": 34.1,
+              "demurrage_usd_round": 9770
+            }
+          ],
+          "china_offers": [
+            {
+              "id": 1,
+              "label": "CHINA 1",
+              "basis_cent_bu": 221
+            },
+            {
+              "id": 2,
+              "label": "CHINA 2",
+              "basis_cent_bu": 223
+            },
+            {
+              "id": 3,
+              "label": "CHINA 3",
+              "basis_cent_bu": 248
+            },
+            {
+              "id": 4,
+              "label": "CHINA 4",
+              "basis_cent_bu": 273
+            }
+          ]
+        },
+        {
+          "round": 8,
+          "news": "Relatórios de embarques e line-up indicam disputa por capacidade logística e maior seletividade nos negócios.",
+          "usd": 5.8,
+          "cbot_cent_bu": 1071,
+          "conv_centbu_to_usd_t": 0.367454,
+          "saca_to_t": 0.06,
+          "basis_porto": {
+            "barcarena": -38,
+            "itaqui": -27,
+            "santos": -22,
+            "paranagua": -27,
+            "riogrande": -24
+          },
+          "offers_exw": [
+            {
+              "id": 1,
+              "label": "Querência MT - Produtor André",
+              "price_brl_saca": 103.4,
+              "volume_t": 48000,
+              "freight_inland_usd_t": 79,
+              "inland_by_corridor": {
+                "barcarena": 78,
+                "itaqui": 88,
+                "santos": 81,
+                "paranagua": 82,
+                "riogrande": 86
+              },
+              "city": "Querência",
+              "uf": "MT",
+              "map_label": "Querência MT",
+              "map_x": 1010,
+              "map_y": 350,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 2,
+              "label": "Balsas MA - Produtor Flavio",
+              "price_brl_saca": 105.6,
+              "volume_t": 12000,
+              "freight_inland_usd_t": 59,
+              "inland_by_corridor": {
+                "barcarena": 64,
+                "itaqui": 29,
+                "santos": 95,
+                "paranagua": 100000,
+                "riogrande": 100000
+              },
+              "city": "Balsas",
+              "uf": "MA",
+              "map_label": "Balsas MA",
+              "map_x": 1215,
+              "map_y": 250,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 3,
+              "label": "Rio Verde GO - Produtor Leonardo",
+              "price_brl_saca": 110.3,
+              "volume_t": 18000,
+              "freight_inland_usd_t": 59,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 47,
+                "paranagua": 53,
+                "riogrande": 100000
+              },
+              "city": "Rio Verde",
+              "uf": "GO",
+              "map_label": "Rio Verde GO",
+              "map_x": 1170,
+              "map_y": 470,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 4,
+              "label": "Rio Brilhante MS - Produtora Ana Paula",
+              "price_brl_saca": 117.9,
+              "volume_t": 36000,
+              "freight_inland_usd_t": 59,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 58,
+                "paranagua": 63,
+                "riogrande": 61
+              },
+              "city": "Rio Brilhante",
+              "uf": "MS",
+              "map_label": "Rio Brilhante MS",
+              "map_x": 1050,
+              "map_y": 575,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 5,
+              "label": "Londrina PR - Produtor Marcio",
+              "price_brl_saca": 119,
+              "volume_t": 6000,
+              "freight_inland_usd_t": 59,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 34,
+                "paranagua": 27,
+                "riogrande": 51
+              },
+              "city": "Londrina",
+              "uf": "PR",
+              "map_label": "Londrina PR",
+              "map_x": 1155,
+              "map_y": 665,
+              "map_w": 110,
+              "map_h": 96
+            }
+          ],
+          "ocean_freight": [
+            {
+              "id": 1,
+              "label": "FRETE 1",
+              "usd_t": 38.8,
+              "demurrage_usd_round": 8360
+            },
+            {
+              "id": 2,
+              "label": "FRETE 2",
+              "usd_t": 40.8,
+              "demurrage_usd_round": 7760
+            },
+            {
+              "id": 3,
+              "label": "FRETE 3",
+              "usd_t": 40,
+              "demurrage_usd_round": 8000
+            },
+            {
+              "id": 4,
+              "label": "FRETE 4",
+              "usd_t": 39.4,
+              "demurrage_usd_round": 8180
+            },
+            {
+              "id": 5,
+              "label": "FRETE 5",
+              "usd_t": 42.2,
+              "demurrage_usd_round": 7340
+            }
+          ],
+          "china_offers": [
+            {
+              "id": 1,
+              "label": "CHINA 1",
+              "basis_cent_bu": 210
+            },
+            {
+              "id": 2,
+              "label": "CHINA 2",
+              "basis_cent_bu": 218
+            },
+            {
+              "id": 3,
+              "label": "CHINA 3",
+              "basis_cent_bu": 246
+            },
+            {
+              "id": 4,
+              "label": "CHINA 4",
+              "basis_cent_bu": 263
+            }
+          ]
+        },
+        {
+          "round": 9,
+          "news": "Clima favorável em parte do cinturão agrícola contrasta com preocupações regionais; mercado segue sensível a headlines.",
+          "usd": 5.46,
+          "cbot_cent_bu": 1073,
+          "conv_centbu_to_usd_t": 0.367454,
+          "saca_to_t": 0.06,
+          "basis_porto": {
+            "barcarena": -39,
+            "itaqui": -27,
+            "santos": -23,
+            "paranagua": -27,
+            "riogrande": -25
+          },
+          "offers_exw": [
+            {
+              "id": 1,
+              "label": "Querência MT - Produtor André",
+              "price_brl_saca": 102.5,
+              "volume_t": 36000,
+              "freight_inland_usd_t": 71,
+              "inland_by_corridor": {
+                "barcarena": 83,
+                "itaqui": 94,
+                "santos": 86,
+                "paranagua": 87,
+                "riogrande": 92
+              },
+              "city": "Querência",
+              "uf": "MT",
+              "map_label": "Querência MT",
+              "map_x": 1010,
+              "map_y": 350,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 2,
+              "label": "Balsas MA - Produtor Flavio",
+              "price_brl_saca": 104.8,
+              "volume_t": 18000,
+              "freight_inland_usd_t": 58,
+              "inland_by_corridor": {
+                "barcarena": 68,
+                "itaqui": 31,
+                "santos": 101,
+                "paranagua": 100000,
+                "riogrande": 100000
+              },
+              "city": "Balsas",
+              "uf": "MA",
+              "map_label": "Balsas MA",
+              "map_x": 1215,
+              "map_y": 250,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 3,
+              "label": "Rio Verde GO - Produtor Leonardo",
+              "price_brl_saca": 116.1,
+              "volume_t": 2000,
+              "freight_inland_usd_t": 62,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 50,
+                "paranagua": 57,
+                "riogrande": 100000
+              },
+              "city": "Rio Verde",
+              "uf": "GO",
+              "map_label": "Rio Verde GO",
+              "map_x": 1170,
+              "map_y": 470,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 4,
+              "label": "Rio Brilhante MS - Produtora Ana Paula",
+              "price_brl_saca": 108.5,
+              "volume_t": 48000,
+              "freight_inland_usd_t": 49,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 61,
+                "paranagua": 52,
+                "riogrande": 65
+              },
+              "city": "Rio Brilhante",
+              "uf": "MS",
+              "map_label": "Rio Brilhante MS",
+              "map_x": 1050,
+              "map_y": 575,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 5,
+              "label": "Londrina PR - Produtor Marcio",
+              "price_brl_saca": 114.8,
+              "volume_t": 12000,
+              "freight_inland_usd_t": 58,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 37,
+                "paranagua": 28,
+                "riogrande": 54
+              },
+              "city": "Londrina",
+              "uf": "PR",
+              "map_label": "Londrina PR",
+              "map_x": 1155,
+              "map_y": 665,
+              "map_w": 110,
+              "map_h": 96
+            }
+          ],
+          "ocean_freight": [
+            {
+              "id": 1,
+              "label": "FRETE 1",
+              "usd_t": 27.1,
+              "demurrage_usd_round": 11870
+            },
+            {
+              "id": 2,
+              "label": "FRETE 2",
+              "usd_t": 28.7,
+              "demurrage_usd_round": 11390
+            },
+            {
+              "id": 3,
+              "label": "FRETE 3",
+              "usd_t": 30.1,
+              "demurrage_usd_round": 10970
+            },
+            {
+              "id": 4,
+              "label": "FRETE 4",
+              "usd_t": 32.7,
+              "demurrage_usd_round": 10190
+            },
+            {
+              "id": 5,
+              "label": "FRETE 5",
+              "usd_t": 33.3,
+              "demurrage_usd_round": 10010
+            }
+          ],
+          "china_offers": [
+            {
+              "id": 1,
+              "label": "CHINA 1",
+              "basis_cent_bu": 201
+            },
+            {
+              "id": 2,
+              "label": "CHINA 2",
+              "basis_cent_bu": 223
+            },
+            {
+              "id": 3,
+              "label": "CHINA 3",
+              "basis_cent_bu": 236
+            },
+            {
+              "id": 4,
+              "label": "CHINA 4",
+              "basis_cent_bu": 260
+            }
+          ]
+        },
+        {
+          "round": 10,
+          "news": "Relatórios de embarques e line-up indicam disputa por capacidade logística e maior seletividade nos negócios.",
+          "usd": 5.6,
+          "cbot_cent_bu": 1089,
+          "conv_centbu_to_usd_t": 0.367454,
+          "saca_to_t": 0.06,
+          "basis_porto": {
+            "barcarena": -43,
+            "itaqui": -34,
+            "santos": -29,
+            "paranagua": -34,
+            "riogrande": -30
+          },
+          "offers_exw": [
+            {
+              "id": 1,
+              "label": "Querência MT - Produtor André",
+              "price_brl_saca": 98.7,
+              "volume_t": 6000,
+              "freight_inland_usd_t": 77,
+              "inland_by_corridor": {
+                "barcarena": 80,
+                "itaqui": 91,
+                "santos": 84,
+                "paranagua": 85,
+                "riogrande": 89
+              },
+              "city": "Querência",
+              "uf": "MT",
+              "map_label": "Querência MT",
+              "map_x": 1010,
+              "map_y": 350,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 2,
+              "label": "Balsas MA - Produtor Flavio",
+              "price_brl_saca": 107.8,
+              "volume_t": 18000,
+              "freight_inland_usd_t": 68,
+              "inland_by_corridor": {
+                "barcarena": 66,
+                "itaqui": 30,
+                "santos": 98,
+                "paranagua": 100000,
+                "riogrande": 100000
+              },
+              "city": "Balsas",
+              "uf": "MA",
+              "map_label": "Balsas MA",
+              "map_x": 1215,
+              "map_y": 250,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 3,
+              "label": "Rio Verde GO - Produtor Leonardo",
+              "price_brl_saca": 115.3,
+              "volume_t": 48000,
+              "freight_inland_usd_t": 56,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 48,
+                "paranagua": 55,
+                "riogrande": 100000
+              },
+              "city": "Rio Verde",
+              "uf": "GO",
+              "map_label": "Rio Verde GO",
+              "map_x": 1170,
+              "map_y": 470,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 4,
+              "label": "Rio Brilhante MS - Produtora Ana Paula",
+              "price_brl_saca": 115.3,
+              "volume_t": 2000,
+              "freight_inland_usd_t": 55,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 60,
+                "paranagua": 51,
+                "riogrande": 53
+              },
+              "city": "Rio Brilhante",
+              "uf": "MS",
+              "map_label": "Rio Brilhante MS",
+              "map_x": 1050,
+              "map_y": 575,
+              "map_w": 110,
+              "map_h": 96
+            },
+            {
+              "id": 5,
+              "label": "Londrina PR - Produtor Marcio",
+              "price_brl_saca": 104.1,
+              "volume_t": 36000,
+              "freight_inland_usd_t": 60,
+              "inland_by_corridor": {
+                "barcarena": 100000,
+                "itaqui": 100000,
+                "santos": 36,
+                "paranagua": 28,
+                "riogrande": 53
+              },
+              "city": "Londrina",
+              "uf": "PR",
+              "map_label": "Londrina PR",
+              "map_x": 1155,
+              "map_y": 665,
+              "map_w": 110,
+              "map_h": 96
+            }
+          ],
+          "ocean_freight": [
+            {
+              "id": 1,
+              "label": "FRETE 1",
+              "usd_t": 40.2,
+              "demurrage_usd_round": 7940
+            },
+            {
+              "id": 2,
+              "label": "FRETE 2",
+              "usd_t": 35.4,
+              "demurrage_usd_round": 9380
+            },
+            {
+              "id": 3,
+              "label": "FRETE 3",
+              "usd_t": 35.1,
+              "demurrage_usd_round": 9470
+            },
+            {
+              "id": 4,
+              "label": "FRETE 4",
+              "usd_t": 38.8,
+              "demurrage_usd_round": 8360
+            },
+            {
+              "id": 5,
+              "label": "FRETE 5",
+              "usd_t": 39.3,
+              "demurrage_usd_round": 8210
+            }
+          ],
+          "china_offers": [
+            {
+              "id": 1,
+              "label": "CHINA 1",
+              "basis_cent_bu": 176
+            },
+            {
+              "id": 2,
+              "label": "CHINA 2",
+              "basis_cent_bu": 211
+            },
+            {
+              "id": 3,
+              "label": "CHINA 3",
+              "basis_cent_bu": 221
+            },
+            {
+              "id": 4,
+              "label": "CHINA 4",
+              "basis_cent_bu": 251
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "rules": {
+    "ship_sizes_t": [
+      60000,
+      120000
+    ],
+    "rounds": 10,
+    "time_per_round_s": 600,
+    "conversion": {
+      "centbu_to_usd_t_default": 0.367454,
+      "saca_to_t_default": 0.06
+    },
+    "penalties": {
+      "sale_cancel_no_full_ship_usd": 5000000,
+      "unused_ocean_freight_penalty_usd": 1500000,
+      "single_ship_overbuy_usd_per_t": 500
+    },
+    "time_control_enabled": true
+  },
+  "corridorList": [
+    {
+      "key": "barcarena",
+      "label": "Barcarena"
+    },
+    {
+      "key": "itaqui",
+      "label": "Itaqui"
+    },
+    {
+      "key": "santos",
+      "label": "Santos"
+    },
+    {
+      "key": "paranagua",
+      "label": "Paranaguá"
+    },
+    {
+      "key": "riogrande",
+      "label": "Rio Grande"
+    }
+  ]
+}

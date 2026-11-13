@@ -1,0 +1,31 @@
+{
+  "id": 2,
+  "code": "L2",
+  "name": "Mais alternativas logísticas",
+  "status": "locked",
+  "summary": "Disponível quando você concluir o Level 1. A estrutura de dados fica preparada para receber as rodadas próprias deste level.",
+  "rules": {
+    "ship_sizes_t": [
+      60000,
+      120000
+    ],
+    "rounds": 5,
+    "time_per_round_s": 600,
+    "conversion": {
+      "centbu_to_usd_t_default": 0.367454,
+      "saca_to_t_default": 0.06
+    },
+    "penalties": {
+      "sale_cancel_no_full_ship_usd": 5000000,
+      "unused_ocean_freight_penalty_usd": 1500000,
+      "single_ship_overbuy_usd_per_t": 500
+    },
+    "time_control_enabled": false
+  },
+  "scenario": {
+    "id": 2,
+    "name": "L2 — Mais alternativas logísticas",
+    "active": false,
+    "rounds": []
+  }
+}

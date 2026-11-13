@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Trading Games (Protótipo)</title>
+  <link rel="stylesheet" href="./styles.css" />
+
+  <!-- PADRÃO VISUAL DOS MODAIS (igual ao “Vincular Frete ↔ BID”) -->
+  <style>
+    /* Backdrop padrão */
+    .modal-backdrop{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:9999;
+      align-items:center;
+      justify-content:center;
+    }
+
+    /* Caixa padrão */
+    .modal-box{
+      background:#fff;
+      width:720px;
+      max-width:92vw;
+      padding:22px 22px 18px;
+      border-radius:16px;
+      text-align:left;
+      box-shadow:0 18px 55px rgba(0,0,0,.35);
+    }
+
+    .modal-title{
+      margin:0 0 10px 0;
+      font-size:22px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+
+    .modal-sub{
+      margin:0 0 12px 0;
+      font-size:14px;
+      opacity:.85;
+    }
+
+    /* Select padrão */
+    .modal-select{
+      width:100%;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.20);
+      outline:none;
+      background:#fff;
+      font-size:14px;
+    }
+
+    .modal-select:focus{
+      border-color: rgba(0,0,0,.35);
+      box-shadow: 0 0 0 3px rgba(0,0,0,.08);
+    }
+
+    /* Área de botões (canto direito) */
+    .btn-row{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    /* Botões padrão (iguais do Vincular Frete) */
+    .btn-light{
+      padding:10px 18px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.20);
+      background:#fff;
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    .btn-dark{
+      padding:10px 18px;
+      border-radius:12px;
+      border:0;
+      background:#444;
+      color:#fff;
+      cursor:pointer;
+      font-weight:800;
+    }
+
+    .btn-light:hover{ filter:brightness(.98); }
+    .btn-dark:hover{ filter:brightness(1.05); }
+    .btn-light:active, .btn-dark:active{ transform:translateY(1px); }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">Trading Games</div>
+
+      <div class="topbar-right">
+        <div class="timer" id="timerBox">--</div>
+
+        <a class="timer admin-link" id="btnAdmin" href="./admin.html" target="_blank" rel="noopener">
+          Admin
+        </a>
+
+        <button class="timer" id="btnFullscreen" type="button" onclick="toggleFullscreen()">
+          Tela cheia
+        </button>
+      </div>
+    </header>
+
+    <div id="calibPanel" class="calib-panel" hidden></div>
+    <main id="screen"></main>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- MODAIS PADRONIZADOS (SELECT + BOTÕES) -->
+  <!-- ===================================================== -->
+
+  <!-- Modal: Corredor -->
+  <div id="corredorModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-title">Escolher corredor de exportação</div>
+      <div class="modal-sub">Enviar por qual porto?</div>
+
+      <select id="corredorSelect" class="modal-select"></select>
+
+      <div class="btn-row">
+        <button class="btn-light" onclick="cancelCorredor()">Cancelar</button>
+        <button class="btn-dark" onclick="confirmCorredor()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Porto -->
+  <div id="portoModal" class="modal-backdrop">
+    <div class="modal-box" style="width:620px;">
+      <div class="modal-title">Qual porto atracar?</div>
+
+      <select id="portoSelect" class="modal-select">
+        <option value="barcarena">Barcarena</option>
+        <option value="itaqui">Itaqui</option>
+        <option value="santos">Santos</option>
+        <option value="paranagua">Paranaguá</option>
+        <option value="riogrande">Rio Grande</option>
+      </select>
+
+      <div class="btn-row">
+        <button class="btn-light" onclick="cancelPorto()">Cancelar</button>
+        <button class="btn-dark" onclick="confirmPorto()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Frete (embarque) -->
+  <div id="freteModal" class="modal-backdrop">
+    <div class="modal-box" style="width:620px;">
+      <div class="modal-title">Embarcar em qual rodada?</div>
+
+      <select id="freteTargetRound" class="modal-select"></select>
+
+      <div class="btn-row">
+        <button class="btn-light" onclick="cancelFreteTarget()">Cancelar</button>
+        <button class="btn-dark" onclick="confirmFreteTarget()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Link BID -->
+  <div id="linkBidModal" class="modal-backdrop">
+    <div class="modal-box" style="width:820px;">
+      <div class="modal-title">Vincular este frete a algum BID China já fechado?</div>
+
+      <select id="linkBidSelect" class="modal-select">
+        <option value="">(Não vincular agora)</option>
+      </select>
+
+      <div class="btn-row">
+        <button class="btn-light" id="linkBidSkip" type="button">Pular</button>
+        <button class="btn-dark" id="linkBidConfirm" type="button">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botão Vincular BID (mantido) -->
+  <button id="btnLinkBidLater"
+    style="display:none;position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9998;
+    padding:10px 14px;border-radius:10px;border:2px solid #111;background:#fff;font-weight:700;">
+    Vincular BID
+  </button>
+
+  <!-- Modal: Resumo da Rodada -->
+  <div id="roundSummaryModal" class="modal-backdrop">
+    <div class="modal-box" style="width:620px; text-align:center;">
+      <h3 id="roundSummaryTitle" style="margin:0;">Resumo da Rodada</h3>
+
+      <div style="text-align:left; margin:15px 0; font-size:14px;">
+        <p><b>Soja Originada:</b><br><span id="summaryExw">—</span></p>
+        <p><b>Frete Marítimo:</b><br><span id="summaryFrete">—</span></p>
+        <p><b>BID CFR China:</b><br><span id="summaryBid">—</span></p>
+      </div>
+
+      <div class="btn-row" style="justify-content:center;">
+        <button class="btn-dark" onclick="confirmRoundSummary()">Confirmar</button>
+        <button class="btn-light" onclick="closeRoundSummary()">Voltar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- MTM -->
+  <!-- ===================================================== -->
+
+  <!-- Botão MTM invisível (não aparece e não captura clique) -->
+  <button id="btnMtm" onclick="openMtmModal()"
+    style="display:none; opacity:0; pointer-events:none;">
+    Market to Market
+  </button>
+
+  <!-- Modal: MTM -->
+  <div id="mtmModal"
+    style="display:none; position:fixed; inset:0; z-index:9999;">
+
+    <div id="mtmOverlay"
+      style="position:absolute; background:rgba(0,0,0,.35); border-radius:18px;">
+    </div>
+
+    <div id="mtmBox"
+      style="
+        position:absolute;
+        background:#fff;
+        width:760px;
+        max-width:92vw;
+        padding:22px 22px 18px;
+        border-radius:16px;
+        text-align:left;
+        box-shadow:0 18px 55px rgba(0,0,0,.35);
+      ">
+
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        <h3 style="margin:0; font-size:18px;">Marcação a Mercado (MTM)</h3>
+        <div style="font-size:12px; opacity:.7;">(posições até a rodada atual)</div>
+      </div>
+
+      <div style="margin-top:12px; font-size:14px; max-height:52vh; overflow:auto;">
+        <div id="mtmList">—</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-light" onclick="closeMtmModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- ===================================================== -->
+  <!-- GLOSSÁRIO -->
+  <!-- ===================================================== -->
+
+  <button id="btnGlossary" onclick="openGlossaryModal()"
+    style="display:none; opacity:0; pointer-events:none;">
+    Glossário
+  </button>
+
+  <div id="glossaryModal"
+    style="display:none; position:fixed; inset:0; z-index:10000;">
+
+    <div id="glossaryOverlay"
+      style="position:absolute; background:rgba(0,0,0,.35); border-radius:18px;">
+    </div>
+
+    <div id="glossaryBox"
+      style="
+        position:absolute;
+        background:#fff;
+        width:860px;
+        max-width:92vw;
+        padding:22px 22px 18px;
+        border-radius:16px;
+        text-align:left;
+        box-shadow:0 18px 55px rgba(0,0,0,.35);
+      ">
+
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+        <div>
+          <h3 style="margin:0; font-size:18px;">Glossário do Trading de Grãos</h3>
+          <div style="font-size:12px; opacity:.7; margin-top:4px;">Termos, conceitos e Incoterms em ordem alfabética.</div>
+        </div>
+        <div style="font-size:12px; opacity:.7; white-space:nowrap;">A-Z</div>
+      </div>
+
+      <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
+        <input id="glossarySearch" type="text" placeholder="Buscar termo..."
+          oninput="filterGlossary()"
+          style="flex:1; min-width:0; height:42px; border:1px solid #d8d8d8; border-radius:10px; padding:0 12px; font-size:14px;">
+        <button class="btn-light" type="button" onclick="clearGlossarySearch()">Limpar</button>
+      </div>
+
+      <div style="margin-top:12px; font-size:14px; max-height:52vh; overflow:auto; border:1px solid #ececec; border-radius:12px; padding:14px; background:#fafafa;">
+        <div id="glossaryList">—</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-light" onclick="closeGlossaryModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <button id="btnPorts" onclick="openPortsModal()"
+    style="display:none; opacity:0; pointer-events:none;">
+    Portos
+  </button>
+
+  <div id="portsModal"
+    style="display:none; position:fixed; inset:0; z-index:10001;">
+
+    <div id="portsOverlay"
+      style="position:absolute; background:rgba(0,0,0,.35); border-radius:18px;">
+    </div>
+
+    <div id="portsBox"
+      style="
+        position:absolute;
+        background:#fff;
+        width:900px;
+        max-width:92vw;
+        padding:22px 22px 18px;
+        border-radius:16px;
+        text-align:left;
+        box-shadow:0 18px 55px rgba(0,0,0,.35);
+      ">
+
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+        <div>
+          <h3 style="margin:0; font-size:18px;">Portos — Estoque acumulado EXW</h3>
+          <div style="font-size:12px; opacity:.7; margin-top:4px;">Volume acumulado comprado no EXW por porto até a rodada atual.</div>
+        </div>
+        <div style="font-size:12px; opacity:.7; white-space:nowrap;">t por porto</div>
+      </div>
+
+      <div style="margin-top:14px; border:1px solid #ececec; border-radius:12px; padding:14px; background:#fafafa;">
+        <div id="portsChartWrap" style="min-height:360px;">
+          <div id="portsChart">—</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px; font-size:13px; color:#666;">
+        O gráfico considera as compras EXW confirmadas e o corredor/porto escolhido em cada operação.
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-light" onclick="closePortsModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="sojaDetailModal"
+    style="display:none; position:fixed; inset:0; z-index:10002;">
+
+    <div id="sojaDetailOverlay"
+      style="position:absolute; background:rgba(0,0,0,.35); border-radius:18px;">
+    </div>
+
+    <div id="sojaDetailBox"
+      style="
+        position:absolute;
+        background:#fff;
+        width:900px;
+        max-width:92vw;
+        padding:22px 22px 18px;
+        border-radius:16px;
+        text-align:left;
+        box-shadow:0 18px 55px rgba(0,0,0,.35);
+      ">
+
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+        <div>
+          <h3 style="margin:0; font-size:18px;">Boleta de Originação</h3>
+          <div id="sojaDetailSub" style="font-size:12px; opacity:.7; margin-top:4px;">Detalhes estruturados da soja originada confirmada.</div>
+        </div>
+        <div style="font-size:12px; opacity:.7; white-space:nowrap;">CONFIRMADO</div>
+      </div>
+
+      <div style="margin-top:14px; border:1px solid #ececec; border-radius:12px; padding:18px; background:#fafafa; max-height:58vh; overflow:auto;">
+        <div id="sojaDetailContent">—</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-light" onclick="closeSojaDetailModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="tradeDetailModal"
+    style="display:none; position:fixed; inset:0; z-index:10003;">
+
+    <div id="tradeDetailOverlay"
+      style="position:absolute; background:rgba(0,0,0,.35); border-radius:18px;">
+    </div>
+
+    <div id="tradeDetailBox"
+      style="
+        position:absolute;
+        background:#fff;
+        width:960px;
+        max-width:92vw;
+        padding:22px 22px 18px;
+        border-radius:16px;
+        text-align:left;
+        box-shadow:0 18px 55px rgba(0,0,0,.35);
+      ">
+
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+        <div>
+          <h3 id="tradeDetailTitle" style="margin:0; font-size:18px;">Boleta de Operação</h3>
+          <div id="tradeDetailSub" style="font-size:12px; opacity:.7; margin-top:4px;">Detalhes estruturados da operação.</div>
+        </div>
+        <div style="font-size:12px; opacity:.7; white-space:nowrap;">CONFIRMADO</div>
+      </div>
+
+      <div style="margin-top:14px; border:1px solid #ececec; border-radius:12px; padding:18px; background:#fafafa; max-height:58vh; overflow:auto;">
+        <div id="tradeDetailContent">—</div>
+      </div>
+
+      <div class="btn-row">
+        <button id="tradeDetailCloseBtn" type="button" class="btn-light" onclick="closeTradeDetailModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="accessModal"
+    style="display:none; position:fixed; inset:0; z-index:10020;">
+
+    <div id="accessOverlay"
+      style="position:absolute; background:rgba(0,0,0,.35); border-radius:18px;">
+    </div>
+
+    <div id="accessBox"
+      style="
+        position:absolute;
+        background:#fff;
+        width:420px;
+        max-width:92vw;
+        padding:22px 22px 18px;
+        border-radius:16px;
+        text-align:left;
+        box-shadow:0 18px 55px rgba(0,0,0,.35);
+      ">
+
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+        <div>
+          <h3 id="accessTitle" style="margin:0; font-size:18px;">Acesso restrito</h3>
+          <div id="accessSub" style="font-size:12px; opacity:.7; margin-top:4px;">Digite a senha de 4 dígitos para continuar.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <input id="accessPassword" type="password" inputmode="numeric" maxlength="4" placeholder="Senha de 4 dígitos"
+          style="width:100%; height:46px; border:1px solid #d8d8d8; border-radius:10px; padding:0 14px; font-size:18px; letter-spacing:6px; text-align:center; box-sizing:border-box;">
+        <div id="accessError" style="display:none; margin-top:8px; font-size:13px; color:#c62828;">Senha incorreta.</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-light" type="button" onclick="closeAccessModal()">Cancelar</button>
+        <button class="btn-dark" type="button" onclick="submitAccessModal()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./game.js"></script>
+
+
+  <button id="btnLongShort" onclick="openLongShortModal()"
+    style="display:none; opacity:0; pointer-events:none;">
+    Long / Short
+  </button>
+
+  <div id="longShortModal"
+    style="display:none; position:fixed; inset:0; z-index:10002;">
+
+    <div id="longShortOverlay"
+      style="position:absolute; background:rgba(0,0,0,.35); border-radius:18px;">
+    </div>
+
+    <div id="longShortBox"
+      style="
+        position:absolute;
+        background:#fff;
+        width:960px;
+        max-width:94vw;
+        padding:22px 22px 18px;
+        border-radius:16px;
+        text-align:left;
+        box-shadow:0 18px 55px rgba(0,0,0,.35);
+        overflow:hidden;
+        display:flex;
+        flex-direction:column;
+        box-sizing:border-box;
+      ">
+
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+        <div>
+          <h3 style="margin:0; font-size:18px;">LONG / SHORT — POSIÇÃO DO TRADER</h3>
+          <div style="font-size:12px; opacity:.7; margin-top:4px;">Painel consolidado das posições físicas, logísticas e comerciais até a rodada atual.</div>
+        </div>
+        <div style="font-size:12px; opacity:.7; white-space:nowrap;">Trading Book</div>
+      </div>
+
+      <div id="longShortScroll" style="margin-top:14px; border:1px solid #ececec; border-radius:12px; padding:14px; background:#fafafa; flex:1; min-height:0; overflow:auto;">
+        <div id="longShortContent">—</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-light" onclick="closeLongShortModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

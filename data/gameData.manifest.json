@@ -1,0 +1,12 @@
+{
+  "version": "split-data-v1",
+  "description": "Arquivos de dados separados por modo de jogo. Campanha é subdividida por level.",
+  "guided": "./data/guided/gameData.json",
+  "expert": "./data/expert/gameData.json",
+  "campaign": "./data/campaign/campaignData.json",
+  "campaignLevels": [
+    "./data/campaign/levels/level1.json",
+    "./data/campaign/levels/level2.json",
+    "./data/campaign/levels/level3.json"
+  ]
+}
