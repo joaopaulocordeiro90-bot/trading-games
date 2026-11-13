@@ -1065,7 +1065,7 @@ function campaignL1CalculatorMarkup(rd){
       ['Basis = CFR − Chicago',num(lot.basisCentBu,1)+' ¢/bu']
     ];
     return header+`<p><strong>Rodada 1: exemplo resolvido.</strong> Observe os passos e a conversão de unidades.</p>
-    <p class="l1wb-hint">EXW = R$ ${num(lot.priceBrlSc)}/sc × ${num(SACKS_PER_TON,4)} sc/t ÷ câmbio R$ ${num(lot.fx,4)}/US$. Frete em R$/t = US$/t × câmbio. CFR = (EXW + rodoviário + fobbing + marítimo) ÷ ${num(BU_PER_TON_SOY,4)} bu/t × 100.</p>
+    <p class="l1wb-hint">EXW = R$ ${num(lot.priceBrlSc)}/sc × ${num((1000/60),4)} sc/t ÷ câmbio R$ ${num(lot.fx,4)}/US$. Frete em R$/t = US$/t × câmbio. CFR = (EXW + rodoviário + fobbing + marítimo) ÷ ${num(36.7437,4)} bu/t × 100.</p>
     ${rows.map(x=>`<div class="l1wb-costrow"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('')}
     <p class="l1wb-hint">Valores simulados; não inclui hedge, financiamento ou MTM.</p>`;
   }
@@ -1073,8 +1073,8 @@ function campaignL1CalculatorMarkup(rd){
   const answers=(state.campaign.l1Exercises||(state.campaign.l1Exercises={}))[key]||{};
   const steps=[
     ['freight','1. Calcule o frete rodoviário (R$/t)',`Frete informado: US$ ${num(lot.inlandUsdT)}/t. Câmbio: R$ ${num(lot.fx,4)}/US$. Multiplique.`],
-    ['exw','2. Converta o preço EXW (US$/t)',`R$ ${num(lot.priceBrlSc)}/sc × ${num(SACKS_PER_TON,4)} sc/t ÷ câmbio.`],
-    ['cfr','3. Calcule o custo CFR (¢/bu)',`Some EXW, rodoviário US$ ${num(lot.inlandUsdT)}/t, fobbing US$ ${num(lot.fobbingUsdT)}/t e marítimo US$ ${num(lot.maritimeUsdT)}/t; divida por ${num(BU_PER_TON_SOY,4)} e multiplique por 100.`],
+    ['exw','2. Converta o preço EXW (US$/t)',`R$ ${num(lot.priceBrlSc)}/sc × ${num((1000/60),4)} sc/t ÷ câmbio.`],
+    ['cfr','3. Calcule o custo CFR (¢/bu)',`Some EXW, rodoviário US$ ${num(lot.inlandUsdT)}/t, fobbing US$ ${num(lot.fobbingUsdT)}/t e marítimo US$ ${num(lot.maritimeUsdT)}/t; divida por ${num(36.7437,4)} e multiplique por 100.`],
     ['basis','4. Calcule o basis de custo (¢/bu)',`CFR calculado menos Chicago ${num(lot.cbotCentBu)} ¢/bu.`]
   ];
   return header+`<p><strong>Rodada ${state.round} de 5.</strong> Responda cada conta e confira. Os botões e a navegação do jogo permanecem disponíveis.</p>
