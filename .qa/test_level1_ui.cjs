@@ -24,11 +24,12 @@ const ctx = {
     const rd=level.scenario.rounds[state.round-1];
     const fx=Number(o.ref_cambio||rd.usd);
     const cbot=Number(o.ref_cbot_cent_bu||rd.cbot_cent_bu);
-    const interior=(Number(o.price_brl_saca)*1000/60/fx)/36.7437*100;
+    const interiorUsdT=Number(o.price_brl_saca)*1000/60/fx;
+    const interior=interiorUsdT/36.7437*100;
     const inland=Number(o.inland_by_corridor?.santos||0);
     const cfr=interior+((inland+Number(level.fixedFobbingUsdT)+Number(level.fixedFreightUsdT))/36.7437)*100;
     const basis=cfr-cbot;
-    return {basisCentBu:basis,cfrCostCentBu:cfr,cbotCentBu:cbot,interiorCentBu:interior,
+    return {basisCentBu:basis,cfrCostCentBu:cfr,cbotCentBu:cbot,interiorCentBu:interior,interiorUsdT,fx,priceBrlSc:Number(o.price_brl_saca),
       inlandUsdT:inland,fobbingUsdT:Number(level.fixedFobbingUsdT),maritimeUsdT:Number(level.fixedFreightUsdT),
       pnlUsdT:(Number(level.fixedSaleBasisCentBu)-basis)/100*36.7437};
   },
@@ -64,8 +65,19 @@ for(let r=1;r<=5;r++){
   state.campaign.l1CalcVisible=true;
   state.choices.exw[r]={...rd.offers_exw[0],ref_cbot_cent_bu:rd.cbot_cent_bu,ref_cambio:rd.usd};
   const html=vm.runInContext('campaignL1CalculatorMarkup(rd)',ctx);
-  assert(html.includes('Custo CFR equivalente') && html.includes('Frete rodoviário'));
-  assert(html.includes('Basis médio projetado'));
+  if(r===1){
+    assert(html.includes('Exemplo resolvido'));
+    assert(html.includes('Custo CFR equivalente') && html.includes('Frete rodoviário'));
+    assert(html.includes('Basis = CFR'));
+    assert(!html.includes('data-l1-answer='));
+  }else{
+    assert(html.includes('Faça os cálculos'));
+    for(const field of ['freight','exw','cfr','basis']){
+      assert(html.includes('data-l1-answer="'+field+'"'));
+      assert(html.includes('data-l1-check="'+field+'"'));
+    }
+    assert(!html.includes('Basis médio projetado'));
+  }
   delete state.choices.exw[r];state.campaign.l1CalcVisible=false;
 }
 assert(!isolated.includes('l1wb-legacy-shield') && !isolated.includes('l1wb-sideguide'), 'Máscaras obsoletas voltaram');

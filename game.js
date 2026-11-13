@@ -717,6 +717,7 @@ function initCampaignRun(levelId = 1) {
   if (Number(level.id) === 1) {
     state.campaign.l1Tab = 'market';
     state.campaign.l1CalcVisible = false;
+    state.campaign.l1Exercises = {};
     state.campaign.l1Focus = false; // Não encobrir a arte original ao avançar rodada
   }
   state.settings.shipCount = 1;
@@ -938,7 +939,11 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb-costrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
     padding:9px 0;border-bottom:1px solid #e1d4c1;font-size:15px}
   .l1wb-costrow strong{font-size:16px;white-space:nowrap}
-  .l1wb-hint{font-size:12px;color:#6b6152;line-height:1.35;margin-top:13px}
+  .l1wb-hint{font-size:12px;color:#6b6152;line-height:1.35;margin-top:8px}
+  .l1wb-exercise{padding:10px 0;border-bottom:1px solid #e1d4c1}
+  .l1wb-exercise-controls{display:flex;gap:8px;margin-top:8px}
+  .l1wb-exercise-controls input{min-width:0;flex:1;padding:9px;border:1px solid #bba98f;border-radius:7px;font:inherit}
+  .l1wb-exercise-feedback{font-size:13px;color:#2d6448;min-height:18px;margin-top:5px}
   .l1wb-dialog .l1wb-market{max-height:440px;overflow:auto}
   .l1wb-dialog .l1wb-market h3{font-size:20px}
   .l1wb-dialog .l1wb-market p{font-size:16px}
@@ -1006,7 +1011,7 @@ function campaignL1WorkbenchMarkup(rd) {
       inner=`<span class="l1wb-label">${confirmed?'Compra confirmada':'Oferta selecionada'}</span>
         <h3>${escapeHtml(formatOfferDisplayName(selected))}</h3>
         <div class="l1wb-mini"><p><strong>${vol(effective)} t · R$ ${num(selected.price_brl_saca,2)}/sc</strong></p>
-        <p>Basis: <strong>${signed(lot.basisCentBu)} ¢/bu</strong> · Book: <strong>${signed(projected.basisAvg)} ¢/bu</strong></p></div>
+        <p>${round===1?`Basis: <strong>${signed(lot.basisCentBu)} ¢/bu</strong> · Book: <strong>${signed(projected.basisAvg)} ¢/bu</strong>`:'Calcule o frete, o CFR e o basis antes de decidir.'}</p></div>
         <div class="l1wb-actions"><button type="button" class="l1wb-btn" data-l1-action="calculator">Calcular CFR ↗</button>
         <span style="font-size:12px;color:#526557">${confirmed?'Compra registrada':'Use COMPRAR abaixo'}</span></div>`;
     }
@@ -1045,26 +1050,39 @@ function campaignL1OfferListMarkup(rd){
 
 function campaignL1CalculatorMarkup(rd){
   const {selected,confirmed,book,remaining}=campaignL1UiData(rd);
-  if(!selected) return '';
+  if(!selected)return '';
   const num=(v,d=2)=>Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
-  const offered=Number(selected.available_volume_t||selected.volume_t||0);
-  const effective=confirmed?Number(state.confirmed.exw[state.round]?.volume_t||0):Math.min(offered,remaining);
-  const draft={...selected,volume_t:effective};
-  const lot=calculateCampaignOfferBasisSnapshot(draft,state.round);
-  const projected=confirmed?book:calculateCampaignBookSnapshot(draft);
-  const signed=v=>`${Number(v)>=0?'+':''}${num(v,1)}`;
-  return `<div class="l1wb-dialog-head"><h2>Calculadora CFR · ${escapeHtml(formatOfferDisplayName(selected))}</h2>
-    <button type="button" class="l1wb-btn" data-l1-action="close">Fechar ✕</button></div>
-    <div class="l1wb-costrow"><span>Volume da decisão</span><strong>${num(effective,0)} t</strong></div>
-    <div class="l1wb-costrow"><span>EXW convertido</span><strong>US$ ${num(lot.interiorUsdT??lot.interiorCentBu*BU_PER_TON_SOY/100)}/t</strong></div>
-    <div class="l1wb-costrow"><span>Frete rodoviário</span><strong>US$ ${num(lot.inlandUsdT)}/t</strong></div>
-    <div class="l1wb-costrow"><span>Fobbing + marítimo</span><strong>US$ ${num(lot.fobbingUsdT+lot.maritimeUsdT)}/t</strong></div>
-    <div class="l1wb-costrow"><span>Custo CFR equivalente</span><strong>${num(lot.cfrCostCentBu,1)} ¢/bu</strong></div>
-    <div class="l1wb-costrow"><span>Chicago (CBOT)</span><strong>${num(lot.cbotCentBu) } ¢/bu</strong></div>
-    <div class="l1wb-costrow"><span>Basis desta origem</span><strong>${signed(lot.basisCentBu)} ¢/bu</strong></div>
-    <div class="l1wb-costrow"><span>Basis médio projetado</span><strong>${signed(projected.basisAvg)} ¢/bu</strong></div>
-    <div class="l1wb-costrow"><span>Margem bruta por tonelada</span><strong>US$ ${num(lot.pnlUsdT)}/t</strong></div>
-    <p class="l1wb-hint">EXW convertido + rodoviário + fobbing + marítimo − CBOT. Cálculo indicativo de cenário simulado; não inclui hedge, financiamento nem MTM.</p>`;
+  const effective=confirmed?Number(state.confirmed.exw[state.round]?.volume_t||0):Math.min(Number(selected.available_volume_t||selected.volume_t||0),remaining);
+  const lot=calculateCampaignOfferBasisSnapshot({...selected,volume_t:effective},state.round);
+  const header=`<div class="l1wb-dialog-head"><h2>${state.round===1?'Exemplo resolvido':'Faça os cálculos'} · ${escapeHtml(formatOfferDisplayName(selected))}</h2><button class="l1wb-btn" type="button" data-l1-action="close">Fechar ✕</button></div>`;
+  if(state.round===1){
+    const rows=[
+      ['Preço EXW convertido',num(lot.interiorUsdT)+' US$/t'],
+      ['Frete rodoviário',num(lot.inlandUsdT*lot.fx)+' R$/t'],
+      ['Fobbing + marítimo',num(lot.fobbingUsdT+lot.maritimeUsdT)+' US$/t'],
+      ['Custo CFR equivalente',num(lot.cfrCostCentBu,1)+' ¢/bu'],
+      ['Chicago',num(lot.cbotCentBu)+' ¢/bu'],
+      ['Basis = CFR − Chicago',num(lot.basisCentBu,1)+' ¢/bu']
+    ];
+    return header+`<p><strong>Rodada 1: exemplo resolvido.</strong> Observe os passos e a conversão de unidades.</p>
+    <p class="l1wb-hint">EXW = R$ ${num(lot.priceBrlSc)}/sc × ${num((1000/60),4)} sc/t ÷ câmbio R$ ${num(lot.fx,4)}/US$. Frete em R$/t = US$/t × câmbio. CFR = (EXW + rodoviário + fobbing + marítimo) ÷ ${num(36.7437,4)} bu/t × 100.</p>
+    ${rows.map(x=>`<div class="l1wb-costrow"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('')}
+    <p class="l1wb-hint">Valores simulados; não inclui hedge, financiamento ou MTM.</p>`;
+  }
+  const key=String(state.round)+':'+String(selected.id??formatOfferDisplayName(selected));
+  const answers=(state.campaign.l1Exercises||(state.campaign.l1Exercises={}))[key]||{};
+  const steps=[
+    ['freight','1. Calcule o frete rodoviário (R$/t)',`Frete informado: US$ ${num(lot.inlandUsdT)}/t. Câmbio: R$ ${num(lot.fx,4)}/US$. Multiplique.`],
+    ['exw','2. Converta o preço EXW (US$/t)',`R$ ${num(lot.priceBrlSc)}/sc × ${num((1000/60),4)} sc/t ÷ câmbio.`],
+    ['cfr','3. Calcule o custo CFR (¢/bu)',`Some EXW, rodoviário US$ ${num(lot.inlandUsdT)}/t, fobbing US$ ${num(lot.fobbingUsdT)}/t e marítimo US$ ${num(lot.maritimeUsdT)}/t; divida por ${num(36.7437,4)} e multiplique por 100.`],
+    ['basis','4. Calcule o basis de custo (¢/bu)',`CFR calculado menos Chicago ${num(lot.cbotCentBu)} ¢/bu.`]
+  ];
+  return header+`<p><strong>Rodada ${state.round} de 5.</strong> Responda cada conta e confira. Os botões e a navegação do jogo permanecem disponíveis.</p>
+    ${steps.map(([id,label,hint])=>`<div class="l1wb-exercise"><strong>${label}</strong><p class="l1wb-hint">${hint}</p><div class="l1wb-exercise-controls">
+      <input type="text" inputmode="decimal" data-l1-answer="${id}" aria-label="${label}" placeholder="Digite o resultado" value="${escapeHtml(String(answers[id]?.value||''))}"/>
+      <button type="button" class="l1wb-btn" data-l1-check="${id}">Conferir</button></div>
+      <div class="l1wb-exercise-feedback" data-l1-feedback="${id}" aria-live="polite">${answers[id]?.ok?'✓ Correto':answers[id]?.attempted?'Confira as unidades e tente novamente.':''}</div></div>`).join('')}
+    <p class="l1wb-hint">Você pode tentar novamente sem penalidade. Os resultados são validados sem revelar a resposta antecipadamente.</p>`;
 }
 
 function renderCampaignL1Workbench(layer,rd) {
@@ -1105,6 +1123,26 @@ function attachCampaignL1WorkbenchEvents(container,rd){
       const offer=getCurrentExwOffersForRender(rd)[Number(idx)];if(!offer)return;
       state.campaign.l1Tab='offers';state.campaign.l1CalcVisible=false;state.campaign.l1Focus=false;
       selectExwOfferForCurrentRound(offer,rd,'r1_exw');return;
+    }
+    const check=button.dataset.l1Check;
+    if(check){
+      const input=container.querySelector('[data-l1-answer="'+check+'"]');
+      const feedback=container.querySelector('[data-l1-feedback="'+check+'"]');
+      const selected=state.choices?.exw?.[state.round];
+      if(!input||!selected)return;
+      const key=String(state.round)+':'+String(selected.id??formatOfferDisplayName(selected));
+      const store=state.campaign.l1Exercises||(state.campaign.l1Exercises={});
+      const answers=store[key]||(store[key]={});
+      const value=String(input.value||'').trim();
+      const candidate=Number(value.replace(/\s/g,'').replace(',','.'));
+      const lot=calculateCampaignOfferBasisSnapshot(selected,state.round);
+      const targets={freight:[lot.inlandUsdT*lot.fx,.06],exw:[lot.interiorUsdT,.06],cfr:[lot.cfrCostCentBu,.16],basis:[lot.basisCentBu,.17]};
+      const target=targets[check];
+      if(!target)return;
+      const ok=value!==''&&Number.isFinite(candidate)&&Math.abs(candidate-target[0])<=target[1];
+      answers[check]={value,attempted:true,ok};
+      if(feedback)feedback.textContent=ok?'✓ Correto.':'Confira as unidades e tente novamente.';
+      return;
     }
     const action=button.dataset.l1Action;
     if(action==='calculator'){
