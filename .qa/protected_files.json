@@ -1,0 +1,12 @@
+{
+  "version": "l1-brz-2026-11-12",
+  "files": {
+    "data/guided/gameData.json": "66e770ce11050dfc4eee3aed3a5065f30643eaf0ef4da04d644d3ebc34fd1081",
+    "data/expert/gameData.json": "66e770ce11050dfc4eee3aed3a5065f30643eaf0ef4da04d644d3ebc34fd1081",
+    "data/campaign/levels/level2.json": "97e8b17e859d9aa78f7fe71e2cac105d9a43a6fc532d7d5cee9bf7296c09581d",
+    "data/campaign/levels/level3.json": "c0fe6f53a858beef668ede3f240b35c5fe0f2827a828a9d1c2c2683b1fa73709",
+    "index.html": "96211a8bb0f2777441c219ef9d283274b360f15721d84f0077e8f82170f16ac1",
+    "styles.css": "6cf547cdf6b222085832ec0d33ab863f0de228b69cdf418a06f9a82ddac2d984",
+    "style.css": "dd805e6959e58eb4845a761cba6100544dfb902be38add26b74f02d3875e4e86"
+  }
+}
