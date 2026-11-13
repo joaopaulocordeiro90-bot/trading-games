@@ -19,3 +19,16 @@ jobs:
         run: python .qa/validate_site.py
       - name: Testes econômicos e UX do Level 1
         run: node .qa/test_level1_ui.cjs
+      - name: Preparar Chrome e Selenium
+        if: github.event_name == 'pull_request'
+        run: python -m pip install selenium
+      - name: Testar o Level 1 em navegador real
+        if: github.event_name == 'pull_request'
+        run: python .qa/browser_smoke.py
+      - name: Registrar capturas da interface
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: trading-games-level1-ux
+          path: test-artifacts/
+          if-no-files-found: ignore
