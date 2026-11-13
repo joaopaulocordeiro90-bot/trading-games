@@ -37,14 +37,21 @@ def guide_off():
     wait.until(lambda d: len(d.find_elements(By.CSS_SELECTOR, ".guideBlocker")) == 0)
 
 def at_panel():
-    wait.until(lambda d: len(d.find_elements(By.ID, "l1wb-panel")) == 1)
+    try:
+        wait.until(lambda d: len(d.find_elements(By.ID, "l1wb-panel")) == 1)
+    except Exception:
+        print("DIAGNOSTICO L1:", js("return JSON.stringify({stage:state.stage,campaign:state.campaign,guide:state.guideOverlayOpen,screen:document.getElementById('screen')?.innerText?.slice(0,250)})"))
+        print("BROWSER ERRORS:", driver.get_log("browser")[-15:])
+        driver.save_screenshot(str(ARTIFACTS/"erro-canvas.png"))
+        raise
     guide_off()
+    wait.until(lambda d: len(d.find_elements(By.ID, "l1wb-panel")) == 1)
     return driver.find_element(By.ID,"l1wb-panel")
 
 try:
     driver.get(f"http://127.0.0.1:{server.server_address[1]}/")
     wait.until(lambda d: js("return typeof initCampaignRun === 'function' && !!getCampaignLevel(1).scenario;"))
-    js("initCampaignRun(1); state.guideSeen={campaign_exw:true,campaign_home:true,r1_exw_first_offer:true};state.guideOverlayOpen=false; state.guideFlow=null;setStage('r1_exw');")
+    js("initCampaignRun(1); state.campaign.introRedirectPending=false;state.guideSeen={campaign_exw:true,campaign_home:true,r1_exw_first_offer:true};state.guideOverlayOpen=false; state.guideFlow=null;setStage('r1_exw');")
     at_panel()
     assert "1 · Mercado" in at_panel().text
     driver.save_screenshot(str(ARTIFACTS/"01-mercado.png"))
