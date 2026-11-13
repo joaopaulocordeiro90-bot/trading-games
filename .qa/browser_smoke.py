@@ -7,6 +7,7 @@ import threading
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoAlertPresentException
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "test-artifacts"
@@ -88,6 +89,12 @@ try:
         js("""document.querySelectorAll('#l1wb-panel .l1wb-offer')[2].click();""")
         at_panel()
         js("""document.querySelector('#l1wb-panel [data-l1-action="buy"]').click();""")
+        # Ao ultrapassar o saldo do navio, o jogo confirma uma compra parcial
+        # em alerta nativo, antes de abrir o resumo da rodada.
+        try:
+            driver.switch_to.alert.accept()
+        except NoAlertPresentException:
+            pass
         wait.until(lambda d: len(d.find_elements(By.ID,"campaignAdvanceModal")) == 1)
         js("closeCampaignAdvanceModal();")
     js("nextRound();")
