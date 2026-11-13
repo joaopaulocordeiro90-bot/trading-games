@@ -74,7 +74,7 @@ try:
         js("nextRound();")
         at_panel()
         assert js("return state.round") == round
-        assert at_panel().find_element(By.CSS_SELECTOR,'[data-l1-tab="market"]').get_attribute("aria-selected") == "true"
+        wait.until(lambda d: js("return document.querySelector('#l1wb-panel [data-l1-tab=\\\"market\\\"]')?.getAttribute('aria-selected') === 'true'"))
         driver.find_element(By.CSS_SELECTOR,'#l1wb-panel [data-l1-tab="offers"]').click()
         driver.find_elements(By.CSS_SELECTOR, "#l1wb-panel .l1wb-offer")[2].click()
         at_panel()
