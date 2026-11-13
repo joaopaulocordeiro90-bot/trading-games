@@ -27,7 +27,14 @@ def js(src):
     return driver.execute_script(src)
 
 def guide_off():
-    js("state.guideOverlayOpen=false;state.guideFlow=null;state.guideSeen={campaign_exw:true,campaign_home:true};")
+    # O guia é uma camada de interação real. Para testar as abas, encerramos
+    # seu fluxo e reconstruímos o canvas, removendo também o blocker do DOM.
+    js("""state.guideSeen.campaign_exw=true;
+          state.guideSeen.campaign_home=true;
+          state.guideSeen.r1_exw_first_offer=true;
+          state.guideOverlayOpen=false;state.guideFlow=null;
+          if(document.querySelector('.guideBlocker')) renderStage();""")
+    wait.until(lambda d: len(d.find_elements(By.CSS_SELECTOR, ".guideBlocker")) == 0)
 
 def at_panel():
     wait.until(lambda d: len(d.find_elements(By.ID, "l1wb-panel")) == 1)
@@ -37,7 +44,7 @@ def at_panel():
 try:
     driver.get(f"http://127.0.0.1:{server.server_address[1]}/")
     wait.until(lambda d: js("return typeof initCampaignRun === 'function' && !!getCampaignLevel(1).scenario;"))
-    js("initCampaignRun(1); state.guideOverlayOpen=false; state.guideFlow=null;setStage('r1_exw');")
+    js("initCampaignRun(1); state.guideSeen={campaign_exw:true,campaign_home:true,r1_exw_first_offer:true};state.guideOverlayOpen=false; state.guideFlow=null;setStage('r1_exw');")
     at_panel()
     assert "1 · Mercado" in at_panel().text
     driver.save_screenshot(str(ARTIFACTS/"01-mercado.png"))
