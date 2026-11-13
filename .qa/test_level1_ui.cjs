@@ -77,6 +77,9 @@ for(let r=1;r<=5;r++){
       assert(html.includes('data-l1-check="'+field+'"'));
     }
     assert(!html.includes('Basis médio projetado'));
+    assert(!html.includes('Multiplique.') && !html.includes('Some EXW') && !html.includes('divida por'), 'Enunciado entrega a operação aritmética');
+    for(const datum of ['Frete rodoviário:', 'Preço EXW:', 'Fobbing:', 'Chicago:']) assert(html.includes(datum), 'Dado necessário ausente: '+datum);
+
   }
   delete state.choices.exw[r];state.campaign.l1CalcVisible=false;
 }
