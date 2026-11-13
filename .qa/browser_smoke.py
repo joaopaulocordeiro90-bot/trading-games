@@ -88,6 +88,10 @@ try:
         js("""document.querySelector('#l1wb-panel [data-l1-tab="offers"]').click();""")
         js("""document.querySelectorAll('#l1wb-panel .l1wb-offer')[2].click();""")
         at_panel()
+        if js("return calculateCampaignBookSnapshot().missingT <= 0"):
+            # Cargo completado antecipadamente: bloqueio de novas compras é correto.
+            assert js("""return document.querySelector('#l1wb-panel [data-l1-action="buy"]')?.disabled === true""")
+            continue
         js("""document.querySelector('#l1wb-panel [data-l1-action="buy"]').click();""")
         # Ao ultrapassar o saldo do navio, o jogo confirma uma compra parcial
         # em alerta nativo, antes de abrir o resumo da rodada.
