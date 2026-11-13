@@ -64,6 +64,28 @@ try:
     assert info['noteBg']=='rgba(0, 0, 0, 0)' and info['listBg']=='rgba(0, 0, 0, 0)',info
     assert info['shields']==0 and info['originalImage'],info
     assert len(driver.find_elements(By.CSS_SELECTOR,'#l1wb-offers .l1wb-offer'))==4
+    assert 'notícia-mestre' in driver.find_element(By.ID,'l1wb-panel').text.casefold()
+    assert 'BRZ' not in driver.find_element(By.ID,'l1wb-panel').text
+    # No Level 1, a manchete está liberada no início e a fonte de câmbio/Chicago é padronizada.
+    js("setStage('r1_home')")
+    wait.until(lambda d:len(d.find_elements(By.ID,'txt_text_cbot'))==1)
+    assert js("return getComputedStyle(document.getElementById('txt_text_cbot')).fontSize")=='40px'
+    assert js("return getComputedStyle(document.getElementById('txt_text_cambio')).fontSize")=='40px'
+    js("setStage('r1_news')")
+    wait.until(lambda d:len(d.find_elements(By.ID,'txt_text_news'))==1)
+    assert 'China reduz' in driver.find_element(By.ID,'txt_text_news').text
+    js("setStage('r1_exw')")
+    screen_ready()
+    # Voltar deve desfazer o caminho, não recair no Book do Trader.
+    js("state.guideSeen.partials_menu_enter=true;state.guideSeen.partials_soja_enter=true;openPartialsMenu()")
+    wait.until(lambda d:js("return state.stage==='partials_menu'"))
+    js("setStage('partials_soja')")
+    wait.until(lambda d:js("return state.stage==='partials_soja'"))
+    js("backFromPartials()")
+    assert js("return state.stage")=='partials_menu'
+    js("backFromPartials()")
+    assert js("return state.stage")=='r1_exw'
+    screen_ready()
     assert not driver.find_elements(By.ID,'l1wb-dialog')  # nenhuma camada aberta na chegada
     driver.save_screenshot(str(ARTIFACTS/'01-layout-original-integrado.png'))
     click('#l1wb-panel [data-l1-tab="offers"]')
