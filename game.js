@@ -2481,7 +2481,7 @@ function renderCampaignResultScreen() {
       <div class="campaign-card campaign-card-xl">
         <div class="campaign-kicker">LEVEL 1 — RESULTADO FINAL</div>
         <h1>${verdict}</h1>
-        <p class="campaign-lead">Referência histórica 06–12/11/2026 · retirada Fev/27 → Santos Mar/27. Venda CFR China simulada: +${level.fixedSaleBasisCentBu.toFixed(1)} c/bu · frete marítimo fixo: US$ ${level.fixedFreightUsdT.toFixed(2)}/t · fobbing: US$ ${level.fixedFobbingUsdT.toFixed(2)}/t.</p>
+        <p class="campaign-lead">Operação simulada de originação, com destino e logística principal já definidos. Venda CFR China: +${level.fixedSaleBasisCentBu.toFixed(1)} c/bu · frete marítimo fixo: US$ ${level.fixedFreightUsdT.toFixed(2)}/t · fobbing: US$ ${level.fixedFobbingUsdT.toFixed(2)}/t.</p>
         <div class="campaign-metrics">
           <div class="metric-box"><span>Volume-alvo</span><strong>${formatTon(level.targetVolumeT)} t</strong></div>
           <div class="metric-box"><span>Volume contratado</span><strong>${formatTon(result.totalBoughtT)} t</strong></div>
@@ -2498,7 +2498,7 @@ function renderCampaignResultScreen() {
             <tbody>${rows}</tbody>
           </table>
         </div></details>
-        <p class="campaign-lead" style="font-size:13px;margin-top:10px">Valores em c/bu, salvo volume. P&L indicado = spread bruto do exercício; não considera hedge executado, capital, custos financeiros, impostos, execução, diferenças de janela ou marcação a mercado. Preços/fretes são referências BRZ; volumes e venda são simulados.</p>
+        <p class="campaign-lead" style="font-size:13px;margin-top:10px">Valores em c/bu, salvo volume. A margem indicada é didática e não inclui hedge executado, capital, custos financeiros, impostos ou marcação a mercado. Preços, volumes e venda são simulados.</p>
         <div class="campaign-actions">
           <button class="campaign-btn campaign-btn-light" onclick="window.restartCampaignLevel()">Repetir level</button>
           <button class="campaign-btn campaign-btn-light" onclick="window.backToCampaignMenu()">Voltar ao menu campanha</button>
@@ -4496,8 +4496,7 @@ addHot("hot_calib", () => toggleCalib(!calibEnabled));
         setStage("r1_home");
         return;
       }
-      if (screenId.startsWith("partials_")) backFromPartials();
-      else setStage(state.prevStage || "home_canva");
+      setStage(state.prevStage || "home_canva");
     });
   }
 
