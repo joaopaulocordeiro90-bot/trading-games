@@ -943,7 +943,14 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb-exercise{padding:10px 0;border-bottom:1px solid #e1d4c1}
   .l1wb-exercise-controls{display:flex;gap:8px;margin-top:8px}
   .l1wb-exercise-controls input{min-width:0;flex:1;padding:9px;border:1px solid #bba98f;border-radius:7px;font:inherit}
-  .l1wb-exercise-feedback{font-size:13px;color:#2d6448;min-height:18px;margin-top:5px}
+  .l1wb-exercise-feedback{font-size:13px;color:#2d6448;min-height:18px;margin-top:5px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .l1wb-hint-btn{font-size:12px;padding:4px 8px}
+  .l1wb-dialog{box-sizing:border-box;overflow-x:hidden}
+  .l1wb-dialog *{box-sizing:border-box;min-width:0}
+  .l1wb-dialog .l1wb-exercise{overflow-wrap:anywhere}
+  .l1wb-dialog input[data-l1-answer]{max-width:100%;min-width:120px}
+  .l1-decision-review{padding:10px 12px;line-height:1.45;background:#f4f8f7;border-left:3px solid #14735b;border-radius:6px}
+  .l1wb-list,.l1wb{isolation:isolate}
   .l1wb-dialog .l1wb-market{max-height:440px;overflow:auto}
   .l1wb-dialog .l1wb-market h3{font-size:20px}
   .l1wb-dialog .l1wb-market p{font-size:16px}
@@ -1072,16 +1079,16 @@ function campaignL1CalculatorMarkup(rd){
   const key=String(state.round)+':'+String(selected.id??formatOfferDisplayName(selected));
   const answers=(state.campaign.l1Exercises||(state.campaign.l1Exercises={}))[key]||{};
   const steps=[
-    ['freight','1. Calcule o frete rodoviário (R$/t)',`Frete informado: US$ ${num(lot.inlandUsdT)}/t. Câmbio: R$ ${num(lot.fx,4)}/US$. Multiplique.`],
-    ['exw','2. Converta o preço EXW (US$/t)',`R$ ${num(lot.priceBrlSc)}/sc × ${num((1000/60),4)} sc/t ÷ câmbio.`],
-    ['cfr','3. Calcule o custo CFR (¢/bu)',`Some EXW, rodoviário US$ ${num(lot.inlandUsdT)}/t, fobbing US$ ${num(lot.fobbingUsdT)}/t e marítimo US$ ${num(lot.maritimeUsdT)}/t; divida por ${num(36.7437,4)} e multiplique por 100.`],
-    ['basis','4. Calcule o basis de custo (¢/bu)',`CFR calculado menos Chicago ${num(lot.cbotCentBu)} ¢/bu.`]
+    ['freight','1. Calcule o frete rodoviário (R$/t)',`Frete rodoviário: US$ ${num(lot.inlandUsdT)}/t · Câmbio: R$ ${num(lot.fx,4)}/US$.`],
+    ['exw','2. Converta o preço EXW (US$/t)',`Preço EXW: R$ ${num(lot.priceBrlSc)}/sc · Conversão: ${num((1000/60),4)} sc/t · Câmbio: R$ ${num(lot.fx,4)}/US$.`],
+    ['cfr','3. Calcule o custo CFR (¢/bu)',`EXW: preço convertido na etapa 2 (US$/t) · Rodoviário: US$ ${num(lot.inlandUsdT)}/t · Fobbing: US$ ${num(lot.fobbingUsdT)}/t · Marítimo: US$ ${num(lot.maritimeUsdT)}/t · Conversão: ${num(36.7437,4)} bu/t.`],
+    ['basis','4. Calcule o basis de custo (¢/bu)',`Custo CFR: resultado da etapa 3 (¢/bu) · Chicago: ${num(lot.cbotCentBu)} ¢/bu.`]
   ];
   return header+`<p><strong>Rodada ${state.round} de 5.</strong> Responda cada conta e confira. Os botões e a navegação do jogo permanecem disponíveis.</p>
     ${steps.map(([id,label,hint])=>`<div class="l1wb-exercise"><strong>${label}</strong><p class="l1wb-hint">${hint}</p><div class="l1wb-exercise-controls">
       <input type="text" inputmode="decimal" data-l1-answer="${id}" aria-label="${label}" placeholder="Digite o resultado" value="${escapeHtml(String(answers[id]?.value||''))}"/>
       <button type="button" class="l1wb-btn" data-l1-check="${id}">Conferir</button></div>
-      <div class="l1wb-exercise-feedback" data-l1-feedback="${id}" aria-live="polite">${answers[id]?.ok?'✓ Correto':answers[id]?.attempted?'Confira as unidades e tente novamente.':''}</div></div>`).join('')}
+      <div class="l1wb-exercise-feedback" data-l1-feedback="${id}" aria-live="polite">${answers[id]?.ok?'✓ Correto':answers[id]?.attempted?'Resultado incorreto. Revise os dados e tente novamente.':''}${answers[id]?.attempts>=2&&!answers[id]?.ok?`<button type="button" class="l1wb-btn l1wb-hint-btn" data-l1-hint="${id}">Dica opcional</button>`:''}</div></div>`).join('')}
     <p class="l1wb-hint">Você pode tentar novamente sem penalidade. Os resultados são validados sem revelar a resposta antecipadamente.</p>`;
 }
 
@@ -1140,8 +1147,18 @@ function attachCampaignL1WorkbenchEvents(container,rd){
       const target=targets[check];
       if(!target)return;
       const ok=value!==''&&Number.isFinite(candidate)&&Math.abs(candidate-target[0])<=target[1];
-      answers[check]={value,attempted:true,ok};
-      if(feedback)feedback.textContent=ok?'✓ Correto.':'Confira as unidades e tente novamente.';
+      const attempts=Number(answers[check]?.attempts||0)+1;
+      answers[check]={value,attempted:true,ok,attempts};
+      if(feedback){feedback.textContent=ok?'✓ Correto.':`Resultado incorreto. Revise os dados e tente novamente. ${attempts>=2?'Dica opcional disponível.':''}`;
+        if(!ok&&attempts>=2){const hintButton=document.createElement('button');hintButton.type='button';hintButton.className='l1wb-btn l1wb-hint-btn';hintButton.dataset.l1Hint=check;hintButton.textContent='Dica opcional';feedback.appendChild(hintButton);}}
+
+      return;
+    }
+    const hint=button.dataset.l1Hint;
+    if(hint){
+      const hints={freight:'Observe a moeda solicitada e a moeda de cotação do frete.',exw:'A cotação é por saca; a resposta deve estar em dólares por tonelada.',cfr:'Todos os custos devem estar na mesma unidade antes da conversão para centavos por bushel.',basis:'Compare o custo equivalente com a referência de Chicago, preservando o sinal.'};
+      const feedback=container.querySelector('[data-l1-feedback="'+hint+'"]');
+      if(feedback)feedback.textContent=hints[hint]||'Confira as unidades da resposta.';
       return;
     }
     const action=button.dataset.l1Action;
@@ -1233,6 +1250,7 @@ function buildCampaignRoundSummaryHtml(roundNum = state.round) {
   return `
     <div class="campaign-round-summary">
       <div class="campaign-round-kicker">Resumo da rodada ${Number(roundNum || 1)}</div>
+      <p class="l1-decision-review"><strong>Leitura de mesa:</strong> ${lot.marginCentBu>=0?'A compra apresenta margem bruta indicativa positiva.':'A compra apresenta margem bruta indicativa negativa.'} ${lot.basisCentBu<=Number(book.level.targetBasisCentBu)?'O basis está dentro da meta de originação.':'O basis ficou acima da meta de originação.'} Avalie se a notícia da rodada sustenta originar agora ou preservar capacidade para a próxima.</p>
       ${feedback}
       ${partialNotice}
       <details class="l1-result-details"><summary>Como o basis e a margem foram calculados</summary><p>${introHtml}</p>
