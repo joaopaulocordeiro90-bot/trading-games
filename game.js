@@ -2078,9 +2078,14 @@ function setStage(stage) {
 
   state.prevStage = state.stage;
   state.stage = stage;
-  if (isCampaignMode() && Number(state.campaign?.levelId) === 1 && stage !== 'r1_exw') {
-    state.campaign.l1Focus = false;
-    document.getElementById('l1wb-dialog')?.remove();
+  if (isCampaignMode() && Number(state.campaign?.levelId) === 1) {
+    if (stage !== 'r1_exw') {
+      state.campaign.l1Focus = false;
+      document.getElementById('l1wb-dialog')?.remove();
+    } else if (from !== 'r1_exw' && typeof window !== 'undefined' && window.innerWidth < 720) {
+      // O canvas original fica ilegível em smartphones; abrir foco na entrada do L1.
+      state.campaign.l1Focus = true;
+    }
   }
 
   // 🎵 Música
