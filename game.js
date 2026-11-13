@@ -667,7 +667,8 @@ function selectExwOfferForCurrentRound(offer, rd, screenId = "r1_exw") {
   state.choices.exw[state.round] = draft;
   renderOverlaysForScreen(screenId, rd);
   setTimerText();
-  triggerGuideEvent("r1_exw_first_offer");
+  // O L1 possui guia próprio; não reabre o tutorial genérico de escolha de corredor.
+  if (!isCampaignLevel1Exw(screenId)) triggerGuideEvent("r1_exw_first_offer");
 }
 
 
