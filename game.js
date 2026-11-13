@@ -717,7 +717,7 @@ function initCampaignRun(levelId = 1) {
   if (Number(level.id) === 1) {
     state.campaign.l1Tab = 'market';
     state.campaign.l1CalcVisible = false;
-    state.campaign.l1Focus = typeof window !== 'undefined' && window.innerWidth < 720;
+    state.campaign.l1Focus = false; // Não encobrir a arte original ao avançar rodada
   }
   state.settings.shipCount = 1;
   state.timeLeft = 0;
@@ -869,8 +869,10 @@ function calculateCampaignBookSnapshot(extraOffer = null) {
 }
 
 /* ============================================================================
-   CAMPANHA L1 — WORKBENCH DE DECISÃO (ISOLADO)
-   Nenhuma regra econômica ou coordenada dos modos Guiado / Expert é alterada.
+   CAMPANHA L1 — INTERFACE INTEGRADA AO CADERNO + QUADRO ORIGINAL
+   Restitui integralmente a imagem do mapa, caderno, quadro de ofertas, sacas e
+   hotspots originais. Calculadora/detalhes só abrem por escolha do jogador.
+   Esta seção só é utilizada no Modo Campanha / Level 1 / tela r1_exw.
    ============================================================================ */
 function isCampaignLevel1Exw(screenId='r1_exw') {
   return screenId === 'r1_exw' && isCampaignMode() && Number(state.campaign?.levelId) === 1;
@@ -881,69 +883,65 @@ function ensureCampaignL1WorkbenchStyle() {
   const el = document.createElement('style');
   el.id = 'campaign-l1-workbench-style';
   el.textContent = `
-  .l1wb { position:absolute;left:16px;top:149px;width:948px;height:846px;z-index:19;
-    box-sizing:border-box;padding:16px 18px;border-radius:22px;background:rgba(255,255,255,.985);
-    border:2px solid #e9d9c4;box-shadow:0 16px 36px rgba(15,23,42,.22);
-    color:#142235;pointer-events:auto;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;
-    display:flex;flex-direction:column;gap:9px;overflow:hidden;}
-  .l1wb *{box-sizing:border-box}
-  .l1wb-head{display:flex;gap:14px;align-items:center;justify-content:space-between}
-  .l1wb-overline{color:#935115;letter-spacing:.095em;font-size:11px;font-weight:900;text-transform:uppercase}
-  .l1wb-head h2{font-size:26px;line-height:1.15;margin:1px 0 0;color:#152238}
-  .l1wb-status{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-  .l1wb-chip{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:10px;background:#f8f4ec;border:1px solid #eedfc9;font-size:16px;font-weight:800;white-space:nowrap}
-  .l1wb-progress{height:6px;overflow:hidden;border-radius:20px;background:#e8e3d8}
-  .l1wb-progress i{display:block;height:100%;background:linear-gradient(90deg,#d97706,#15803d);border-radius:20px}
-  .l1wb-tabs{display:flex;align-items:center;gap:7px;border-bottom:1px solid #e2e5e9;padding-bottom:7px}
-  .l1wb-btn{font:inherit;cursor:pointer;border:1px solid #d5d9de;border-radius:10px;padding:8px 12px;background:#fff;color:#172233;font-size:16px;font-weight:800}
-  .l1wb-btn:hover{background:#f9f3e6}
-  .l1wb-btn[aria-selected=true]{background:#202a37;color:#fff;border-color:#202a37}
-  .l1wb-btn-primary{background:#157a50;color:white;border-color:#157a50}
-  .l1wb-btn-primary:hover{background:#0c6541}
-  .l1wb-btn:disabled{opacity:.48;cursor:not-allowed}
-  .l1wb-filler{flex:1}
-  .l1wb-content{flex:1;min-height:0;overflow:auto;scrollbar-width:thin}
-  .l1wb-note{font-size:18px;line-height:1.43;color:#405064;margin:6px 0}
-  .l1wb-label{display:block;text-transform:uppercase;letter-spacing:.055em;font-size:13px;font-weight:900;color:#925113;margin-bottom:5px}
-  .l1wb-market{min-height:100%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;max-width:840px}
-  .l1wb-market h3{font-size:24px;line-height:1.24;margin:3px 0 7px;color:#172233}
-  .l1wb-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;color:#64748b}
-  .l1wb-grid{display:grid;grid-template-columns:1.02fr 1fr;gap:13px;height:100%;min-height:0}
-  .l1wb-offers{overflow:auto;display:flex;flex-direction:column;gap:5px;max-height:100%}
-  .l1wb-offer{font:inherit;font-size:16px;line-height:1.15;text-align:left;background:#fafbfc;color:#192838;border:1px solid #dbe1e6;padding:8px 9px;cursor:pointer;border-radius:10px;display:flex;align-items:center;gap:10px;justify-content:space-between}
-  .l1wb-offer strong{display:block;font-size:17px}
-  .l1wb-offer small{display:block;font-size:13px;color:#64748b;padding-top:2px}
-  .l1wb-offer[aria-pressed=true]{border:2px solid #157a50;background:#eff8f1;padding:7px 8px}
-  .l1wb-costbox{background:#f7f9fa;border:1px solid #dce4e9;border-radius:14px;padding:12px;overflow:auto}
-  .l1wb-costbox h3{font-size:19px;margin:2px 0 6px}
-  .l1wb-costrow{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:16px;padding:5px 0;border-bottom:1px solid #e2e7ea}
-  .l1wb-costrow strong{font-size:17px}
-  .l1wb-actions{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:9px}
-  .l1wb-hint{font-size:12px;color:#64748b;line-height:1.3}
-  .l1wb-position{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:3px 0 10px}
-  .l1wb-position>div{border:1px solid #e1e5e9;border-radius:10px;background:#f7f8fa;padding:10px}
-  .l1wb-position b{display:block;font-size:19px}
-  .l1wb-position span{font-size:11px;font-weight:700;color:#64748b}
-  .l1wb-history{font-size:13px;color:#405064;line-height:1.45}
-  .l1wb-focus-backdrop{position:fixed;inset:0;background:rgba(9,15,25,.68);z-index:10040;display:flex;align-items:center;justify-content:center;padding:12px}
-  .l1wb.l1wb-focus-panel{position:relative!important;inset:auto!important;left:auto!important;top:auto!important;transform:none!important;
-     width:min(960px,96vw);height:min(680px,92vh);max-height:92vh;box-shadow:0 28px 80px #0007;padding:20px 24px}
-  .l1wb-focus-panel .l1wb-content{font-size:16px}
-  .l1wb-focus-panel .l1wb-offer{padding:14px;font-size:16px}
-  .l1wb-focus-panel .l1wb-offer strong{font-size:17px}
-  .l1wb-focus-panel .l1wb-costrow{font-size:16px;padding:9px 0}
-  .l1wb-focus-panel .l1wb-costrow strong{font-size:17px}
-  .l1wb-focus-panel .l1wb-btn{font-size:15px;padding:11px 15px}
-  .l1wb-focus-panel .l1wb-market h3{font-size:22px}
-  .l1wb-focus-panel .l1wb-note{font-size:17px}
-  .l1wb-legacy-shield{position:absolute;pointer-events:none;z-index:11;border-radius:16px;background:#eaf0f3;box-shadow:0 8px 20px #14223520}
-  .l1wb-sideguide{position:absolute;z-index:12;top:290px;left:1465px;width:353px;min-height:565px;pointer-events:none;display:flex;flex-direction:column;justify-content:space-around;
-    border-radius:22px;background:linear-gradient(150deg,#0e3144,#173b4b);color:white;padding:25px 22px;box-sizing:border-box;font:18px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
-  .l1wb-sideguide h3{margin:0 0 12px;font-size:23px;color:white}.l1wb-sideguide p{margin:10px 0;opacity:.88}
-  .l1wb-sideguide strong{display:block;color:#f9d47d;font-size:27px;margin:20px 0 6px}
-  .l1wb-sideguide-meter{height:9px;background:#416273;border-radius:9px;overflow:hidden;margin-top:12px}
-  .l1wb-sideguide-meter b{display:block;background:#f9d47d;height:100%;border-radius:9px}
-  .l1wb-score-preview{margin-top:11px;border-radius:9px;padding:9px 11px;background:#eaf5ee;font-size:12px;color:#125c40}
+  /* Caderno original: apenas textos e botões dentro da folha, sem cartão extra. */
+  .l1wb,.l1wb *,.l1wb-list,.l1wb-list *{box-sizing:border-box}
+  .l1wb{position:absolute;left:230px;top:648px;width:467px;height:265px;z-index:19;
+    padding:0;background:transparent;border:0;box-shadow:none;overflow:hidden;
+    font:16px/1.26 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#172533;
+    display:flex;flex-direction:column;gap:5px;pointer-events:auto}
+  .l1wb-head{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:25px}
+  .l1wb-head strong{font-size:17px;letter-spacing:-.01em;color:#57351b}
+  .l1wb-head small{font-size:13px;font-weight:800;color:#436156}
+  .l1wb-tabs{display:flex;gap:4px;align-items:center;min-height:33px}
+  .l1wb-btn{border:1px solid #d5bfa1;background:#fffaf1;border-radius:8px;padding:5px 9px;
+    font:800 13px/1.2 system-ui,Arial,sans-serif;cursor:pointer;color:#493b29}
+  .l1wb-btn:hover{background:#f3e5cd}
+  .l1wb-btn[aria-selected=true]{background:#d46b1d;color:white;border-color:#ad5115}
+  .l1wb-btn-primary{color:#fff;background:#167449;border-color:#167449}
+  .l1wb-btn-primary:hover{background:#075b34}
+  .l1wb-btn:disabled{opacity:.45;cursor:not-allowed}
+  .l1wb-content{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:4px}
+  .l1wb-label{font:900 12px/1.3 system-ui,Arial,sans-serif;text-transform:uppercase;letter-spacing:.055em;color:#9a541b}
+  .l1wb-content h3{font-size:17px;line-height:1.22;margin:5px 0;color:#233329}
+  .l1wb-content p{font-size:14px;line-height:1.3;margin:5px 0;color:#44423b}
+  .l1wb-content strong{color:#163c33}
+  .l1wb-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px}
+  .l1wb-mini{background:rgba(254,247,232,.9);border:1px solid #e8d3ab;border-radius:8px;padding:6px 8px;margin-top:5px}
+  .l1wb-mini p{margin:2px 0}
+  .l1wb-foot{font:11px/1.2 system-ui,Arial,sans-serif;color:#826c58;min-height:14px}
+  /* Quadro OFERTAS EXW é parte da imagem; cards ocupam apenas seu interior. */
+  .l1wb-list{position:absolute;left:1472px;top:370px;width:356px;height:504px;z-index:18;
+    background:transparent;border:0;overflow-y:auto;scrollbar-width:thin;pointer-events:auto;
+    display:flex;flex-direction:column;gap:8px;padding:1px 3px}
+  .l1wb-list-heading{margin:0 2px 1px;color:#655140;font:800 13px/1.3 system-ui,Arial,sans-serif;text-align:center}
+  .l1wb-offer{width:100%;min-height:94px;text-align:left;border:1.5px solid #d9cbb6;border-radius:11px;
+    background:#fdfbf5;color:#17252b;padding:10px 12px;cursor:pointer;
+    display:flex;flex-direction:column;justify-content:center;gap:4px;font:16px/1.2 system-ui,Arial,sans-serif}
+  .l1wb-offer:hover{border-color:#0e7b57;background:#f5faee}
+  .l1wb-offer[aria-pressed=true]{border:3px solid #16804d;background:#eaf5df;padding:8px 10px}
+  .l1wb-offer-top{display:flex;align-items:center;gap:7px;justify-content:space-between}
+  .l1wb-offer-top strong{font-size:17px;font-weight:900;line-height:1.18}
+  .l1wb-offer-price{font-weight:900;color:#a34f17;white-space:nowrap;font-size:17px}
+  .l1wb-offer small{font-size:13px;color:#526066;font-weight:700}
+  .l1wb-offer-flag{font-size:12px;font-weight:800;color:#157549}
+  /* Sob demanda: modal compacto central, nunca aberto permanentemente. */
+  .l1wb-focus-backdrop{position:fixed;inset:0;background:rgba(7,16,27,.49);z-index:10040;
+    display:flex;align-items:center;justify-content:center;padding:16px}
+  .l1wb-dialog{background:#fffaf1;border:3px solid #e0b477;border-radius:18px;box-shadow:0 25px 70px #0006;
+    width:min(580px,94vw);max-height:min(680px,88vh);overflow-y:auto;padding:22px 25px;
+    font:16px/1.4 system-ui,Arial,sans-serif;color:#18312a}
+  .l1wb-dialog h2{font-size:21px;margin:0 0 10px}
+  .l1wb-dialog-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+  .l1wb-costrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:9px 0;border-bottom:1px solid #e1d4c1;font-size:15px}
+  .l1wb-costrow strong{font-size:16px;white-space:nowrap}
+  .l1wb-hint{font-size:12px;color:#6b6152;line-height:1.35;margin-top:13px}
+  .l1wb-dialog .l1wb-market{max-height:440px;overflow:auto}
+  .l1wb-dialog .l1wb-market h3{font-size:20px}
+  .l1wb-dialog .l1wb-market p{font-size:16px}
+  .l1wb-dialog .l1wb-actions{margin-top:18px}
+  @media(max-width:680px){.l1wb-dialog{width:96vw;max-height:90vh;padding:16px}.l1wb-dialog .l1wb-tabs{flex-wrap:wrap}}
+  /* Regras de resultado da Etapa 2, exclusivas do L1. */
   .l1-feedback{border-radius:12px;background:#fff7e8;border:1px solid #e9cfaa;padding:14px 16px;margin:8px 0 14px}
   .l1-feedback.is-positive{background:#edf7ee;border-color:#b6d4be}.l1-feedback-title{font-size:18px;font-weight:800;margin-bottom:9px}
   .l1-feedback-metrics{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}.l1-feedback p{font-size:13px;margin:10px 0 0}
@@ -958,127 +956,159 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1-best-score{display:inline-flex;font-size:13px;align-self:center;color:#0c7153;font-weight:700}
   .l1-result-details{border:1px solid #e3e9ef;border-radius:12px;padding:8px 14px;margin:15px 0}
   .l1-result-details summary{cursor:pointer;padding:10px 0;font-weight:700}
-  @media(max-width:640px){.l1wb-focus-panel .l1wb-grid{grid-template-columns:1fr;overflow:auto;height:auto}.l1wb-focus-panel .l1wb-content{overflow:auto}.l1wb-focus-panel .l1wb-offers{max-height:240px}.l1wb-focus-panel .l1wb-head{align-items:flex-start;flex-direction:column}.l1wb-focus-panel .l1wb-tabs{flex-wrap:wrap}}
   `;
   document.head.appendChild(el);
 }
 
+function campaignL1UiData(rd) {
+  const level=getCampaignLevel(1),book=calculateCampaignBookSnapshot();
+  const offers=getCurrentExwOffersForRender(rd);
+  const tab=['market','offers','book'].includes(state.campaign.l1Tab)?state.campaign.l1Tab:'market';
+  const confirmed=!!state.confirmed?.exw?.[state.round];
+  const selected=state.choices?.exw?.[state.round]||null;
+  const maxVol=Number(level.targetVolumeT||60000);
+  const remaining=Math.max(0,maxVol-Number(book.totalUsedT||0));
+  return {level,book,offers,tab,confirmed,selected,maxVol,remaining};
+}
+
 function campaignL1WorkbenchMarkup(rd) {
-  const level = getCampaignLevel(1);
-  const book = calculateCampaignBookSnapshot();
-  const offers = getCurrentExwOffersForRender(rd);
-  const tab = ['market','offers','book'].includes(state.campaign.l1Tab) ? state.campaign.l1Tab : 'market';
-  const confirmed = !!state.confirmed?.exw?.[state.round];
-  const selected = state.choices?.exw?.[state.round] || null;
-  const booked = Number(book.totalUsedT || 0);
-  const maxVol = Number(level.targetVolumeT || 60000);
-  const remaining = Math.max(0,maxVol-booked);
-  const progress = maxVol ? Math.min(100,booked/maxVol*100) : 0;
-  const num = (v,d=1)=>Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
-  const vol = v=>Number(v||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
-  const signed = v=>`${Number(v)>=0?'+':''}${num(v,1)}`;
-  const note = String(rd.market_headline || rd.news || 'Consulte os preços e as ofertas antes de comprar.');
-  const name = o => escapeHtml(formatOfferDisplayName(o));
-  const offersHtml = offers.map((o,i)=>`<button type="button" class="l1wb-offer" data-l1-select="${i}" aria-pressed="${!!selected && Number(selected.id)===Number(o.id)}"><span><strong>${name(o)}</strong><small>${vol(o.volume_t)} t · retirada Fev/27</small></span><b>R$ ${num(o.price_brl_saca,2)}/sc</b></button>`).join('');
-  let calcHtml = '<h3>Selecione uma origem</h3><p class="l1wb-note">Compare preço EXW e volume. A calculadora é opcional e utiliza a mesma fórmula do resultado.</p>';
-  if(selected) {
-    const offered=Number(selected.available_volume_t||selected.volume_t||0);
-    const effective=confirmed?Number(state.confirmed.exw[state.round]?.volume_t||0):Math.min(offered,remaining);
-    const draft={...selected,volume_t:effective};
-    const lot=calculateCampaignOfferBasisSnapshot(draft,state.round);
-    const hypothetical=confirmed?book:calculateCampaignBookSnapshot(draft);
-    const preview=state.campaign.l1CalcVisible===true;
-    calcHtml = `<span class="l1wb-label">${confirmed?'Lote contratado':'Origem selecionada'}</span><h3>${name(selected)}</h3>
-      <div class="l1wb-costrow"><span>Volume da decisão</span><strong>${vol(effective)} t</strong></div>
-      <div class="l1wb-costrow"><span>Basis desta origem</span><strong>${signed(lot.basisCentBu)} ¢/bu</strong></div>
-      <div class="l1wb-costrow"><span>Basis médio ${confirmed?'do book':'projetado'}</span><strong>${signed(hypothetical.basisAvg)} ¢/bu</strong></div>
-      <div class="l1wb-actions"><button type="button" class="l1wb-btn" data-l1-action="calculator">${preview?'Ocultar':'Consultar'} custo CFR</button>
-      <button type="button" class="l1wb-btn l1wb-btn-primary" data-l1-action="buy" ${confirmed||remaining===0?'disabled':''}>${confirmed?'Já contratado':'Comprar lote'}</button></div>`;
-    if(preview) calcHtml += `<div style="margin-top:7px">
-      <div class="l1wb-costrow"><span>EXW convertido</span><strong>${num(lot.interiorUsdT??lot.interiorCentBu*BU_PER_TON_SOY/100,2)} US$/t</strong></div>
-      <div class="l1wb-costrow"><span>Frete rodoviário</span><strong>${num(lot.inlandUsdT,2)} US$/t</strong></div>
-      <div class="l1wb-costrow"><span>Fobbing + marítimo</span><strong>${num(lot.fobbingUsdT+lot.maritimeUsdT,2)} US$/t</strong></div>
-      <div class="l1wb-costrow"><span>Custo CFR equivalente</span><strong>${num(lot.cfrCostCentBu,1)} ¢/bu</strong></div>
-      <div class="l1wb-costrow"><span>CBOT H27</span><strong>${num(lot.cbotCentBu,2)} ¢/bu</strong></div>
-      <div class="l1wb-costrow"><span>Margem bruta / t</span><strong>${num(lot.pnlUsdT,2)} US$/t</strong></div>
-      <p class="l1wb-hint">EXW convertido + rodoviário + fobbing + marítimo − CBOT. Projeção didática, sem hedge ou custos financeiros.</p></div>`;
-  }
+  const {level,book,tab,confirmed,selected,maxVol,remaining}=campaignL1UiData(rd);
+  const num=(v,d=1)=>Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const vol=v=>Number(v||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
+  const signed=v=>`${Number(v)>=0?'+':''}${num(v,1)}`;
+  const round=Number(state.round);
   let content='';
-  if(tab==='market') content=`<div class="l1wb-market"><span class="l1wb-label">Etapa 1 · Entender o mercado</span><h3>${escapeHtml(note)}</h3>
-    <p class="l1wb-note">CBOT H27: <strong>${num(rd.cbot_cent_bu,2)} ¢/bu</strong> · Dólar futuro Mar/27: <strong>R$ ${num(rd.usd,4)}</strong>.</p>
-    <p class="l1wb-note">Venda CFR e marítimo já contratados no exercício. Sua missão é escolher origens competitivas e controlar o basis do navio.</p>
-    <button type="button" class="l1wb-btn l1wb-btn-primary" data-l1-tab="offers">Analisar ofertas →</button></div>`;
-  if(tab==='offers') content=`<div class="l1wb-grid"><div class="l1wb-offers"><span class="l1wb-label">Etapa 2 · Escolher uma oferta</span>${offersHtml}</div><div class="l1wb-costbox">${calcHtml}</div></div>`;
-  if(tab==='book') content=`<span class="l1wb-label">Etapa 3 · Acompanhar o resultado</span><div class="l1wb-position">
-    <div><span>Originado</span><b>${vol(booked)} t</b></div><div><span>Basis médio</span><b>${booked?signed(book.basisAvg)+' ¢':'—'}</b></div>
-    <div><span>Margem bruta indicativa</span><b>${booked?'US$ '+vol(book.pnlUsd):'—'}</b></div></div>
-    <div class="l1wb-history">${book.usedLots.length?book.usedLots.map(l=>`${escapeHtml(l.origin)} · ${vol(l.usedVolumeT)} t · ${signed(l.basisCentBu)} ¢/bu`).join('<hr style="border:0;border-top:1px solid #e6eaef;margin:5px 0">'):'Nenhuma compra confirmada. A primeira oferta contratada aparecerá aqui.'}</div>
-    <div class="l1wb-score-preview">${booked?`Pontuação parcial (não define aprovação): <strong>${calculateCampaignL1Score(book.usedLots,book).total}/100</strong>`:'A pontuação começa após sua primeira compra.'}</div>
-    <p class="l1wb-hint">O resultado da rodada é apresentado após confirmar a compra. Margem bruta indicativa não é lucro realizado nem MTM.</p>`;
-  return `<div class="l1wb-head"><div><span class="l1wb-overline">Trading Games · Level 1</span><h2>Originação | Rodada ${state.round} de ${level.rounds}</h2></div>
-    <div class="l1wb-status"><span class="l1wb-chip">${vol(booked)} / ${vol(maxVol)} t</span><span class="l1wb-chip">Meta ≤ +${num(level.targetBasisCentBu,0)} ¢/bu</span></div></div>
-    <div class="l1wb-progress"><i style="width:${progress.toFixed(2)}%"></i></div>
-    <div class="l1wb-tabs" role="tablist" aria-label="Etapas da rodada">
-    <button type="button" class="l1wb-btn" role="tab" data-l1-tab="market" aria-selected="${tab==='market'}">1 · Mercado</button>
-    <button type="button" class="l1wb-btn" role="tab" data-l1-tab="offers" aria-selected="${tab==='offers'}">2 · Ofertas</button>
-    <button type="button" class="l1wb-btn" role="tab" data-l1-tab="book" aria-selected="${tab==='book'}">3 · Posição</button>
-    <span class="l1wb-filler"></span><button type="button" class="l1wb-btn" data-l1-action="focus" aria-label="Ampliar painel">Ampliar ⛶</button></div>
-    <div class="l1wb-content">${content}</div><div class="l1wb-foot"><span>Referências BRZ · volumes e venda CFR simulados</span><span>${confirmed?'Compra confirmada nesta rodada':remaining>0?'Aguardando decisão de compra':'Cargo completo'}</span></div>`;
+  if(tab==='market'){
+    const note=String(rd.market_headline||rd.news||'Observe as referências de mercado antes de comprar.');
+    content=`<span class="l1wb-label">Mercado · Rodada ${round}</span>
+      <h3>${escapeHtml(note)}</h3>
+      <p>Venda CFR China e porto Santos já definidos.</p>
+      <p>Compare as origens na tabela ao lado ou selecione uma saca no mapa.</p>
+      <div class="l1wb-actions"><button class="l1wb-btn l1wb-btn-primary" type="button" data-l1-tab="offers">Ver decisão →</button></div>`;
+  }
+  if(tab==='offers'){
+    let inner='<span class="l1wb-label">Decisão · Uma compra por rodada</span><h3>Selecione uma oferta no quadro à direita ou no mapa.</h3><p>Confira volume e custo antes de usar o botão COMPRAR do caderno.</p>';
+    if(selected){
+      const offered=Number(selected.available_volume_t||selected.volume_t||0);
+      const effective=confirmed?Number(state.confirmed.exw[round]?.volume_t||0):Math.min(offered,remaining);
+      const lot=calculateCampaignOfferBasisSnapshot({...selected,volume_t:effective},round);
+      const projected=confirmed?book:calculateCampaignBookSnapshot({...selected,volume_t:effective});
+      inner=`<span class="l1wb-label">${confirmed?'Compra confirmada':'Oferta selecionada'}</span>
+        <h3>${escapeHtml(formatOfferDisplayName(selected))}</h3>
+        <div class="l1wb-mini"><p><strong>${vol(effective)} t · R$ ${num(selected.price_brl_saca,2)}/sc</strong></p>
+        <p>Basis: <strong>${signed(lot.basisCentBu)} ¢/bu</strong> · Book: <strong>${signed(projected.basisAvg)} ¢/bu</strong></p></div>
+        <div class="l1wb-actions"><button type="button" class="l1wb-btn" data-l1-action="calculator">Calcular CFR ↗</button>
+        <span style="font-size:12px;color:#526557">${confirmed?'Compra registrada':'Use COMPRAR abaixo'}</span></div>`;
+    }
+    content=inner;
+  }
+  if(tab==='book'){
+    content=`<span class="l1wb-label">Posição · Navio de ${vol(maxVol)} t</span>
+    <div class="l1wb-mini"><p><strong>Originação:</strong> ${vol(book.totalUsedT)} t · faltam ${vol(book.missingT)} t</p>
+    <p><strong>Basis médio:</strong> ${book.totalUsedT?signed(book.basisAvg)+' ¢/bu':'—'} · teto +${num(level.targetBasisCentBu,0)}</p>
+    <p><strong>Margem bruta:</strong> ${book.totalUsedT?'US$ '+num(book.pnlUsd,0):'—'}</p></div>
+    <p>${book.totalUsedT?`Nota parcial: <strong>${calculateCampaignL1Score(book.usedLots,book).total}/100</strong>`:'A pontuação começa após a primeira compra.'}</p>
+    <p>Resultado completo e disciplina comercial ao final das cinco rodadas.</p>`;
+  }
+  return `<div class="l1wb-head"><strong>Rodada ${round} de ${level.rounds}</strong><small>${vol(book.totalUsedT)} / ${vol(maxVol)} t</small></div>
+    <nav class="l1wb-tabs" role="tablist" aria-label="Etapas da rodada">
+    <button type="button" class="l1wb-btn" role="tab" data-l1-tab="market" aria-selected="${tab==='market'}">Mercado</button>
+    <button type="button" class="l1wb-btn" role="tab" data-l1-tab="offers" aria-selected="${tab==='offers'}">Origem</button>
+    <button type="button" class="l1wb-btn" role="tab" data-l1-tab="book" aria-selected="${tab==='book'}">Posição</button>
+    <button type="button" class="l1wb-btn" data-l1-action="focus" aria-label="Ampliar leitura do caderno">Ler ⛶</button></nav>
+    <div class="l1wb-content">${content}</div>
+    <div class="l1wb-foot">Meta: basis médio ≤ +${num(level.targetBasisCentBu,0)} ¢/bu · Valores indicativos BRZ</div>`;
+}
+
+function campaignL1OfferListMarkup(rd){
+  const {offers,selected,confirmed}=campaignL1UiData(rd);
+  const num=(v,d=2)=>Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const vol=v=>Number(v||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
+  return `<p class="l1wb-list-heading">Selecione na lista ou no mapa</p>${offers.map((o,i)=>{
+    const active=!!selected&&Number(selected.id)===Number(o.id);
+    return `<button type="button" class="l1wb-offer" data-l1-select="${i}" aria-pressed="${active}">
+       <span class="l1wb-offer-top"><strong>${escapeHtml(formatOfferDisplayName(o))}</strong></span>
+       <span class="l1wb-offer-top"><small>${vol(o.volume_t)} t · Fev/27</small><span class="l1wb-offer-price">R$ ${num(o.price_brl_saca)}/sc</span></span>
+       ${active?`<span class="l1wb-offer-flag">${confirmed?'✓ Compra confirmada':'✓ Selecionada · consulte o caderno'}</span>`:''}
+    </button>`}).join('')}`;
+}
+
+function campaignL1CalculatorMarkup(rd){
+  const {selected,confirmed,book,remaining}=campaignL1UiData(rd);
+  if(!selected) return '';
+  const num=(v,d=2)=>Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const offered=Number(selected.available_volume_t||selected.volume_t||0);
+  const effective=confirmed?Number(state.confirmed.exw[state.round]?.volume_t||0):Math.min(offered,remaining);
+  const draft={...selected,volume_t:effective};
+  const lot=calculateCampaignOfferBasisSnapshot(draft,state.round);
+  const projected=confirmed?book:calculateCampaignBookSnapshot(draft);
+  const signed=v=>`${Number(v)>=0?'+':''}${num(v,1)}`;
+  return `<div class="l1wb-dialog-head"><h2>Calculadora CFR · ${escapeHtml(formatOfferDisplayName(selected))}</h2>
+    <button type="button" class="l1wb-btn" data-l1-action="close">Fechar ✕</button></div>
+    <div class="l1wb-costrow"><span>Volume da decisão</span><strong>${num(effective,0)} t</strong></div>
+    <div class="l1wb-costrow"><span>EXW convertido</span><strong>US$ ${num(lot.interiorUsdT??lot.interiorCentBu*BU_PER_TON_SOY/100)}/t</strong></div>
+    <div class="l1wb-costrow"><span>Frete rodoviário</span><strong>US$ ${num(lot.inlandUsdT)}/t</strong></div>
+    <div class="l1wb-costrow"><span>Fobbing + marítimo</span><strong>US$ ${num(lot.fobbingUsdT+lot.maritimeUsdT)}/t</strong></div>
+    <div class="l1wb-costrow"><span>Custo CFR equivalente</span><strong>${num(lot.cfrCostCentBu,1)} ¢/bu</strong></div>
+    <div class="l1wb-costrow"><span>CBOT H27</span><strong>${num(lot.cbotCentBu) } ¢/bu</strong></div>
+    <div class="l1wb-costrow"><span>Basis desta origem</span><strong>${signed(lot.basisCentBu)} ¢/bu</strong></div>
+    <div class="l1wb-costrow"><span>Basis médio projetado</span><strong>${signed(projected.basisAvg)} ¢/bu</strong></div>
+    <div class="l1wb-costrow"><span>Margem bruta por tonelada</span><strong>US$ ${num(lot.pnlUsdT)}/t</strong></div>
+    <p class="l1wb-hint">EXW convertido + rodoviário + fobbing + marítimo − CBOT. Cálculo indicativo de cenário simulado; não inclui hedge, financiamento nem MTM.</p>`;
 }
 
 function renderCampaignL1Workbench(layer,rd) {
-  if(!isCampaignLevel1Exw()) return;
+  if(!isCampaignLevel1Exw())return;
   ensureCampaignL1WorkbenchStyle();
-  const html=campaignL1WorkbenchMarkup(rd);
-  const panel=document.createElement('section');
-  panel.className='l1wb';
-  panel.id='l1wb-panel';
-  panel.setAttribute('aria-label','Painel de originação do Level 1');
-  panel.innerHTML=html;
-  attachCampaignL1WorkbenchEvents(panel,rd);
-  layer.appendChild(panel);
-  // O fundo original é uma imagem com caderno/tabela desenhados nela.
-  // Essas máscaras são exclusivas do L1 e não alteram imagem, CSS ou hotspots compartilhados.
-  const shield = document.createElement('div');
-  shield.className='l1wb-legacy-shield';
-  shield.style.cssText += ';left:170px;top:580px;width:620px;height:430px;';
-  layer.appendChild(shield);
-  const snap=calculateCampaignBookSnapshot();
-  const max=Math.max(1,Number(snap.level.targetVolumeT||60000));
-  const side=document.createElement('aside');
-  side.className='l1wb-sideguide';
-  side.setAttribute('aria-label','Status resumido da carga');
-  side.innerHTML=`<h3>Plano de carga</h3><p>Uma decisão por rodada. Venda CFR China e porto Santos já definidos.</p>
-    <strong>${formatTon(snap.totalUsedT)} t</strong><p>de ${formatTon(max)} t originadas</p>
-    <div class="l1wb-sideguide-meter"><b style="width:${(100*campaignL1Clamp(snap.totalUsedT/max)).toFixed(1)}%"></b></div>
-    <p>Faltam <b>${formatTon(snap.missingT)} t</b> para completar o navio.</p>
-    <p>Você pode consultar a calculadora antes de cada compra. O resultado ficará disponível na aba Posição.</p>`;
-  layer.appendChild(side);
+  // Não cobrimos caderno, mapa ou tabela: HTML transparente alinhado ao desenho.
+  const notebook=document.createElement('section');
+  notebook.className='l1wb';notebook.id='l1wb-panel';
+  notebook.setAttribute('aria-label','Informações no caderno original');
+  notebook.innerHTML=campaignL1WorkbenchMarkup(rd);
+  attachCampaignL1WorkbenchEvents(notebook,rd);layer.appendChild(notebook);
+  const list=document.createElement('aside');
+  list.className='l1wb-list';list.id='l1wb-offers';
+  list.setAttribute('aria-label','Ofertas EXW no quadro original');
+  list.innerHTML=campaignL1OfferListMarkup(rd);
+  attachCampaignL1WorkbenchEvents(list,rd);layer.appendChild(list);
   document.getElementById('l1wb-dialog')?.remove();
-  if(state.campaign.l1Focus){
-    const backdrop=document.createElement('div');backdrop.id='l1wb-dialog';backdrop.className='l1wb-focus-backdrop';
-    backdrop.innerHTML='<section class="l1wb l1wb-focus-panel" role="dialog" aria-modal="true" aria-label="Painel de decisão ampliado"></section>';
-    backdrop.querySelector('section').innerHTML=html.replace('data-l1-action="focus" aria-label="Ampliar painel">Ampliar ⛶','data-l1-action="focus" aria-label="Fechar painel ampliado">Fechar ✕');
-    backdrop.addEventListener('click',e=>{if(e.target===backdrop){state.campaign.l1Focus=false;backdrop.remove();}});
+  if(state.campaign.l1CalcVisible || state.campaign.l1Focus){
+    const backdrop=document.createElement('div');
+    backdrop.id='l1wb-dialog';backdrop.className='l1wb-focus-backdrop';
+    const calculator=!!state.campaign.l1CalcVisible && !!state.choices?.exw?.[state.round];
+    backdrop.innerHTML=`<section class="l1wb-dialog" role="dialog" aria-modal="true" aria-label="${calculator?'Calculadora CFR':'Leitura ampliada'}">${calculator?campaignL1CalculatorMarkup(rd):
+      `<div class="l1wb-dialog-head"><h2>Caderno · rodada ${state.round}</h2><button type="button" class="l1wb-btn" data-l1-action="close">Fechar ✕</button></div><div class="l1wb-market">${campaignL1WorkbenchMarkup(rd)}</div>`}</section>`;
+    backdrop.addEventListener('click',e=>{if(e.target===backdrop){state.campaign.l1Focus=false;state.campaign.l1CalcVisible=false;renderOverlaysForScreen('r1_exw',rd);}});
     attachCampaignL1WorkbenchEvents(backdrop.querySelector('section'),rd);
     document.body.appendChild(backdrop);
   }
 }
 
-function attachCampaignL1WorkbenchEvents(panel,rd){
-  panel.addEventListener('click',ev=>{
-    const button=ev.target.closest('button'); if(!button || state.guideOverlayOpen) return;
+function attachCampaignL1WorkbenchEvents(container,rd){
+  container.addEventListener('click',ev=>{
+    const button=ev.target.closest('button');
+    if(!button||state.guideOverlayOpen)return;
     const tab=button.dataset.l1Tab;
     if(tab){state.campaign.l1Tab=tab;renderOverlaysForScreen('r1_exw',rd);return;}
     const idx=button.dataset.l1Select;
-    if(idx!==undefined){const offer=getCurrentExwOffersForRender(rd)[Number(idx)]; if(!offer)return;
-      state.campaign.l1Tab='offers';state.campaign.l1CalcVisible=false;
-      selectExwOfferForCurrentRound(offer,rd,'r1_exw');return;}
+    if(idx!==undefined){
+      const offer=getCurrentExwOffersForRender(rd)[Number(idx)];if(!offer)return;
+      state.campaign.l1Tab='offers';state.campaign.l1CalcVisible=false;state.campaign.l1Focus=false;
+      selectExwOfferForCurrentRound(offer,rd,'r1_exw');return;
+    }
     const action=button.dataset.l1Action;
-    if(action==='calculator'){state.campaign.l1CalcVisible=!state.campaign.l1CalcVisible;renderOverlaysForScreen('r1_exw',rd);return;}
-    if(action==='focus'){state.campaign.l1Focus=!state.campaign.l1Focus;renderOverlaysForScreen('r1_exw',rd);return;}
-    if(action==='buy'){state.campaign.l1Focus=false;document.getElementById('l1wb-dialog')?.remove();
-      document.querySelector('[data-l1-hot="confirm"]')?.click();return;}
+    if(action==='calculator'){
+      state.campaign.l1CalcVisible=true;state.campaign.l1Focus=false;
+      renderOverlaysForScreen('r1_exw',rd);return;
+    }
+    if(action==='focus'){
+      state.campaign.l1Focus=true;state.campaign.l1CalcVisible=false;
+      renderOverlaysForScreen('r1_exw',rd);return;
+    }
+    if(action==='close'){
+      state.campaign.l1Focus=false;state.campaign.l1CalcVisible=false;
+      renderOverlaysForScreen('r1_exw',rd);return;
+    }
   });
 }
 
@@ -2082,9 +2112,11 @@ function setStage(stage) {
     if (stage !== 'r1_exw') {
       state.campaign.l1Focus = false;
       document.getElementById('l1wb-dialog')?.remove();
-    } else if (from !== 'r1_exw' && typeof window !== 'undefined' && window.innerWidth < 720) {
-      // O canvas original fica ilegível em smartphones; abrir foco na entrada do L1.
-      state.campaign.l1Focus = true;
+    } else if (from !== 'r1_exw') {
+      // A arte original permanece visível por padrão, inclusive no celular.
+      // Leitura ampliada e calculadora são escolhas explícitas do jogador.
+      state.campaign.l1Focus = false;
+      state.campaign.l1CalcVisible = false;
     }
   }
 
@@ -2278,7 +2310,7 @@ const totalRounds = state.totalRounds || getActiveRules()?.rounds || 5;
       if (Number(state.campaign?.levelId) === 1) {
         state.campaign.l1Tab = 'market';
         state.campaign.l1CalcVisible = false;
-        state.campaign.l1Focus = typeof window !== 'undefined' && window.innerWidth < 720;
+        state.campaign.l1Focus = false; // Não encobrir a arte original ao avançar rodada
       }
       state.campaign.roundSplashUntil = 0;
       setStage("r1_exw");
