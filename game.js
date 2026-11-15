@@ -826,6 +826,7 @@ function calculateCampaignOfferBasisSnapshot(offer, roundNum = state.round) {
     inlandUsdT,
     maritimeUsdT,
     fobbingUsdT,
+    interiorUsdT,
     interiorCentBu,
     inlandCentBu,
     maritimeCentBu,
@@ -3331,7 +3332,8 @@ function renderOverlaysForScreen(screenId, rd) {
     const cbKey=screenId==='r1_exw'&&sc.l1_text_cbot?'l1_text_cbot':'text_cbot';
     const fxKey=screenId==='r1_exw'&&sc.l1_text_cambio?'l1_text_cambio':'text_cambio';
     const compact={fontSize:'40px',fontWeight:'900',whiteSpace:'nowrap'};
-    if (sc[cbKey]) addText(cbKey,Number(rd.cbot_cent_bu).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}),'overlayText',compact);
+    const cbotVisual = screenId === 'r1_exw' ? {...compact,fontSize:'37px'} : compact;
+    if (sc[cbKey]) addText(cbKey,Number(rd.cbot_cent_bu).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}),'overlayText',cbotVisual);
     if (sc[fxKey]) addText(fxKey,Number(rd.usd).toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4}),'overlayText',compact);
   } else {
     if (sc.text_cbot) addText("text_cbot", String(rd.cbot_cent_bu));

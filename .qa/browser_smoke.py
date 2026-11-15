@@ -37,6 +37,33 @@ def screen_ready():
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-panel'))==1 and len(d.find_elements(By.ID,'l1wb-offers'))==1)
     quiet_guide()
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-panel'))==1 and len(d.find_elements(By.ID,'l1wb-offers'))==1)
+    assert_l1_visual_geometry()
+
+def assert_l1_visual_geometry():
+    # Validação do DOM real com escala responsiva de desktop e celular.
+    result=js("""return (()=>{
+      const $=s=>document.querySelector(s);
+      const bags=[...document.querySelectorAll('img.campaign-exw-bag')];
+      const el=$('#l1wb-panel'), list=$('#l1wb-offers'), cb=$('#txt_l1_text_cbot'), fx=$('#txt_l1_text_cambio');
+      const rect=e=>{if(!e)return null;const r=e.getBoundingClientRect();return {x:r.left,y:r.top,w:r.width,h:r.height}};
+      const intersect=(a,b)=>a&&b?Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*
+        Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)):0;
+      const boxes=bags.map(rect), critical=[rect(el),rect(list),rect(cb),rect(fx)];
+      const issues=[];
+      if(bags.length!==getCurrentExwOffersForRender(getRoundData(state.round)).length)issues.push('Contagem de sacos');
+      for(let i=0;i<boxes.length;i++){
+        for(let j=i+1;j<boxes.length;j++)if(intersect(boxes[i],boxes[j])>.5)issues.push('Sacos '+i+'/'+j);
+        for(let k=0;k<critical.length;k++)if(intersect(boxes[i],critical[k])>.5)issues.push('Saco '+i+' invade área '+k);
+      }
+      if(intersect(rect(cb),rect(fx))>.5)issues.push('Chicago/câmbio');
+      if(cb&&cb.scrollWidth>cb.clientWidth+2)issues.push('Texto Chicago cortado');
+      if(fx&&fx.scrollWidth>fx.clientWidth+2)issues.push('Texto câmbio cortado');
+      return {round:state.round,issues,actual:bags.length,header:{cbText:cb?.textContent,cbClient:cb?.clientWidth,cbScroll:cb?.scrollWidth,cbStyle:cb?getComputedStyle(cb).font:null,fxText:fx?.textContent,fxClient:fx?.clientWidth,fxScroll:fx?.scrollWidth}};
+    })();""")
+    assert result['actual']==4,result
+    if result['issues']:
+        driver.save_screenshot(str(ARTIFACTS/f'diagnostico-R{result["round"]}.png'))
+    assert result['issues']==[],result
 
 def enter_l1():
     js("""initCampaignRun(1);state.campaign.introRedirectPending=false;
@@ -97,6 +124,7 @@ try:
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==1)
     modal=driver.find_element(By.ID,'l1wb-dialog').text
     assert 'Custo CFR equivalente' in modal and 'Frete rodoviário' in modal
+    assert '0,00 US$/t' not in modal, 'EXW convertido erroneamente exibido como zero'
     driver.save_screenshot(str(ARTIFACTS/'03-calculadora-sob-demanda.png'))
     click('#l1wb-dialog [data-l1-action="close"]')
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==0)
@@ -117,6 +145,7 @@ try:
     for rnd in range(2,6):
         js('nextRound();')
         screen_ready()
+        driver.save_screenshot(str(ARTIFACTS/f'R{rnd}-mapa-sem-colisao.png'))
         assert js('return state.round')==rnd
         assert not driver.find_elements(By.ID,'l1wb-dialog')
         click('#l1wb-offers .l1wb-offer:nth-of-type(3)')
@@ -145,6 +174,8 @@ try:
     driver.set_window_size(430,900)
     enter_l1()
     assert not driver.find_elements(By.ID,'l1wb-dialog')
+    wait.until(lambda d:len(d.find_elements(By.CSS_SELECTOR,'img.campaign-exw-bag'))==4)
+    assert_l1_visual_geometry()
     driver.save_screenshot(str(ARTIFACTS/'08-mobile-sem-modal-automatico.png'))
     errors=[e for e in driver.get_log('browser') if e.get('level')=='SEVERE'
             and 'favicon' not in e.get('message','')
