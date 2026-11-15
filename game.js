@@ -1038,6 +1038,12 @@ function campaignL1WorkbenchMarkup(rd) {
     <p>${book.totalUsedT?`Nota parcial: <strong>${calculateCampaignL1Score(book.usedLots,book).total}/100</strong>`:'A pontuação começa após a primeira compra.'}</p>
     <p>Resultado completo e disciplina comercial ao final das cinco rodadas.</p>`;
   }
+  // Após a rodada tutorial, o caderno mostra apenas volumes; custo/basis/margem ficam para o resultado final.
+  if(tab==='book' && round>1){
+    content=`<span class="l1wb-label">Posição · Navio de ${vol(maxVol)} t</span>
+      <div class="l1wb-mini"><p><strong>Originação:</strong> ${vol(book.totalUsedT)} t · faltam ${vol(book.missingT)} t</p></div>
+      <p>Calcule o custo e o basis por conta própria. O desempenho comercial será apresentado no encerramento das cinco rodadas.</p>`;
+  }
   return `<div class="l1wb-head"><strong>Rodada ${round} de ${level.rounds}</strong><small>${vol(book.totalUsedT)} / ${vol(maxVol)} t</small></div>
     <nav class="l1wb-tabs" role="tablist" aria-label="Etapas da rodada">
     <button type="button" class="l1wb-btn" role="tab" data-l1-tab="market" aria-selected="${tab==='market'}">Mercado</button>
@@ -1208,6 +1214,17 @@ function buildCampaignStatusHtml() {
 
 function buildCampaignBookPanelHtml() {
   if (isCampaignMode() && Number(state.campaign?.levelId) !== 1) return buildCampaignBookPanelHtmlLegacy();
+  if(isCampaignMode() && Number(state.campaign?.levelId)===1 && Number(state.round)>1){
+    const progress=calculateCampaignBookSnapshot();
+    const p=progress.level.targetVolumeT>0 ? Math.min(100,(progress.totalUsedT/progress.level.targetVolumeT)*100) : 0;
+    return `<div class="campaign-canvas-card campaign-book-card">
+      <div class="campaign-canvas-title">BOOK DO LEVEL · VOLUME</div>
+      <div class="campaign-book-grid">
+        <div><span>Volume</span><strong>${formatTon(progress.totalUsedT)} / ${formatTon(progress.level.targetVolumeT)} t</strong></div>
+        <div><span>Faltante</span><strong>${formatTon(progress.missingT)} t</strong></div>
+      </div><div class="campaign-progress"><i style="width:${p.toFixed(1)}%"></i></div>
+      <div class="campaign-book-note">Basis, margem e nota somente no resultado final.</div></div>`;
+  }
   const snap = calculateCampaignBookSnapshot();
   const progress = snap.level.targetVolumeT > 0 ? Math.min(100, (snap.totalUsedT / snap.level.targetVolumeT) * 100) : 0;
   return `
@@ -1247,6 +1264,19 @@ function buildCampaignRoundSummaryHtml(roundNum = state.round) {
   const exw = state.confirmed?.exw?.[roundNum];
   if (!exw) {
     return `<div class="campaign-round-summary"><p>Nenhuma compra foi confirmada nesta rodada. O book segue sem alteração operacional.</p></div>`;
+  }
+  if(Number(roundNum)>1){
+    const book=calculateCampaignBookSnapshot();
+    const val=(v,d=2)=>Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+    return `<div class="campaign-round-summary">
+      <div class="campaign-round-kicker">Resumo da rodada ${Number(roundNum)} · Originação confirmada</div>
+      <h3>${escapeHtml(formatOfferDisplayName(exw))}</h3>
+      <div class="campaign-summary-grid">
+        <div><span>Volume contratado</span><strong>${formatTon(exw.volume_t)} t</strong></div>
+        <div><span>Volume acumulado</span><strong>${formatTon(book.totalUsedT)} / ${formatTon(book.level.targetVolumeT)} t</strong></div>
+      </div><p>Preço EXW: <strong>R$ ${val(exw.price_brl_saca)}/sc</strong> · Frete rodoviário: <strong>R$ ${val(exw.freight_brl_t_santos)}/t</strong>.</p>
+      <p>Compare seus cálculos com Chicago, câmbio e custos fixos. Basis, margem e avaliação da compra serão revelados apenas no resultado final.</p>
+    </div>`;
   }
   const lot = calculateCampaignOfferBasisSnapshot(exw, roundNum);
   const book = calculateCampaignBookSnapshot();
@@ -1374,6 +1404,12 @@ function campaignL1ScoreMarkup(score) {
 }
 
 function campaignL1RoundFeedbackMarkup(roundNum, lot, book) {
+  if(Number(roundNum)>1){
+    return `<div class="l1-feedback"><div class="l1-feedback-title">Compra registrada · ${escapeHtml(lot.origin)}</div>
+    <div class="l1-feedback-metrics"><span>Contratado <b>${formatTon(lot.volumeT)} t</b></span>
+    <span>Book <b>${formatTon(book.totalUsedT)} / ${formatTon(book.level.targetVolumeT||60000)} t</b></span></div>
+    <p>Continue avaliando Chicago, câmbio, frete e físico. A leitura econômica fica para o resultado final.</p></div>`;
+  }
   const usedBefore = book.usedLots.filter(l => Number(l.round) < Number(roundNum));
   const prevT = usedBefore.reduce((sum,l)=>sum+Number(l.usedVolumeT||0),0);
   const prevBasis = prevT ? campaignWeightedAverage(usedBefore,'basisCentBu') : null;
