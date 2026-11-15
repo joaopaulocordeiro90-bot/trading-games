@@ -4071,7 +4071,7 @@ function positionTradeDetailOnCanvas() {
                 <div style="margin-top:8px; font-weight:700; color:#171717; line-height:1.35;">${escapeHtml(item.label || 'Operação confirmada')}</div>
                 <div style="margin-top:8px; color:#333; line-height:1.45; font-size:${Math.max(18, (box.font || 24) - 4)}px;">
                   ${escapeHtml(item.origin)} • ${escapeHtml(item.producer)} • ${FMT_TON_SAFE(item.volume_t)} t • R$ ${Number(item.price_brl_saca||0).toFixed(1)}/saca<br>
-                  CBOT ${escapeHtml(String(item.ref_cbot_cent_bu ?? '-'))} ¢/bu • Câmbio ${escapeHtml(String(item.ref_cambio ?? '-'))} • ${escapeHtml(item.portLabel)} • Inland US$ ${escapeHtml(String(item.inland_usd_t_selected ?? '-'))}/t
+                  CBOT ${escapeHtml(String(item.ref_cbot_cent_bu ?? '-'))} ¢/bu • Câmbio ${escapeHtml(String(item.ref_cambio ?? '-'))} • ${escapeHtml(item.portLabel)} ${isCampaignMode() && Number(state.campaign?.levelId)===1 ? ' • Rodoviário R$ '+Number(item.freight_brl_t_santos||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'/t' : ' • Inland US$ '+escapeHtml(String(item.inland_usd_t_selected ?? '-'))+'/t'}
                 </div>
               </div>
             </div>
@@ -6366,6 +6366,7 @@ function getConfirmedExwRowsForUi() {
         portKey: String(exw.corredor || '').trim(),
         portLabel: PORT_LABEL_SAFE(exw.corredor || '—'),
         inland_usd_t_selected: exw.inland_usd_t_selected ?? exw.freight_inland_usd_t ?? null,
+        freight_brl_t_santos: exw.freight_brl_t_santos ?? null,
       };
     })
     .filter(Boolean);
@@ -6383,6 +6384,8 @@ function buildSojaBoletaHtml(round) {
   const cambio = exw.ref_cambio ?? '—';
   const portLabel = PORT_LABEL_SAFE(exw.corredor || '—');
   const inland = exw.inland_usd_t_selected ?? exw.freight_inland_usd_t ?? '—';
+  const freightL1Brl=Number(exw.freight_brl_t_santos||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const level1RoadOnly=isCampaignMode() && Number(state.campaign?.levelId)===1;
   const valorMercadoria = volume > 0 && priceSaca > 0 ? (volume / 0.06) * priceSaca : null;
 
   return `
@@ -6413,7 +6416,7 @@ function buildSojaBoletaHtml(round) {
           <div style="margin-top:10px; line-height:1.55; color:#222;">
             <div><b>Volume:</b> ${FMT_TON_SAFE(volume)} t</div>
             <div><b>Porto / Corredor:</b> ${escapeHtml(portLabel)}</div>
-            <div><b>Inland:</b> US$ ${escapeHtml(String(inland))}/t</div>
+            ${level1RoadOnly ? '<div><b>Frete rodoviário:</b> R$ '+freightL1Brl+'/t</div>' : '<div><b>Inland:</b> US$ '+escapeHtml(String(inland))+'/t</div>'}
           </div>
         </div>
 
