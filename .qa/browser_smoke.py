@@ -94,100 +94,7 @@ try:
     assert 'notícia-mestre' in driver.find_element(By.ID,'l1wb-panel').text.casefold()
     assert 'BRZ' not in driver.find_element(By.ID,'l1wb-panel').text
     assert 'Modal: Rodoviário' in driver.find_element(By.ID,'l1wb-offers').text
-    assert 'Frete: US
-    # No Level 1, a manchete está liberada no início e a fonte de câmbio/Chicago é padronizada.
-    js("setStage('r1_home')")
-    wait.until(lambda d:len(d.find_elements(By.ID,'txt_l1_text_cbot'))==1)
-    assert js("return getComputedStyle(document.getElementById('txt_l1_text_cbot')).fontSize")=='34px'
-    assert js("return getComputedStyle(document.getElementById('txt_l1_text_cambio')).fontSize")=='34px'
-    js("setStage('r1_news')")
-    wait.until(lambda d:len(d.find_elements(By.ID,'txt_text_news'))==1)
-    assert 'China reduz' in driver.find_element(By.ID,'txt_text_news').text
-    js("setStage('r1_exw')")
-    screen_ready()
-    # Voltar deve desfazer o caminho, não recair no Book do Trader.
-    js("state.guideSeen.partials_menu_enter=true;state.guideSeen.partials_soja_enter=true;openPartialsMenu()")
-    wait.until(lambda d:js("return state.stage==='partials_menu'"))
-    js("setStage('partials_soja')")
-    wait.until(lambda d:js("return state.stage==='partials_soja'"))
-    js("backFromPartials()")
-    assert js("return state.stage")=='partials_menu'
-    js("backFromPartials()")
-    assert js("return state.stage")=='r1_exw'
-    screen_ready()
-    assert not driver.find_elements(By.ID,'l1wb-dialog')  # nenhuma camada aberta na chegada
-    driver.save_screenshot(str(ARTIFACTS/'01-layout-original-integrado.png'))
-    click('#l1wb-panel [data-l1-tab="offers"]')
-    click('#l1wb-offers .l1wb-offer:nth-of-type(3)')
-    screen_ready()
-    assert 'Rio Verde' in driver.find_element(By.ID,'l1wb-panel').text
-    assert 'Considere o fobbing de: US$ 11,00/t' in driver.find_element(By.ID,'l1wb-panel').text
-    driver.save_screenshot(str(ARTIFACTS/'02-oferta-selecionada.png'))
-    click('#l1wb-panel [data-l1-action="calculator"]')
-    wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==1)
-    modal=driver.find_element(By.ID,'l1wb-dialog').text
-    assert 'Custo CFR equivalente' in modal and 'Frete rodoviário' in modal
-    assert '0,00 US$/t' not in modal, 'EXW convertido erroneamente exibido como zero'
-    driver.save_screenshot(str(ARTIFACTS/'03-calculadora-sob-demanda.png'))
-    click('#l1wb-dialog [data-l1-action="close"]')
-    wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==0)
-    click('#l1wb-panel [data-l1-action="focus"]')
-    wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==1)
-    driver.save_screenshot(str(ARTIFACTS/'04-leitura-opcional.png'))
-    click('#l1wb-dialog [data-l1-action="close"]')
-    wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==0)
-    # Compra acontece com o COMPRAR original do caderno, não botão desenhado sobre ele.
-    click('[data-l1-hot="confirm"]')
-    wait.until(lambda d:len(d.find_elements(By.ID,'campaignAdvanceModal'))==1)
-    assert js('return Number(state.confirmed.exw[1]?.volume_t||0)')>0
-    assert 'Basis do lote' in driver.find_element(By.ID,'campaignAdvanceModal').text
-    driver.save_screenshot(str(ARTIFACTS/'05-feedback-rodada.png'))
-    js('closeCampaignAdvanceModal();')
-    click('#l1wb-panel [data-l1-tab="book"]')
-    assert 'Margem bruta' in driver.find_element(By.ID,'l1wb-panel').text
-    for rnd in range(2,6):
-        js('nextRound();')
-        screen_ready()
-        driver.save_screenshot(str(ARTIFACTS/f'R{rnd}-mapa-sem-colisao.png'))
-        assert js('return state.round')==rnd
-        assert not driver.find_elements(By.ID,'l1wb-dialog')
-        click('#l1wb-offers .l1wb-offer:nth-of-type(3)')
-        screen_ready()
-        if js('return calculateCampaignBookSnapshot().missingT<=0'):
-            continue
-        click('[data-l1-hot="confirm"]')
-        try: driver.switch_to.alert.accept()
-        except NoAlertPresentException: pass
-        wait.until(lambda d:len(d.find_elements(By.ID,'campaignAdvanceModal'))==1)
-        js('closeCampaignAdvanceModal();')
-    js('nextRound();')
-    wait.until(lambda d:js("return state.stage==='campaign_result'"))
-    assert js('return buildCampaignLevel1Result().approved') is True
-    assert js('return buildCampaignLevel1Result().scorecard.total')>=70
-    assert driver.find_elements(By.CSS_SELECTOR,'.l1-scorecard')
-    driver.save_screenshot(str(ARTIFACTS/'06-resultado-final.png'))
-    # Iniciante/Expert não recebem nenhuma nova interface do L1.
-    for mode in ('guided','expert'):
-        js(f"state.primaryMode='scenarios';state.gameMode='{mode}';state.campaign.active=false;state.round=1;state.guideOverlayOpen=false;state.guideFlow=null;setStage('r1_exw');")
-        wait.until(lambda d:len(d.find_elements(By.ID,'overlayLayer'))==1)
-        assert not driver.find_elements(By.ID,'l1wb-panel')
-        assert not driver.find_elements(By.ID,'l1wb-offers')
-        driver.save_screenshot(str(ARTIFACTS/f'07-{mode}-inalterado.png'))
-    # Mobile: o jogo não exibe sobreposição de leitura por padrão.
-    driver.set_window_size(430,900)
-    enter_l1()
-    assert not driver.find_elements(By.ID,'l1wb-dialog')
-    wait.until(lambda d:len(d.find_elements(By.CSS_SELECTOR,'img.campaign-exw-bag'))==4)
-    assert_l1_visual_geometry()
-    driver.save_screenshot(str(ARTIFACTS/'08-mobile-sem-modal-automatico.png'))
-    errors=[e for e in driver.get_log('browser') if e.get('level')=='SEVERE'
-            and 'favicon' not in e.get('message','')
-            and '/assets/audio/r1_home.mp3' not in e.get('message','')]
-    assert not errors,errors
-    print('OK: original intacto, caderno+tabela integrados, calculadora opcional, 5 rodadas, score e dois modos preservados.')
-finally:
-    driver.quit()
-    server.shutdown() in driver.find_element(By.ID,'l1wb-offers').text
+    assert 'Frete: US$' in driver.find_element(By.ID,'l1wb-offers').text
     assert 'R$/t' not in driver.find_element(By.ID,'l1wb-offers').text
     # No Level 1, a manchete está liberada no início e a fonte de câmbio/Chicago é padronizada.
     js("setStage('r1_home')")
@@ -215,6 +122,7 @@ finally:
     click('#l1wb-offers .l1wb-offer:nth-of-type(3)')
     screen_ready()
     assert 'Rio Verde' in driver.find_element(By.ID,'l1wb-panel').text
+    assert 'Considere o fobbing de: US$ 11,00/t' in driver.find_element(By.ID,'l1wb-panel').text
     driver.save_screenshot(str(ARTIFACTS/'02-oferta-selecionada.png'))
     click('#l1wb-panel [data-l1-action="calculator"]')
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==1)
