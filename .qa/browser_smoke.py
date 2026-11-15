@@ -88,6 +88,7 @@ try:
               originalImage:!!map,shields:document.querySelectorAll('.l1wb-legacy-shield,.l1wb-sideguide').length};
     })();""")
     assert info['note']==[172,345,600,670],info
+    assert js("return getComputedStyle(document.querySelector('#l1wb-panel .l1wb-content p')).fontSize")=='21px', 'Fonte do caderno pequena'
     assert 'caderno_level1.svg' in js("return getComputedStyle(document.getElementById('l1wb-panel')).backgroundImage"),info
     assert info['list']==[1472,370,356,504],info
     assert info['noteBg']=='rgba(0, 0, 0, 0)' and info['listBg']=='rgba(0, 0, 0, 0)',info
@@ -162,6 +163,7 @@ try:
         try: driver.switch_to.alert.accept()
         except NoAlertPresentException: pass
         wait.until(lambda d:len(d.find_elements(By.ID,'campaignAdvanceModal'))==1)
+        assert not driver.find_elements(By.ID,'txt_campaign_round_splash'), 'Letreiro da rodada cobrindo resumo de compra'
         summary=driver.find_element(By.ID,'campaignAdvanceModal').text
         assert 'Basis do lote' not in summary and 'Margem bruta indicada' not in summary, summary
         assert 'Basis médio' not in summary and 'margem bruta teórica' not in summary, summary
