@@ -826,6 +826,7 @@ function calculateCampaignOfferBasisSnapshot(offer, roundNum = state.round) {
     inlandUsdT,
     maritimeUsdT,
     fobbingUsdT,
+    interiorUsdT,
     interiorCentBu,
     inlandCentBu,
     maritimeCentBu,
