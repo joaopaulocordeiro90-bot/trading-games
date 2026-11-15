@@ -175,7 +175,7 @@ try:
     assert js('return buildCampaignLevel1Result().approved') is True
     assert js('return buildCampaignLevel1Result().scorecard.total')>=70
     assert driver.find_elements(By.CSS_SELECTOR,'.l1-scorecard')
-    assert 'Basis médio CFR eq.' in driver.find_element(By.CSS_SELECTOR,'.campaign-card-xl').text
+    assert 'Basis médio CFR eq.' in js("return document.querySelector('.campaign-card-xl')?.textContent || ''"), 'Resultado final não exibiu a auditoria de basis'
     driver.save_screenshot(str(ARTIFACTS/'06-resultado-final.png'))
     # Iniciante/Expert não recebem nenhuma nova interface do L1.
     for mode in ('guided','expert'):
