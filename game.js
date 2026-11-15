@@ -1074,23 +1074,24 @@ function campaignL1CalculatorMarkup(rd){
   if(state.round===1){
     const rows=[
       ['Preço EXW convertido',num(lot.interiorUsdT)+' US$/t'],
-      ['Frete rodoviário',num(lot.inlandUsdT*lot.fx)+' R$/t'],
+      ['Frete rodoviário cotado',num(Number(selected.freight_brl_t_santos))+' R$/t'],
+      ['Frete rodoviário convertido',num(lot.inlandUsdT)+' US$/t'],
       ['Fobbing + marítimo',num(lot.fobbingUsdT+lot.maritimeUsdT)+' US$/t'],
       ['Custo CFR equivalente',num(lot.cfrCostCentBu,1)+' ¢/bu'],
       ['Chicago',num(lot.cbotCentBu)+' ¢/bu'],
       ['Basis = CFR − Chicago',num(lot.basisCentBu,1)+' ¢/bu']
     ];
     return header+`<p><strong>Rodada 1: exemplo resolvido.</strong> Observe os passos e a conversão de unidades.</p>
-    <p class="l1wb-hint">EXW = R$ ${num(lot.priceBrlSc)}/sc × ${num((1000/60),4)} sc/t ÷ câmbio R$ ${num(lot.fx,4)}/US$. Frete em R$/t = US$/t × câmbio. CFR = (EXW + rodoviário + fobbing + marítimo) ÷ ${num(36.7437,4)} bu/t × 100.</p>
+    <p class="l1wb-hint">EXW = R$ ${num(lot.priceBrlSc)}/sc × ${num((1000/60),4)} sc/t ÷ câmbio R$ ${num(lot.fx,4)}/US$. Frete em US$/t = R$/t ÷ câmbio. CFR = (EXW + rodoviário + fobbing + marítimo) ÷ ${num(36.7437,4)} bu/t × 100.</p>
     ${rows.map(x=>`<div class="l1wb-costrow"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('')}
     <p class="l1wb-hint">Valores simulados; não inclui hedge, financiamento ou MTM.</p>`;
   }
   const key=String(state.round)+':'+String(selected.id??formatOfferDisplayName(selected));
   const answers=(state.campaign.l1Exercises||(state.campaign.l1Exercises={}))[key]||{};
   const steps=[
-    ['freight','1. Calcule o frete rodoviário (R$/t)',`Frete rodoviário: US$ ${num(lot.inlandUsdT)}/t · Câmbio: R$ ${num(lot.fx,4)}/US$.`],
+    ['freight','1. Converta o frete rodoviário (US$/t)',`Frete rodoviário: R$ ${num(Number(selected.freight_brl_t_santos))}/t · Câmbio: R$ ${num(lot.fx,4)}/US$.`],
     ['exw','2. Converta o preço EXW (US$/t)',`Preço EXW: R$ ${num(lot.priceBrlSc)}/sc · Conversão: ${num((1000/60),4)} sc/t · Câmbio: R$ ${num(lot.fx,4)}/US$.`],
-    ['cfr','3. Calcule o custo CFR (¢/bu)',`EXW: preço convertido na etapa 2 (US$/t) · Rodoviário: US$ ${num(lot.inlandUsdT)}/t · Fobbing: US$ ${num(lot.fobbingUsdT)}/t · Marítimo: US$ ${num(lot.maritimeUsdT)}/t · Conversão: ${num(36.7437,4)} bu/t.`],
+    ['cfr','3. Calcule o custo CFR (¢/bu)',`EXW: preço convertido na etapa 2 (US$/t) · Rodoviário: resultado da etapa 1 (US$/t) · Fobbing: US$ ${num(lot.fobbingUsdT)}/t · Marítimo: US$ ${num(lot.maritimeUsdT)}/t · Conversão: ${num(36.7437,4)} bu/t.`],
     ['basis','4. Calcule o basis de custo (¢/bu)',`Custo CFR: resultado da etapa 3 (¢/bu) · Chicago: ${num(lot.cbotCentBu)} ¢/bu.`]
   ];
   return header+`<p><strong>Rodada ${state.round} de 5.</strong> Responda cada conta e confira. Os botões e a navegação do jogo permanecem disponíveis.</p>
@@ -1152,7 +1153,7 @@ function attachCampaignL1WorkbenchEvents(container,rd){
       const value=String(input.value||'').trim();
       const candidate=Number(value.replace(/\s/g,'').replace(',','.'));
       const lot=calculateCampaignOfferBasisSnapshot(selected,state.round);
-      const targets={freight:[lot.inlandUsdT*lot.fx,.06],exw:[lot.interiorUsdT,.06],cfr:[lot.cfrCostCentBu,.16],basis:[lot.basisCentBu,.17]};
+      const targets={freight:[lot.inlandUsdT,.06],exw:[lot.interiorUsdT,.06],cfr:[lot.cfrCostCentBu,.16],basis:[lot.basisCentBu,.17]};
       const target=targets[check];
       if(!target)return;
       const ok=value!==''&&Number.isFinite(candidate)&&Math.abs(candidate-target[0])<=target[1];
@@ -1165,7 +1166,7 @@ function attachCampaignL1WorkbenchEvents(container,rd){
     }
     const hint=button.dataset.l1Hint;
     if(hint){
-      const hints={freight:'Observe a moeda solicitada e a moeda de cotação do frete.',exw:'A cotação é por saca; a resposta deve estar em dólares por tonelada.',cfr:'Todos os custos devem estar na mesma unidade antes da conversão para centavos por bushel.',basis:'Compare o custo equivalente com a referência de Chicago, preservando o sinal.'};
+      const hints={freight:'Compare a moeda do frete com a moeda solicitada e observe o câmbio.',exw:'A cotação é por saca; a resposta deve estar em dólares por tonelada.',cfr:'Todos os custos devem estar na mesma unidade antes da conversão para centavos por bushel.',basis:'Compare o custo equivalente com a referência de Chicago, preservando o sinal.'};
       const feedback=container.querySelector('[data-l1-feedback="'+hint+'"]');
       if(feedback)feedback.textContent=hints[hint]||'Confira as unidades da resposta.';
       return;
