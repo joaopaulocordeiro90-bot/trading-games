@@ -27,7 +27,7 @@ const ui=game.slice(game.indexOf('function campaignL1WorkbenchMarkup('),game.ind
 assert(ui.includes('Notícia-mestre')&&ui.includes('Efeito da notícia anterior'),'Notícia mestre não é protagonista');
 assert(!/\bBRZ\b|Fev\/27|Mar\/27|H27/.test(ui),'Datas ou BRZ na interface L1');
 assert(game.includes("if (Number(state.campaign.levelId) === 1) addHot(\"hot_news\""),'Notícias ainda bloqueadas no L1');
-assert(game.includes("fontSize:'40px'"),'Fontes Chicago/câmbio não foram padronizadas');
+assert(game.includes("fontSize:'34px'")&&game.includes("fontVariantNumeric:'tabular-nums'"),'Fontes Chicago/câmbio não foram padronizadas');
 const a=game.indexOf('function setStage('),b=game.indexOf('function renderHome()',a);
 assert(a>0&&b>a,'Funções de navegação não encontradas');
 const state={
