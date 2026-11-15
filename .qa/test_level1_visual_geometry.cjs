@@ -5,7 +5,7 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const cal=JSON.parse(fs.readFileSync(path.join(root,'calibration.json'),'utf8')).screens.r1_exw;
 const lvl=JSON.parse(fs.readFileSync(path.join(root,'data/campaign/levels/level1.json'),'utf8'));
-const sheet={notebook:{x:230,y:648,w:467,h:265},offers:{x:1472,y:370,w:356,h:504},cbot:cal.l1_text_cbot,fx:cal.l1_text_cambio};
+const sheet={notebook:{x:172,y:345,w:600,h:670},offers:{x:1472,y:370,w:356,h:504},cbot:cal.l1_text_cbot,fx:cal.l1_text_cambio};
 const home=JSON.parse(fs.readFileSync(path.join(root,'calibration.json'),'utf8')).screens.r1_home;
 assert.deepEqual(home.l1_text_cbot,cal.l1_text_cbot,'CBOT deve seguir mesmo padrão no home e EXW');
 assert.deepEqual(home.l1_text_cambio,cal.l1_text_cambio,'Câmbio deve seguir mesmo padrão no home e EXW');
