@@ -59,11 +59,20 @@ for(let r=1;r<=5;r++){
     const html=vm.runInContext('campaignL1WorkbenchMarkup(rd)',ctx);
     assert(html.includes('Rodada '+r+' de 5'));
     assert(html.includes('data-l1-tab="market"')&&html.includes('data-l1-tab="offers"')&&html.includes('data-l1-tab="book"'));
-    if(tab==='offers'){ const list=vm.runInContext('campaignL1OfferListMarkup(rd)',ctx); assert.equal((list.match(/class="l1wb-offer"/g)||[]).length,rd.offers_exw.length); }
+    if(tab==='offers'){
+      const list=vm.runInContext('campaignL1OfferListMarkup(rd)',ctx);
+      assert.equal((list.match(/class="l1wb-offer"/g)||[]).length,rd.offers_exw.length);
+      assert.equal((list.match(/Modal: <strong>Rodoviário<\/strong>/g)||[]).length,rd.offers_exw.length);
+      assert.equal((list.match(/Frete: <strong>US\$/g)||[]).length,rd.offers_exw.length);
+      assert(!list.includes('Ferroviário')&&!list.includes('Hidroviário'),'Modal não permitido no L1');
+      assert(!list.includes('R$/t'),'Não revelar conversão para reais antes do aluno calcular');
+    }
   }
   state.campaign.l1Tab='offers';
   state.campaign.l1CalcVisible=true;
   state.choices.exw[r]={...rd.offers_exw[0],ref_cbot_cent_bu:rd.cbot_cent_bu,ref_cambio:rd.usd};
+  const note=vm.runInContext('campaignL1WorkbenchMarkup(rd)',ctx);
+  assert(note.includes('Considere o fobbing de: <strong>US$ 11,00/t</strong>'), 'Fobbing ausente no caderno');
   const html=vm.runInContext('campaignL1CalculatorMarkup(rd)',ctx);
   if(r===1){
     assert(html.includes('Exemplo resolvido'));

@@ -37,6 +37,7 @@ def screen_ready():
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-panel'))==1 and len(d.find_elements(By.ID,'l1wb-offers'))==1)
     quiet_guide()
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-panel'))==1 and len(d.find_elements(By.ID,'l1wb-offers'))==1)
+    wait.until(lambda d:len(d.find_elements(By.CSS_SELECTOR,'img.campaign-exw-bag'))==4)
     assert_l1_visual_geometry()
 
 def assert_l1_visual_geometry():
@@ -93,11 +94,14 @@ try:
     assert len(driver.find_elements(By.CSS_SELECTOR,'#l1wb-offers .l1wb-offer'))==4
     assert 'notícia-mestre' in driver.find_element(By.ID,'l1wb-panel').text.casefold()
     assert 'BRZ' not in driver.find_element(By.ID,'l1wb-panel').text
+    assert 'Modal: Rodoviário' in driver.find_element(By.ID,'l1wb-offers').text
+    assert 'Frete: US$' in driver.find_element(By.ID,'l1wb-offers').text
+    assert 'R$/t' not in driver.find_element(By.ID,'l1wb-offers').text
     # No Level 1, a manchete está liberada no início e a fonte de câmbio/Chicago é padronizada.
     js("setStage('r1_home')")
-    wait.until(lambda d:len(d.find_elements(By.ID,'txt_text_cbot'))==1)
-    assert js("return getComputedStyle(document.getElementById('txt_text_cbot')).fontSize")=='40px'
-    assert js("return getComputedStyle(document.getElementById('txt_text_cambio')).fontSize")=='40px'
+    wait.until(lambda d:len(d.find_elements(By.ID,'txt_l1_text_cbot'))==1)
+    assert js("return getComputedStyle(document.getElementById('txt_l1_text_cbot')).fontSize")=='34px'
+    assert js("return getComputedStyle(document.getElementById('txt_l1_text_cambio')).fontSize")=='34px'
     js("setStage('r1_news')")
     wait.until(lambda d:len(d.find_elements(By.ID,'txt_text_news'))==1)
     assert 'China reduz' in driver.find_element(By.ID,'txt_text_news').text
@@ -119,6 +123,7 @@ try:
     click('#l1wb-offers .l1wb-offer:nth-of-type(3)')
     screen_ready()
     assert 'Rio Verde' in driver.find_element(By.ID,'l1wb-panel').text
+    assert 'Considere o fobbing de: US$ 11,00/t' in driver.find_element(By.ID,'l1wb-panel').text
     driver.save_screenshot(str(ARTIFACTS/'02-oferta-selecionada.png'))
     click('#l1wb-panel [data-l1-action="calculator"]')
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==1)

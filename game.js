@@ -919,16 +919,19 @@ function ensureCampaignL1WorkbenchStyle() {
     background:transparent;border:0;overflow-y:auto;scrollbar-width:thin;pointer-events:auto;
     display:flex;flex-direction:column;gap:8px;padding:1px 3px}
   .l1wb-list-heading{margin:0 2px 1px;color:#655140;font:800 13px/1.3 system-ui,Arial,sans-serif;text-align:center}
-  .l1wb-offer{width:100%;min-height:94px;text-align:left;border:1.5px solid #d9cbb6;border-radius:11px;
-    background:#fdfbf5;color:#17252b;padding:10px 12px;cursor:pointer;
-    display:flex;flex-direction:column;justify-content:center;gap:4px;font:16px/1.2 system-ui,Arial,sans-serif}
+  .l1wb-offer{width:100%;min-height:108px;text-align:left;border:1.5px solid #d9cbb6;border-radius:11px;
+    background:#fdfbf5;color:#17252b;padding:8px 10px;cursor:pointer;
+    display:flex;flex-direction:column;justify-content:center;gap:3px;font:14px/1.16 system-ui,Arial,sans-serif}
   .l1wb-offer:hover{border-color:#0e7b57;background:#f5faee}
-  .l1wb-offer[aria-pressed=true]{border:3px solid #16804d;background:#eaf5df;padding:8px 10px}
+  .l1wb-offer[aria-pressed=true]{border:2.5px solid #16804d;background:#eaf5df;padding:7px 9px}
   .l1wb-offer-top{display:flex;align-items:center;gap:7px;justify-content:space-between}
-  .l1wb-offer-top strong{font-size:17px;font-weight:900;line-height:1.18}
-  .l1wb-offer-price{font-weight:900;color:#a34f17;white-space:nowrap;font-size:17px}
-  .l1wb-offer small{font-size:13px;color:#526066;font-weight:700}
-  .l1wb-offer-flag{font-size:12px;font-weight:800;color:#157549}
+  .l1wb-offer-top strong{font-size:16px;font-weight:900;line-height:1.16}
+  .l1wb-offer-price{font-weight:900;color:#a34f17;white-space:nowrap;font-size:16px}
+  .l1wb-offer small{font-size:12.5px;color:#526066;font-weight:700}
+  .l1wb-offer-logistics{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;line-height:1.15;color:#38505c;white-space:nowrap}
+  .l1wb-offer-logistics strong{font-size:12px;color:#183b4d}
+  .l1wb-offer-flag{font-size:11px;font-weight:800;color:#157549}
+  .l1wb-fobbing{font-weight:750;color:#3a423a;margin:5px 0 2px!important;font-size:13px!important}
   /* Sob demanda: modal compacto central, nunca aberto permanentemente. */
   .l1wb-focus-backdrop{position:fixed;inset:0;background:rgba(7,16,27,.49);z-index:10040;
     display:flex;align-items:center;justify-content:center;padding:16px}
@@ -1020,6 +1023,7 @@ function campaignL1WorkbenchMarkup(rd) {
         <h3>${escapeHtml(formatOfferDisplayName(selected))}</h3>
         <div class="l1wb-mini"><p><strong>${vol(effective)} t · R$ ${num(selected.price_brl_saca,2)}/sc</strong></p>
         <p>${round===1?`Basis: <strong>${signed(lot.basisCentBu)} ¢/bu</strong> · Book: <strong>${signed(projected.basisAvg)} ¢/bu</strong>`:'Calcule o frete, o CFR e o basis antes de decidir.'}</p></div>
+        <p class="l1wb-fobbing">Considere o fobbing de: <strong>US$ ${num(level.fixedFobbingUsdT,2)}/t</strong></p>
         <div class="l1wb-actions"><button type="button" class="l1wb-btn" data-l1-action="calculator">Calcular CFR ↗</button>
         <span style="font-size:12px;color:#526557">${confirmed?'Compra registrada':'Use COMPRAR abaixo'}</span></div>`;
     }
@@ -1049,9 +1053,12 @@ function campaignL1OfferListMarkup(rd){
   const vol=v=>Number(v||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
   return `<p class="l1wb-list-heading">Selecione na lista ou no mapa</p>${offers.map((o,i)=>{
     const active=!!selected&&Number(selected.id)===Number(o.id);
+    const roadFreight=Number(o.inland_by_corridor?.santos);
+    const freightText=Number.isFinite(roadFreight)?`US$ ${num(roadFreight)}/t`:'Não informado';
     return `<button type="button" class="l1wb-offer" data-l1-select="${i}" aria-pressed="${active}">
-       <span class="l1wb-offer-top"><strong>${escapeHtml(formatOfferDisplayName(o))}</strong></span>
-       <span class="l1wb-offer-top"><small>${vol(o.volume_t)} t · Disponível</small><span class="l1wb-offer-price">R$ ${num(o.price_brl_saca)}/sc</span></span>
+       <span class="l1wb-offer-top"><strong>${escapeHtml(formatOfferDisplayName(o))}</strong><span class="l1wb-offer-price">R$ ${num(o.price_brl_saca)}/sc</span></span>
+       <span class="l1wb-offer-top"><small>${vol(o.volume_t)} t · Disponível</small></span>
+       <span class="l1wb-offer-logistics"><span>Modal: <strong>Rodoviário</strong></span><span>Frete: <strong>${freightText}</strong></span></span>
        ${active?`<span class="l1wb-offer-flag">${confirmed?'✓ Compra confirmada':'✓ Selecionada · consulte o caderno'}</span>`:''}
     </button>`}).join('')}`;
 }
@@ -3329,11 +3336,13 @@ function renderOverlaysForScreen(screenId, rd) {
   // ✅ Fonte consistente de Chicago e câmbio na abertura e na origem, apenas L1.
   if (isCampaignMode() && Number(state.campaign.levelId) === 1 &&
       (screenId === 'r1_home' || screenId === 'r1_exw')) {
-    const cbKey=screenId==='r1_exw'&&sc.l1_text_cbot?'l1_text_cbot':'text_cbot';
-    const fxKey=screenId==='r1_exw'&&sc.l1_text_cambio?'l1_text_cambio':'text_cambio';
-    const compact={fontSize:'40px',fontWeight:'900',whiteSpace:'nowrap'};
-    const cbotVisual = screenId === 'r1_exw' ? {...compact,fontSize:'37px'} : compact;
-    if (sc[cbKey]) addText(cbKey,Number(rd.cbot_cent_bu).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}),'overlayText',cbotVisual);
+    const cbKey=sc.l1_text_cbot?'l1_text_cbot':'text_cbot';
+    const fxKey=sc.l1_text_cambio?'l1_text_cambio':'text_cambio';
+    // Mesma tipografia e grade nos dois painéis; números centralizados sem tocar o rótulo.
+    const compact={fontSize:'34px',fontWeight:'900',whiteSpace:'nowrap',
+      fontFamily:'Arial,Helvetica,sans-serif',fontVariantNumeric:'tabular-nums',
+      letterSpacing:'-.02em',lineHeight:'1',textShadow:'0 2px 4px rgba(0,0,0,.38)'};
+    if (sc[cbKey]) addText(cbKey,Number(rd.cbot_cent_bu).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}),'overlayText',compact);
     if (sc[fxKey]) addText(fxKey,Number(rd.usd).toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4}),'overlayText',compact);
   } else {
     if (sc.text_cbot) addText("text_cbot", String(rd.cbot_cent_bu));
