@@ -59,13 +59,18 @@ for(let r=1;r<=5;r++){
     const html=vm.runInContext('campaignL1WorkbenchMarkup(rd)',ctx);
     assert(html.includes('Rodada '+r+' de 5'));
     assert(html.includes('data-l1-tab="market"')&&html.includes('data-l1-tab="offers"')&&html.includes('data-l1-tab="book"'));
+    if(tab==='book' && r>1){
+      assert(!html.includes('<strong>Basis médio:</strong>') && !html.includes('<strong>Margem bruta:</strong>') && !html.includes('Nota parcial:'),'Book revelou desempenho antes do fechamento');
+      assert(html.includes('faltam'),'Progresso em toneladas ausente');
+    }
     if(tab==='offers'){
       const list=vm.runInContext('campaignL1OfferListMarkup(rd)',ctx);
       assert.equal((list.match(/class="l1wb-offer"/g)||[]).length,rd.offers_exw.length);
       assert.equal((list.match(/Modal: <strong>Rodoviário<\/strong>/g)||[]).length,rd.offers_exw.length);
-      assert.equal((list.match(/Frete: <strong>US\$/g)||[]).length,rd.offers_exw.length);
+      assert.equal((list.match(/Frete: <strong>R\$/g)||[]).length,rd.offers_exw.length);
       assert(!list.includes('Ferroviário')&&!list.includes('Hidroviário'),'Modal não permitido no L1');
-      assert(!list.includes('R$/t'),'Não revelar conversão para reais antes do aluno calcular');
+      assert(!list.includes('Frete: <strong>US$'),'Frete deve usar BRL/t de origem');
+      for(const offer of rd.offers_exw) assert(list.includes(Number(offer.freight_brl_t_santos).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})), 'Frete R$/t não corresponde à oferta');
     }
   }
   state.campaign.l1Tab='offers';
@@ -86,6 +91,10 @@ for(let r=1;r<=5;r++){
       assert(html.includes('data-l1-check="'+field+'"'));
     }
     assert(!html.includes('Basis médio projetado'));
+    assert(html.includes('Converta o frete rodoviário (US$/t)'),'Exercício deve pedir conversão para dólares');
+    assert(html.includes('Frete rodoviário: R$'),'Exercício deve mostrar frete em reais');
+    assert(html.includes('Rodoviário: resultado da etapa 1 (US$/t)'),'CFR não pode revelar a resposta da etapa 1');
+    assert(!note.includes('Basis: <strong>') && !note.includes('Book: <strong>'),'Oferta revelou basis/book das rodadas 2-5');
     assert(!html.includes('Multiplique.') && !html.includes('Some EXW') && !html.includes('divida por'), 'Enunciado entrega a operação aritmética');
     for(const datum of ['Frete rodoviário:', 'Preço EXW:', 'Fobbing:', 'Chicago:']) assert(html.includes(datum), 'Dado necessário ausente: '+datum);
 
@@ -93,5 +102,7 @@ for(let r=1;r<=5;r++){
   delete state.choices.exw[r];state.campaign.l1CalcVisible=false;
 }
 assert(!isolated.includes('l1wb-legacy-shield') && !isolated.includes('l1wb-sideguide'), 'Máscaras obsoletas voltaram');
-assert(isolated.includes('left:230px;top:648px') && isolated.includes('left:1472px;top:370px'), 'Integração no caderno/quadro ausente');
+assert(isolated.includes('left:172px;top:345px;width:600px;height:670px') && isolated.includes('assets/caderno_level1.svg') && isolated.includes('left:1472px;top:370px'), 'Caderno maior ou quadro não integrados');
+assert(isolated.includes('data-l1-action="buy"') && isolated.includes('data-l1-action="discard"'),'Botões Comprar e Descartar ocultos no novo caderno');
+assert(require('node:fs').existsSync(path.join(root,'assets/caderno_level1.svg')),'Imagem do novo caderno não encontrada');
 console.log('OK: 5 rodadas, lista no quadro original, caderno e calculadora sob demanda, isolamento L1.');
