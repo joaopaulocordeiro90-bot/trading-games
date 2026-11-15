@@ -87,7 +87,8 @@ try:
               noteBg:getComputedStyle(c).backgroundColor,listBg:getComputedStyle(l).backgroundColor,
               originalImage:!!map,shields:document.querySelectorAll('.l1wb-legacy-shield,.l1wb-sideguide').length};
     })();""")
-    assert info['note']==[230,648,467,265],info
+    assert info['note']==[172,345,600,670],info
+    assert 'caderno_level1.svg' in js("return getComputedStyle(document.getElementById('l1wb-panel')).backgroundImage"),info
     assert info['list']==[1472,370,356,504],info
     assert info['noteBg']=='rgba(0, 0, 0, 0)' and info['listBg']=='rgba(0, 0, 0, 0)',info
     assert info['shields']==0 and info['originalImage'],info
@@ -95,8 +96,8 @@ try:
     assert 'notícia-mestre' in driver.find_element(By.ID,'l1wb-panel').text.casefold()
     assert 'BRZ' not in driver.find_element(By.ID,'l1wb-panel').text
     assert 'Modal: Rodoviário' in driver.find_element(By.ID,'l1wb-offers').text
-    assert 'Frete: US$' in driver.find_element(By.ID,'l1wb-offers').text
-    assert 'R$/t' not in driver.find_element(By.ID,'l1wb-offers').text
+    assert 'Frete: R$' in driver.find_element(By.ID,'l1wb-offers').text
+    assert 'US$/t' not in driver.find_element(By.ID,'l1wb-offers').text
     # No Level 1, a manchete está liberada no início e a fonte de câmbio/Chicago é padronizada.
     js("setStage('r1_home')")
     wait.until(lambda d:len(d.find_elements(By.ID,'txt_l1_text_cbot'))==1)
@@ -138,8 +139,8 @@ try:
     driver.save_screenshot(str(ARTIFACTS/'04-leitura-opcional.png'))
     click('#l1wb-dialog [data-l1-action="close"]')
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==0)
-    # Compra acontece com o COMPRAR original do caderno, não botão desenhado sobre ele.
-    click('[data-l1-hot="confirm"]')
+    # Novo botão visível no caderno maior delega à lógica original de confirmação.
+    click('#l1wb-panel [data-l1-action="buy"]')
     wait.until(lambda d:len(d.find_elements(By.ID,'campaignAdvanceModal'))==1)
     assert js('return Number(state.confirmed.exw[1]?.volume_t||0)')>0
     assert 'Basis do lote' in driver.find_element(By.ID,'campaignAdvanceModal').text
@@ -157,16 +158,24 @@ try:
         screen_ready()
         if js('return calculateCampaignBookSnapshot().missingT<=0'):
             continue
-        click('[data-l1-hot="confirm"]')
+        click('#l1wb-panel [data-l1-action="buy"]')
         try: driver.switch_to.alert.accept()
         except NoAlertPresentException: pass
         wait.until(lambda d:len(d.find_elements(By.ID,'campaignAdvanceModal'))==1)
+        summary=driver.find_element(By.ID,'campaignAdvanceModal').text
+        assert 'Basis do lote' not in summary and 'Margem bruta indicada' not in summary, summary
+        assert 'Basis médio' not in summary and 'margem bruta teórica' not in summary, summary
+        driver.save_screenshot(str(ARTIFACTS/f'R{rnd}-resumo-sem-resposta.png'))
         js('closeCampaignAdvanceModal();')
+        click('#l1wb-panel [data-l1-tab="book"]')
+        assert 'Basis médio:' not in driver.find_element(By.ID,'l1wb-panel').text
+        assert 'Margem bruta:' not in driver.find_element(By.ID,'l1wb-panel').text
     js('nextRound();')
     wait.until(lambda d:js("return state.stage==='campaign_result'"))
     assert js('return buildCampaignLevel1Result().approved') is True
     assert js('return buildCampaignLevel1Result().scorecard.total')>=70
     assert driver.find_elements(By.CSS_SELECTOR,'.l1-scorecard')
+    assert 'Basis médio CFR eq.' in driver.find_element(By.CSS_SELECTOR,'.campaign-card-xl').text
     driver.save_screenshot(str(ARTIFACTS/'06-resultado-final.png'))
     # Iniciante/Expert não recebem nenhuma nova interface do L1.
     for mode in ('guided','expert'):
