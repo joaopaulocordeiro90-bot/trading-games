@@ -888,32 +888,40 @@ function ensureCampaignL1WorkbenchStyle() {
   const el = document.createElement('style');
   el.id = 'campaign-l1-workbench-style';
   el.textContent = `
-  /* Caderno original: apenas textos e botões dentro da folha, sem cartão extra. */
+  /* L1: caderno vetorial ampliado; cobre a pequena arte anterior e ocupa a faixa vazia no mapa. */
   .l1wb,.l1wb *,.l1wb-list,.l1wb-list *{box-sizing:border-box}
-  .l1wb{position:absolute;left:230px;top:648px;width:467px;height:265px;z-index:19;
-    padding:0;background:transparent;border:0;box-shadow:none;overflow:hidden;
-    font:16px/1.26 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#172533;
-    display:flex;flex-direction:column;gap:5px;pointer-events:auto}
-  .l1wb-head{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:25px}
-  .l1wb-head strong{font-size:17px;letter-spacing:-.01em;color:#57351b}
-  .l1wb-head small{font-size:13px;font-weight:800;color:#436156}
-  .l1wb-tabs{display:flex;gap:4px;align-items:center;min-height:33px}
-  .l1wb-btn{border:1px solid #d5bfa1;background:#fffaf1;border-radius:8px;padding:5px 9px;
-    font:800 13px/1.2 system-ui,Arial,sans-serif;cursor:pointer;color:#493b29}
+  .l1wb{position:absolute;left:172px;top:345px;width:600px;height:670px;z-index:19;
+    padding:91px 42px 43px 64px;background:url("assets/caderno_level1.svg") center/100% 100% no-repeat;
+    border:0;box-shadow:none;overflow:hidden;
+    font:21px/1.34 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#172533;
+    display:flex;flex-direction:column;gap:9px;pointer-events:auto}
+  .l1wb-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:33px}
+  .l1wb-head strong{font-size:24px;letter-spacing:-.01em;color:#57351b}
+  .l1wb-head small{font-size:18px;font-weight:800;color:#436156}
+  .l1wb-tabs{display:flex;gap:7px;align-items:center;min-height:44px}
+  .l1wb-btn{border:1px solid #d5bfa1;background:#fffaf1;border-radius:8px;padding:7px 11px;
+    font:800 18px/1.2 system-ui,Arial,sans-serif;cursor:pointer;color:#493b29}
   .l1wb-btn:hover{background:#f3e5cd}
   .l1wb-btn[aria-selected=true]{background:#d46b1d;color:white;border-color:#ad5115}
   .l1wb-btn-primary{color:#fff;background:#167449;border-color:#167449}
   .l1wb-btn-primary:hover{background:#075b34}
   .l1wb-btn:disabled{opacity:.45;cursor:not-allowed}
-  .l1wb-content{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:4px}
-  .l1wb-label{font:900 12px/1.3 system-ui,Arial,sans-serif;text-transform:uppercase;letter-spacing:.055em;color:#9a541b}
-  .l1wb-content h3{font-size:17px;line-height:1.22;margin:5px 0;color:#233329}
-  .l1wb-content p{font-size:14px;line-height:1.3;margin:5px 0;color:#44423b}
+  .l1wb-content{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:6px}
+  .l1wb-label{font:900 16px/1.4 system-ui,Arial,sans-serif;text-transform:uppercase;letter-spacing:.045em;color:#9a541b}
+  .l1wb-content h3{font-size:25px;line-height:1.25;margin:7px 0;color:#233329}
+  .l1wb-content p{font-size:21px;line-height:1.4;margin:7px 0;color:#44423b}
   .l1wb-content strong{color:#163c33}
-  .l1wb-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px}
-  .l1wb-mini{background:rgba(254,247,232,.9);border:1px solid #e8d3ab;border-radius:8px;padding:6px 8px;margin-top:5px}
-  .l1wb-mini p{margin:2px 0}
-  .l1wb-foot{font:11px/1.2 system-ui,Arial,sans-serif;color:#826c58;min-height:14px}
+  .l1wb-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:11px}
+  .l1wb-mini{background:rgba(254,247,232,.84);border:1px solid #e8d3ab;border-radius:8px;padding:9px 11px;margin-top:7px}
+  .l1wb-mini p{margin:5px 0}
+  .l1wb-actions span{font-size:16px!important}
+  .l1wb-foot{font:15px/1.3 system-ui,Arial,sans-serif;color:#826c58;min-height:19px}
+  .l1wb-purchase{display:flex;gap:18px;justify-content:space-between;align-items:center;flex-shrink:0;min-height:58px;padding:0 4px}
+  .l1wb-purchase button{border-radius:26px;border:3px solid #fff;color:#fff;box-shadow:0 2px 5px #0003;
+    font:900 22px/1.2 system-ui,Arial,sans-serif;padding:8px 19px;cursor:pointer}
+  .l1wb-purchase button:disabled{opacity:.45;cursor:not-allowed}
+  .l1wb-purchase .l1wb-discard{background:#e02126}
+  .l1wb-purchase .l1wb-buy{background:#0b9b35}
   /* Quadro OFERTAS EXW é parte da imagem; cards ocupam apenas seu interior. */
   .l1wb-list{position:absolute;left:1472px;top:370px;width:356px;height:504px;z-index:18;
     background:transparent;border:0;overflow-y:auto;scrollbar-width:thin;pointer-events:auto;
@@ -931,7 +939,7 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb-offer-logistics{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;line-height:1.15;color:#38505c;white-space:nowrap}
   .l1wb-offer-logistics strong{font-size:12px;color:#183b4d}
   .l1wb-offer-flag{font-size:11px;font-weight:800;color:#157549}
-  .l1wb-fobbing{font-weight:750;color:#3a423a;margin:5px 0 2px!important;font-size:13px!important}
+  .l1wb-fobbing{font-weight:750;color:#3a423a;margin:9px 0 4px!important;font-size:20px!important}
   /* Sob demanda: modal compacto central, nunca aberto permanentemente. */
   .l1wb-focus-backdrop{position:fixed;inset:0;background:rgba(7,16,27,.49);z-index:10040;
     display:flex;align-items:center;justify-content:center;padding:16px}
@@ -1022,7 +1030,7 @@ function campaignL1WorkbenchMarkup(rd) {
       inner=`<span class="l1wb-label">${confirmed?'Compra confirmada':'Oferta selecionada'}</span>
         <h3>${escapeHtml(formatOfferDisplayName(selected))}</h3>
         <div class="l1wb-mini"><p><strong>${vol(effective)} t · R$ ${num(selected.price_brl_saca,2)}/sc</strong></p>
-        <p>${round===1?`Basis: <strong>${signed(lot.basisCentBu)} ¢/bu</strong> · Book: <strong>${signed(projected.basisAvg)} ¢/bu</strong>`:'Calcule o frete, o CFR e o basis antes de decidir.'}</p></div>
+        <p>${round===1?`Basis: <strong>${signed(lot.basisCentBu)} ¢/bu</strong> · Book: <strong>${signed(projected.basisAvg)} ¢/bu</strong>`:'Calcule o frete, o CFR e o basis antes de decidir.'}</p><p>Frete rodoviário: <strong>R$ ${num(Number(selected.freight_brl_t_santos),2)}/t</strong></p></div>
         <p class="l1wb-fobbing">Considere o fobbing de: <strong>US$ ${num(level.fixedFobbingUsdT,2)}/t</strong></p>
         <div class="l1wb-actions"><button type="button" class="l1wb-btn" data-l1-action="calculator">Calcular CFR ↗</button>
         <span style="font-size:12px;color:#526557">${confirmed?'Compra registrada':'Use COMPRAR abaixo'}</span></div>`;
@@ -1037,6 +1045,12 @@ function campaignL1WorkbenchMarkup(rd) {
     <p>${book.totalUsedT?`Nota parcial: <strong>${calculateCampaignL1Score(book.usedLots,book).total}/100</strong>`:'A pontuação começa após a primeira compra.'}</p>
     <p>Resultado completo e disciplina comercial ao final das cinco rodadas.</p>`;
   }
+  // Após a rodada tutorial, o caderno mostra apenas volumes; custo/basis/margem ficam para o resultado final.
+  if(tab==='book' && round>1){
+    content=`<span class="l1wb-label">Posição · Navio de ${vol(maxVol)} t</span>
+      <div class="l1wb-mini"><p><strong>Originação:</strong> ${vol(book.totalUsedT)} t · faltam ${vol(book.missingT)} t</p></div>
+      <p>Calcule o custo e o basis por conta própria. O desempenho comercial será apresentado no encerramento das cinco rodadas.</p>`;
+  }
   return `<div class="l1wb-head"><strong>Rodada ${round} de ${level.rounds}</strong><small>${vol(book.totalUsedT)} / ${vol(maxVol)} t</small></div>
     <nav class="l1wb-tabs" role="tablist" aria-label="Etapas da rodada">
     <button type="button" class="l1wb-btn" role="tab" data-l1-tab="market" aria-selected="${tab==='market'}">Mercado</button>
@@ -1044,6 +1058,8 @@ function campaignL1WorkbenchMarkup(rd) {
     <button type="button" class="l1wb-btn" role="tab" data-l1-tab="book" aria-selected="${tab==='book'}">Posição</button>
     <button type="button" class="l1wb-btn" data-l1-action="focus" aria-label="Ampliar leitura do caderno">Ler ⛶</button></nav>
     <div class="l1wb-content">${content}</div>
+    <div class="l1wb-purchase"><button type="button" class="l1wb-discard" data-l1-action="discard">Descartar</button>
+    <button type="button" class="l1wb-buy" data-l1-action="buy" ${selected?'':'disabled'}>Comprar</button></div>
     <div class="l1wb-foot">Meta: basis médio ≤ +${num(level.targetBasisCentBu,0)} ¢/bu · Cenário simulado</div>`;
 }
 
@@ -1053,8 +1069,8 @@ function campaignL1OfferListMarkup(rd){
   const vol=v=>Number(v||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
   return `<p class="l1wb-list-heading">Selecione na lista ou no mapa</p>${offers.map((o,i)=>{
     const active=!!selected&&Number(selected.id)===Number(o.id);
-    const roadFreight=Number(o.inland_by_corridor?.santos);
-    const freightText=Number.isFinite(roadFreight)?`US$ ${num(roadFreight)}/t`:'Não informado';
+    const roadFreight=Number(o.freight_brl_t_santos);
+    const freightText=Number.isFinite(roadFreight)?`R$ ${num(roadFreight)}/t`:'Não informado';
     return `<button type="button" class="l1wb-offer" data-l1-select="${i}" aria-pressed="${active}">
        <span class="l1wb-offer-top"><strong>${escapeHtml(formatOfferDisplayName(o))}</strong><span class="l1wb-offer-price">R$ ${num(o.price_brl_saca)}/sc</span></span>
        <span class="l1wb-offer-top"><small>${vol(o.volume_t)} t · Disponível</small></span>
@@ -1073,23 +1089,24 @@ function campaignL1CalculatorMarkup(rd){
   if(state.round===1){
     const rows=[
       ['Preço EXW convertido',num(lot.interiorUsdT)+' US$/t'],
-      ['Frete rodoviário',num(lot.inlandUsdT*lot.fx)+' R$/t'],
+      ['Frete rodoviário cotado',num(Number(selected.freight_brl_t_santos))+' R$/t'],
+      ['Frete rodoviário convertido',num(lot.inlandUsdT)+' US$/t'],
       ['Fobbing + marítimo',num(lot.fobbingUsdT+lot.maritimeUsdT)+' US$/t'],
       ['Custo CFR equivalente',num(lot.cfrCostCentBu,1)+' ¢/bu'],
       ['Chicago',num(lot.cbotCentBu)+' ¢/bu'],
       ['Basis = CFR − Chicago',num(lot.basisCentBu,1)+' ¢/bu']
     ];
     return header+`<p><strong>Rodada 1: exemplo resolvido.</strong> Observe os passos e a conversão de unidades.</p>
-    <p class="l1wb-hint">EXW = R$ ${num(lot.priceBrlSc)}/sc × ${num((1000/60),4)} sc/t ÷ câmbio R$ ${num(lot.fx,4)}/US$. Frete em R$/t = US$/t × câmbio. CFR = (EXW + rodoviário + fobbing + marítimo) ÷ ${num(36.7437,4)} bu/t × 100.</p>
+    <p class="l1wb-hint">EXW = R$ ${num(lot.priceBrlSc)}/sc × ${num((1000/60),4)} sc/t ÷ câmbio R$ ${num(lot.fx,4)}/US$. Frete em US$/t = R$/t ÷ câmbio. CFR = (EXW + rodoviário + fobbing + marítimo) ÷ ${num(36.7437,4)} bu/t × 100.</p>
     ${rows.map(x=>`<div class="l1wb-costrow"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('')}
     <p class="l1wb-hint">Valores simulados; não inclui hedge, financiamento ou MTM.</p>`;
   }
   const key=String(state.round)+':'+String(selected.id??formatOfferDisplayName(selected));
   const answers=(state.campaign.l1Exercises||(state.campaign.l1Exercises={}))[key]||{};
   const steps=[
-    ['freight','1. Calcule o frete rodoviário (R$/t)',`Frete rodoviário: US$ ${num(lot.inlandUsdT)}/t · Câmbio: R$ ${num(lot.fx,4)}/US$.`],
+    ['freight','1. Converta o frete rodoviário (US$/t)',`Frete rodoviário: R$ ${num(Number(selected.freight_brl_t_santos))}/t · Câmbio: R$ ${num(lot.fx,4)}/US$.`],
     ['exw','2. Converta o preço EXW (US$/t)',`Preço EXW: R$ ${num(lot.priceBrlSc)}/sc · Conversão: ${num((1000/60),4)} sc/t · Câmbio: R$ ${num(lot.fx,4)}/US$.`],
-    ['cfr','3. Calcule o custo CFR (¢/bu)',`EXW: preço convertido na etapa 2 (US$/t) · Rodoviário: US$ ${num(lot.inlandUsdT)}/t · Fobbing: US$ ${num(lot.fobbingUsdT)}/t · Marítimo: US$ ${num(lot.maritimeUsdT)}/t · Conversão: ${num(36.7437,4)} bu/t.`],
+    ['cfr','3. Calcule o custo CFR (¢/bu)',`EXW: preço convertido na etapa 2 (US$/t) · Rodoviário: resultado da etapa 1 (US$/t) · Fobbing: US$ ${num(lot.fobbingUsdT)}/t · Marítimo: US$ ${num(lot.maritimeUsdT)}/t · Conversão: ${num(36.7437,4)} bu/t.`],
     ['basis','4. Calcule o basis de custo (¢/bu)',`Custo CFR: resultado da etapa 3 (¢/bu) · Chicago: ${num(lot.cbotCentBu)} ¢/bu.`]
   ];
   return header+`<p><strong>Rodada ${state.round} de 5.</strong> Responda cada conta e confira. Os botões e a navegação do jogo permanecem disponíveis.</p>
@@ -1106,7 +1123,7 @@ function renderCampaignL1Workbench(layer,rd) {
   // Não cobrimos caderno, mapa ou tabela: HTML transparente alinhado ao desenho.
   const notebook=document.createElement('section');
   notebook.className='l1wb';notebook.id='l1wb-panel';
-  notebook.setAttribute('aria-label','Informações no caderno original');
+  notebook.setAttribute('aria-label','Caderno ampliado de originação do Level 1');
   notebook.innerHTML=campaignL1WorkbenchMarkup(rd);
   attachCampaignL1WorkbenchEvents(notebook,rd);layer.appendChild(notebook);
   const list=document.createElement('aside');
@@ -1151,7 +1168,7 @@ function attachCampaignL1WorkbenchEvents(container,rd){
       const value=String(input.value||'').trim();
       const candidate=Number(value.replace(/\s/g,'').replace(',','.'));
       const lot=calculateCampaignOfferBasisSnapshot(selected,state.round);
-      const targets={freight:[lot.inlandUsdT*lot.fx,.06],exw:[lot.interiorUsdT,.06],cfr:[lot.cfrCostCentBu,.16],basis:[lot.basisCentBu,.17]};
+      const targets={freight:[lot.inlandUsdT,.06],exw:[lot.interiorUsdT,.06],cfr:[lot.cfrCostCentBu,.16],basis:[lot.basisCentBu,.17]};
       const target=targets[check];
       if(!target)return;
       const ok=value!==''&&Number.isFinite(candidate)&&Math.abs(candidate-target[0])<=target[1];
@@ -1164,12 +1181,18 @@ function attachCampaignL1WorkbenchEvents(container,rd){
     }
     const hint=button.dataset.l1Hint;
     if(hint){
-      const hints={freight:'Observe a moeda solicitada e a moeda de cotação do frete.',exw:'A cotação é por saca; a resposta deve estar em dólares por tonelada.',cfr:'Todos os custos devem estar na mesma unidade antes da conversão para centavos por bushel.',basis:'Compare o custo equivalente com a referência de Chicago, preservando o sinal.'};
+      const hints={freight:'Compare a moeda do frete com a moeda solicitada e observe o câmbio.',exw:'A cotação é por saca; a resposta deve estar em dólares por tonelada.',cfr:'Todos os custos devem estar na mesma unidade antes da conversão para centavos por bushel.',basis:'Compare o custo equivalente com a referência de Chicago, preservando o sinal.'};
       const feedback=container.querySelector('[data-l1-feedback="'+hint+'"]');
       if(feedback)feedback.textContent=hints[hint]||'Confira as unidades da resposta.';
       return;
     }
     const action=button.dataset.l1Action;
+    if(action==='buy' || action==='discard'){
+      // Aciona o mesmo hotspot original; conserva validações, parcial e fluxo de compra.
+      const original=document.querySelector('[data-l1-hot="'+(action==='buy'?'confirm':'discard')+'"]');
+      if(original)original.click();
+      return;
+    }
     if(action==='calculator'){
       state.campaign.l1CalcVisible=true;state.campaign.l1Focus=false;
       renderOverlaysForScreen('r1_exw',rd);return;
@@ -1206,6 +1229,17 @@ function buildCampaignStatusHtml() {
 
 function buildCampaignBookPanelHtml() {
   if (isCampaignMode() && Number(state.campaign?.levelId) !== 1) return buildCampaignBookPanelHtmlLegacy();
+  if(isCampaignMode() && Number(state.campaign?.levelId)===1 && Number(state.round)>1){
+    const progress=calculateCampaignBookSnapshot();
+    const p=progress.level.targetVolumeT>0 ? Math.min(100,(progress.totalUsedT/progress.level.targetVolumeT)*100) : 0;
+    return `<div class="campaign-canvas-card campaign-book-card">
+      <div class="campaign-canvas-title">BOOK DO LEVEL · VOLUME</div>
+      <div class="campaign-book-grid">
+        <div><span>Volume</span><strong>${formatTon(progress.totalUsedT)} / ${formatTon(progress.level.targetVolumeT)} t</strong></div>
+        <div><span>Faltante</span><strong>${formatTon(progress.missingT)} t</strong></div>
+      </div><div class="campaign-progress"><i style="width:${p.toFixed(1)}%"></i></div>
+      <div class="campaign-book-note">Basis, margem e nota somente no resultado final.</div></div>`;
+  }
   const snap = calculateCampaignBookSnapshot();
   const progress = snap.level.targetVolumeT > 0 ? Math.min(100, (snap.totalUsedT / snap.level.targetVolumeT) * 100) : 0;
   return `
@@ -1245,6 +1279,19 @@ function buildCampaignRoundSummaryHtml(roundNum = state.round) {
   const exw = state.confirmed?.exw?.[roundNum];
   if (!exw) {
     return `<div class="campaign-round-summary"><p>Nenhuma compra foi confirmada nesta rodada. O book segue sem alteração operacional.</p></div>`;
+  }
+  if(Number(roundNum)>1){
+    const book=calculateCampaignBookSnapshot();
+    const val=(v,d=2)=>Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+    return `<div class="campaign-round-summary">
+      <div class="campaign-round-kicker">Resumo da rodada ${Number(roundNum)} · Originação confirmada</div>
+      <h3>${escapeHtml(formatOfferDisplayName(exw))}</h3>
+      <div class="campaign-summary-grid">
+        <div><span>Volume contratado</span><strong>${formatTon(exw.volume_t)} t</strong></div>
+        <div><span>Volume acumulado</span><strong>${formatTon(book.totalUsedT)} / ${formatTon(book.level.targetVolumeT)} t</strong></div>
+      </div><p>Preço EXW: <strong>R$ ${val(exw.price_brl_saca)}/sc</strong> · Frete rodoviário: <strong>R$ ${val(exw.freight_brl_t_santos)}/t</strong>.</p>
+      <p>Compare seus cálculos com Chicago, câmbio e custos fixos. Basis, margem e avaliação da compra serão revelados apenas no resultado final.</p>
+    </div>`;
   }
   const lot = calculateCampaignOfferBasisSnapshot(exw, roundNum);
   const book = calculateCampaignBookSnapshot();
@@ -1372,6 +1419,12 @@ function campaignL1ScoreMarkup(score) {
 }
 
 function campaignL1RoundFeedbackMarkup(roundNum, lot, book) {
+  if(Number(roundNum)>1){
+    return `<div class="l1-feedback"><div class="l1-feedback-title">Compra registrada · ${escapeHtml(lot.origin)}</div>
+    <div class="l1-feedback-metrics"><span>Contratado <b>${formatTon(lot.volumeT)} t</b></span>
+    <span>Book <b>${formatTon(book.totalUsedT)} / ${formatTon(book.level.targetVolumeT||60000)} t</b></span></div>
+    <p>Continue avaliando Chicago, câmbio, frete e físico. A leitura econômica fica para o resultado final.</p></div>`;
+  }
   const usedBefore = book.usedLots.filter(l => Number(l.round) < Number(roundNum));
   const prevT = usedBefore.reduce((sum,l)=>sum+Number(l.usedVolumeT||0),0);
   const prevBasis = prevT ? campaignWeightedAverage(usedBefore,'basisCentBu') : null;
@@ -4019,7 +4072,7 @@ function positionTradeDetailOnCanvas() {
                 <div style="margin-top:8px; font-weight:700; color:#171717; line-height:1.35;">${escapeHtml(item.label || 'Operação confirmada')}</div>
                 <div style="margin-top:8px; color:#333; line-height:1.45; font-size:${Math.max(18, (box.font || 24) - 4)}px;">
                   ${escapeHtml(item.origin)} • ${escapeHtml(item.producer)} • ${FMT_TON_SAFE(item.volume_t)} t • R$ ${Number(item.price_brl_saca||0).toFixed(1)}/saca<br>
-                  CBOT ${escapeHtml(String(item.ref_cbot_cent_bu ?? '-'))} ¢/bu • Câmbio ${escapeHtml(String(item.ref_cambio ?? '-'))} • ${escapeHtml(item.portLabel)} • Inland US$ ${escapeHtml(String(item.inland_usd_t_selected ?? '-'))}/t
+                  CBOT ${escapeHtml(String(item.ref_cbot_cent_bu ?? '-'))} ¢/bu • Câmbio ${escapeHtml(String(item.ref_cambio ?? '-'))} • ${escapeHtml(item.portLabel)} ${isCampaignMode() && Number(state.campaign?.levelId)===1 ? ' • Rodoviário R$ '+Number(item.freight_brl_t_santos||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'/t' : ' • Inland US$ '+escapeHtml(String(item.inland_usd_t_selected ?? '-'))+'/t'}
                 </div>
               </div>
             </div>
@@ -4296,6 +4349,7 @@ function positionTradeDetailOnCanvas() {
     };
     // Atalho de confirmação apenas para o cockpit do L1; não altera hotspots compartilhados.
     if (isCampaignLevel1Exw(screenId) && key === 'hot_confirm') el.dataset.l1Hot = 'confirm';
+    if (isCampaignLevel1Exw(screenId) && key === 'hot_discard') el.dataset.l1Hot = 'discard';
     layer.appendChild(el);
   };
 
@@ -5487,6 +5541,12 @@ function advanceCampaignToNextRound(){
 
 function openCampaignAdvanceModal(){
   closeCampaignAdvanceModal();
+  if(isCampaignMode() && Number(state.campaign?.levelId)===1){
+    // O letreiro de troca de rodada não pode ficar sobre os detalhes da compra.
+    state.campaign.roundSplashUntil=0;
+    document.getElementById('txt_campaign_round_splash')?.remove();
+    document.getElementById('campaignRoundSplashFixed')?.remove();
+  }
   const modal = document.createElement('div');
   modal.id = 'campaignAdvanceModal';
   modal.className = 'modal-backdrop';
@@ -6313,6 +6373,7 @@ function getConfirmedExwRowsForUi() {
         portKey: String(exw.corredor || '').trim(),
         portLabel: PORT_LABEL_SAFE(exw.corredor || '—'),
         inland_usd_t_selected: exw.inland_usd_t_selected ?? exw.freight_inland_usd_t ?? null,
+        freight_brl_t_santos: exw.freight_brl_t_santos ?? null,
       };
     })
     .filter(Boolean);
@@ -6330,6 +6391,8 @@ function buildSojaBoletaHtml(round) {
   const cambio = exw.ref_cambio ?? '—';
   const portLabel = PORT_LABEL_SAFE(exw.corredor || '—');
   const inland = exw.inland_usd_t_selected ?? exw.freight_inland_usd_t ?? '—';
+  const freightL1Brl=Number(exw.freight_brl_t_santos||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const level1RoadOnly=isCampaignMode() && Number(state.campaign?.levelId)===1;
   const valorMercadoria = volume > 0 && priceSaca > 0 ? (volume / 0.06) * priceSaca : null;
 
   return `
@@ -6360,7 +6423,7 @@ function buildSojaBoletaHtml(round) {
           <div style="margin-top:10px; line-height:1.55; color:#222;">
             <div><b>Volume:</b> ${FMT_TON_SAFE(volume)} t</div>
             <div><b>Porto / Corredor:</b> ${escapeHtml(portLabel)}</div>
-            <div><b>Inland:</b> US$ ${escapeHtml(String(inland))}/t</div>
+            ${level1RoadOnly ? '<div><b>Frete rodoviário:</b> R$ '+freightL1Brl+'/t</div>' : '<div><b>Inland:</b> US$ '+escapeHtml(String(inland))+'/t</div>'}
           </div>
         </div>
 
