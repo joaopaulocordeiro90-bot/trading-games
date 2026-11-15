@@ -37,6 +37,7 @@ def screen_ready():
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-panel'))==1 and len(d.find_elements(By.ID,'l1wb-offers'))==1)
     quiet_guide()
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-panel'))==1 and len(d.find_elements(By.ID,'l1wb-offers'))==1)
+    wait.until(lambda d:len(d.find_elements(By.CSS_SELECTOR,'img.campaign-exw-bag'))==4)
     assert_l1_visual_geometry()
 
 def assert_l1_visual_geometry():
