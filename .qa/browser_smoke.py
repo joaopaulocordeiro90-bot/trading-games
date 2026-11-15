@@ -164,6 +164,7 @@ try:
         except NoAlertPresentException: pass
         wait.until(lambda d:len(d.find_elements(By.ID,'campaignAdvanceModal'))==1)
         assert not driver.find_elements(By.ID,'txt_campaign_round_splash'), 'Letreiro da rodada cobrindo resumo de compra'
+        assert not driver.find_elements(By.ID,'campaignRoundSplashFixed'), 'Letreiro fixo com z-index maior que o resumo'
         summary=driver.find_element(By.ID,'campaignAdvanceModal').text
         assert 'Basis do lote' not in summary and 'Margem bruta indicada' not in summary, summary
         assert 'Basis médio' not in summary and 'margem bruta teórica' not in summary, summary
