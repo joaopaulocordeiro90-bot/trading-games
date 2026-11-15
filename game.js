@@ -888,32 +888,33 @@ function ensureCampaignL1WorkbenchStyle() {
   const el = document.createElement('style');
   el.id = 'campaign-l1-workbench-style';
   el.textContent = `
-  /* Caderno original: apenas textos e botões dentro da folha, sem cartão extra. */
+  /* L1: caderno vetorial ampliado; cobre a pequena arte anterior e ocupa a faixa vazia no mapa. */
   .l1wb,.l1wb *,.l1wb-list,.l1wb-list *{box-sizing:border-box}
-  .l1wb{position:absolute;left:230px;top:648px;width:467px;height:265px;z-index:19;
-    padding:0;background:transparent;border:0;box-shadow:none;overflow:hidden;
-    font:16px/1.26 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#172533;
-    display:flex;flex-direction:column;gap:5px;pointer-events:auto}
-  .l1wb-head{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:25px}
-  .l1wb-head strong{font-size:17px;letter-spacing:-.01em;color:#57351b}
-  .l1wb-head small{font-size:13px;font-weight:800;color:#436156}
-  .l1wb-tabs{display:flex;gap:4px;align-items:center;min-height:33px}
-  .l1wb-btn{border:1px solid #d5bfa1;background:#fffaf1;border-radius:8px;padding:5px 9px;
-    font:800 13px/1.2 system-ui,Arial,sans-serif;cursor:pointer;color:#493b29}
+  .l1wb{position:absolute;left:172px;top:345px;width:600px;height:670px;z-index:19;
+    padding:91px 42px 43px 64px;background:url("assets/caderno_level1.svg") center/100% 100% no-repeat;
+    border:0;box-shadow:none;overflow:hidden;
+    font:18px/1.32 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#172533;
+    display:flex;flex-direction:column;gap:9px;pointer-events:auto}
+  .l1wb-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:33px}
+  .l1wb-head strong{font-size:22px;letter-spacing:-.01em;color:#57351b}
+  .l1wb-head small{font-size:16px;font-weight:800;color:#436156}
+  .l1wb-tabs{display:flex;gap:7px;align-items:center;min-height:44px}
+  .l1wb-btn{border:1px solid #d5bfa1;background:#fffaf1;border-radius:8px;padding:7px 11px;
+    font:800 15px/1.2 system-ui,Arial,sans-serif;cursor:pointer;color:#493b29}
   .l1wb-btn:hover{background:#f3e5cd}
   .l1wb-btn[aria-selected=true]{background:#d46b1d;color:white;border-color:#ad5115}
   .l1wb-btn-primary{color:#fff;background:#167449;border-color:#167449}
   .l1wb-btn-primary:hover{background:#075b34}
   .l1wb-btn:disabled{opacity:.45;cursor:not-allowed}
-  .l1wb-content{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:4px}
-  .l1wb-label{font:900 12px/1.3 system-ui,Arial,sans-serif;text-transform:uppercase;letter-spacing:.055em;color:#9a541b}
-  .l1wb-content h3{font-size:17px;line-height:1.22;margin:5px 0;color:#233329}
-  .l1wb-content p{font-size:14px;line-height:1.3;margin:5px 0;color:#44423b}
+  .l1wb-content{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:6px}
+  .l1wb-label{font:900 14px/1.4 system-ui,Arial,sans-serif;text-transform:uppercase;letter-spacing:.045em;color:#9a541b}
+  .l1wb-content h3{font-size:21px;line-height:1.25;margin:7px 0;color:#233329}
+  .l1wb-content p{font-size:17px;line-height:1.4;margin:7px 0;color:#44423b}
   .l1wb-content strong{color:#163c33}
-  .l1wb-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px}
-  .l1wb-mini{background:rgba(254,247,232,.9);border:1px solid #e8d3ab;border-radius:8px;padding:6px 8px;margin-top:5px}
-  .l1wb-mini p{margin:2px 0}
-  .l1wb-foot{font:11px/1.2 system-ui,Arial,sans-serif;color:#826c58;min-height:14px}
+  .l1wb-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:11px}
+  .l1wb-mini{background:rgba(254,247,232,.84);border:1px solid #e8d3ab;border-radius:8px;padding:9px 11px;margin-top:7px}
+  .l1wb-mini p{margin:4px 0}
+  .l1wb-foot{font:13px/1.3 system-ui,Arial,sans-serif;color:#826c58;min-height:19px}
   /* Quadro OFERTAS EXW é parte da imagem; cards ocupam apenas seu interior. */
   .l1wb-list{position:absolute;left:1472px;top:370px;width:356px;height:504px;z-index:18;
     background:transparent;border:0;overflow-y:auto;scrollbar-width:thin;pointer-events:auto;
@@ -931,7 +932,7 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb-offer-logistics{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;line-height:1.15;color:#38505c;white-space:nowrap}
   .l1wb-offer-logistics strong{font-size:12px;color:#183b4d}
   .l1wb-offer-flag{font-size:11px;font-weight:800;color:#157549}
-  .l1wb-fobbing{font-weight:750;color:#3a423a;margin:5px 0 2px!important;font-size:13px!important}
+  .l1wb-fobbing{font-weight:750;color:#3a423a;margin:9px 0 4px!important;font-size:17px!important}
   /* Sob demanda: modal compacto central, nunca aberto permanentemente. */
   .l1wb-focus-backdrop{position:fixed;inset:0;background:rgba(7,16,27,.49);z-index:10040;
     display:flex;align-items:center;justify-content:center;padding:16px}
@@ -1022,7 +1023,7 @@ function campaignL1WorkbenchMarkup(rd) {
       inner=`<span class="l1wb-label">${confirmed?'Compra confirmada':'Oferta selecionada'}</span>
         <h3>${escapeHtml(formatOfferDisplayName(selected))}</h3>
         <div class="l1wb-mini"><p><strong>${vol(effective)} t · R$ ${num(selected.price_brl_saca,2)}/sc</strong></p>
-        <p>${round===1?`Basis: <strong>${signed(lot.basisCentBu)} ¢/bu</strong> · Book: <strong>${signed(projected.basisAvg)} ¢/bu</strong>`:'Calcule o frete, o CFR e o basis antes de decidir.'}</p></div>
+        <p>${round===1?`Basis: <strong>${signed(lot.basisCentBu)} ¢/bu</strong> · Book: <strong>${signed(projected.basisAvg)} ¢/bu</strong>`:'Calcule o frete, o CFR e o basis antes de decidir.'}</p><p>Frete rodoviário: <strong>R$ ${num(Number(selected.freight_brl_t_santos),2)}/t</strong></p></div>
         <p class="l1wb-fobbing">Considere o fobbing de: <strong>US$ ${num(level.fixedFobbingUsdT,2)}/t</strong></p>
         <div class="l1wb-actions"><button type="button" class="l1wb-btn" data-l1-action="calculator">Calcular CFR ↗</button>
         <span style="font-size:12px;color:#526557">${confirmed?'Compra registrada':'Use COMPRAR abaixo'}</span></div>`;
@@ -1053,8 +1054,8 @@ function campaignL1OfferListMarkup(rd){
   const vol=v=>Number(v||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
   return `<p class="l1wb-list-heading">Selecione na lista ou no mapa</p>${offers.map((o,i)=>{
     const active=!!selected&&Number(selected.id)===Number(o.id);
-    const roadFreight=Number(o.inland_by_corridor?.santos);
-    const freightText=Number.isFinite(roadFreight)?`US$ ${num(roadFreight)}/t`:'Não informado';
+    const roadFreight=Number(o.freight_brl_t_santos);
+    const freightText=Number.isFinite(roadFreight)?`R$ ${num(roadFreight)}/t`:'Não informado';
     return `<button type="button" class="l1wb-offer" data-l1-select="${i}" aria-pressed="${active}">
        <span class="l1wb-offer-top"><strong>${escapeHtml(formatOfferDisplayName(o))}</strong><span class="l1wb-offer-price">R$ ${num(o.price_brl_saca)}/sc</span></span>
        <span class="l1wb-offer-top"><small>${vol(o.volume_t)} t · Disponível</small></span>
@@ -1106,7 +1107,7 @@ function renderCampaignL1Workbench(layer,rd) {
   // Não cobrimos caderno, mapa ou tabela: HTML transparente alinhado ao desenho.
   const notebook=document.createElement('section');
   notebook.className='l1wb';notebook.id='l1wb-panel';
-  notebook.setAttribute('aria-label','Informações no caderno original');
+  notebook.setAttribute('aria-label','Caderno ampliado de originação do Level 1');
   notebook.innerHTML=campaignL1WorkbenchMarkup(rd);
   attachCampaignL1WorkbenchEvents(notebook,rd);layer.appendChild(notebook);
   const list=document.createElement('aside');
