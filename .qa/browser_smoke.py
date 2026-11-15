@@ -58,9 +58,11 @@ def assert_l1_visual_geometry():
       if(intersect(rect(cb),rect(fx))>.5)issues.push('Chicago/câmbio');
       if(cb&&cb.scrollWidth>cb.clientWidth+2)issues.push('Texto Chicago cortado');
       if(fx&&fx.scrollWidth>fx.clientWidth+2)issues.push('Texto câmbio cortado');
-      return {round:state.round,issues,actual:bags.length};
+      return {round:state.round,issues,actual:bags.length,header:{cbText:cb?.textContent,cbClient:cb?.clientWidth,cbScroll:cb?.scrollWidth,cbStyle:cb?getComputedStyle(cb).font:null,fxText:fx?.textContent,fxClient:fx?.clientWidth,fxScroll:fx?.scrollWidth}};
     })();""")
     assert result['actual']==4,result
+    if result['issues']:
+        driver.save_screenshot(str(ARTIFACTS/f'diagnostico-R{result["round"]}.png'))
     assert result['issues']==[],result
 
 def enter_l1():
