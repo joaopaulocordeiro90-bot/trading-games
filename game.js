@@ -5545,6 +5545,7 @@ function openCampaignAdvanceModal(){
     // O letreiro de troca de rodada não pode ficar sobre os detalhes da compra.
     state.campaign.roundSplashUntil=0;
     document.getElementById('txt_campaign_round_splash')?.remove();
+    document.getElementById('campaignRoundSplashFixed')?.remove();
   }
   const modal = document.createElement('div');
   modal.id = 'campaignAdvanceModal';
