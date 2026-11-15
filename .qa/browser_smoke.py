@@ -124,6 +124,7 @@ try:
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==1)
     modal=driver.find_element(By.ID,'l1wb-dialog').text
     assert 'Custo CFR equivalente' in modal and 'Frete rodoviário' in modal
+    assert '0,00 US$/t' not in modal, 'EXW convertido erroneamente exibido como zero'
     driver.save_screenshot(str(ARTIFACTS/'03-calculadora-sob-demanda.png'))
     click('#l1wb-dialog [data-l1-action="close"]')
     wait.until(lambda d:len(d.find_elements(By.ID,'l1wb-dialog'))==0)
@@ -173,6 +174,7 @@ try:
     driver.set_window_size(430,900)
     enter_l1()
     assert not driver.find_elements(By.ID,'l1wb-dialog')
+    wait.until(lambda d:len(d.find_elements(By.CSS_SELECTOR,'img.campaign-exw-bag'))==4)
     assert_l1_visual_geometry()
     driver.save_screenshot(str(ARTIFACTS/'08-mobile-sem-modal-automatico.png'))
     errors=[e for e in driver.get_log('browser') if e.get('level')=='SEVERE'
