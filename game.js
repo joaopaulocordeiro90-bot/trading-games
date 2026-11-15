@@ -915,6 +915,12 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb-mini{background:rgba(254,247,232,.84);border:1px solid #e8d3ab;border-radius:8px;padding:9px 11px;margin-top:7px}
   .l1wb-mini p{margin:4px 0}
   .l1wb-foot{font:13px/1.3 system-ui,Arial,sans-serif;color:#826c58;min-height:19px}
+  .l1wb-purchase{display:flex;gap:18px;justify-content:space-between;align-items:center;flex-shrink:0;min-height:58px;padding:0 4px}
+  .l1wb-purchase button{border-radius:26px;border:3px solid #fff;color:#fff;box-shadow:0 2px 5px #0003;
+    font:900 22px/1.2 system-ui,Arial,sans-serif;padding:8px 19px;cursor:pointer}
+  .l1wb-purchase button:disabled{opacity:.45;cursor:not-allowed}
+  .l1wb-purchase .l1wb-discard{background:#e02126}
+  .l1wb-purchase .l1wb-buy{background:#0b9b35}
   /* Quadro OFERTAS EXW é parte da imagem; cards ocupam apenas seu interior. */
   .l1wb-list{position:absolute;left:1472px;top:370px;width:356px;height:504px;z-index:18;
     background:transparent;border:0;overflow-y:auto;scrollbar-width:thin;pointer-events:auto;
@@ -1051,6 +1057,8 @@ function campaignL1WorkbenchMarkup(rd) {
     <button type="button" class="l1wb-btn" role="tab" data-l1-tab="book" aria-selected="${tab==='book'}">Posição</button>
     <button type="button" class="l1wb-btn" data-l1-action="focus" aria-label="Ampliar leitura do caderno">Ler ⛶</button></nav>
     <div class="l1wb-content">${content}</div>
+    <div class="l1wb-purchase"><button type="button" class="l1wb-discard" data-l1-action="discard">Descartar</button>
+    <button type="button" class="l1wb-buy" data-l1-action="buy" ${selected?'':'disabled'}>Comprar</button></div>
     <div class="l1wb-foot">Meta: basis médio ≤ +${num(level.targetBasisCentBu,0)} ¢/bu · Cenário simulado</div>`;
 }
 
@@ -1178,6 +1186,12 @@ function attachCampaignL1WorkbenchEvents(container,rd){
       return;
     }
     const action=button.dataset.l1Action;
+    if(action==='buy' || action==='discard'){
+      // Aciona o mesmo hotspot original; conserva validações, parcial e fluxo de compra.
+      const original=document.querySelector('[data-l1-hot="'+(action==='buy'?'confirm':'discard')+'"]');
+      if(original)original.click();
+      return;
+    }
     if(action==='calculator'){
       state.campaign.l1CalcVisible=true;state.campaign.l1Focus=false;
       renderOverlaysForScreen('r1_exw',rd);return;
@@ -4334,6 +4348,7 @@ function positionTradeDetailOnCanvas() {
     };
     // Atalho de confirmação apenas para o cockpit do L1; não altera hotspots compartilhados.
     if (isCampaignLevel1Exw(screenId) && key === 'hot_confirm') el.dataset.l1Hot = 'confirm';
+    if (isCampaignLevel1Exw(screenId) && key === 'hot_discard') el.dataset.l1Hot = 'discard';
     layer.appendChild(el);
   };
 
