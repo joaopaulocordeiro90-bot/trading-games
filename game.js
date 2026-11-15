@@ -893,28 +893,29 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb{position:absolute;left:172px;top:345px;width:600px;height:670px;z-index:19;
     padding:91px 42px 43px 64px;background:url("assets/caderno_level1.svg") center/100% 100% no-repeat;
     border:0;box-shadow:none;overflow:hidden;
-    font:18px/1.32 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#172533;
+    font:21px/1.34 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#172533;
     display:flex;flex-direction:column;gap:9px;pointer-events:auto}
   .l1wb-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:33px}
-  .l1wb-head strong{font-size:22px;letter-spacing:-.01em;color:#57351b}
-  .l1wb-head small{font-size:16px;font-weight:800;color:#436156}
+  .l1wb-head strong{font-size:24px;letter-spacing:-.01em;color:#57351b}
+  .l1wb-head small{font-size:18px;font-weight:800;color:#436156}
   .l1wb-tabs{display:flex;gap:7px;align-items:center;min-height:44px}
   .l1wb-btn{border:1px solid #d5bfa1;background:#fffaf1;border-radius:8px;padding:7px 11px;
-    font:800 15px/1.2 system-ui,Arial,sans-serif;cursor:pointer;color:#493b29}
+    font:800 18px/1.2 system-ui,Arial,sans-serif;cursor:pointer;color:#493b29}
   .l1wb-btn:hover{background:#f3e5cd}
   .l1wb-btn[aria-selected=true]{background:#d46b1d;color:white;border-color:#ad5115}
   .l1wb-btn-primary{color:#fff;background:#167449;border-color:#167449}
   .l1wb-btn-primary:hover{background:#075b34}
   .l1wb-btn:disabled{opacity:.45;cursor:not-allowed}
   .l1wb-content{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:6px}
-  .l1wb-label{font:900 14px/1.4 system-ui,Arial,sans-serif;text-transform:uppercase;letter-spacing:.045em;color:#9a541b}
-  .l1wb-content h3{font-size:21px;line-height:1.25;margin:7px 0;color:#233329}
-  .l1wb-content p{font-size:17px;line-height:1.4;margin:7px 0;color:#44423b}
+  .l1wb-label{font:900 16px/1.4 system-ui,Arial,sans-serif;text-transform:uppercase;letter-spacing:.045em;color:#9a541b}
+  .l1wb-content h3{font-size:25px;line-height:1.25;margin:7px 0;color:#233329}
+  .l1wb-content p{font-size:21px;line-height:1.4;margin:7px 0;color:#44423b}
   .l1wb-content strong{color:#163c33}
   .l1wb-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:11px}
   .l1wb-mini{background:rgba(254,247,232,.84);border:1px solid #e8d3ab;border-radius:8px;padding:9px 11px;margin-top:7px}
-  .l1wb-mini p{margin:4px 0}
-  .l1wb-foot{font:13px/1.3 system-ui,Arial,sans-serif;color:#826c58;min-height:19px}
+  .l1wb-mini p{margin:5px 0}
+  .l1wb-actions span{font-size:16px!important}
+  .l1wb-foot{font:15px/1.3 system-ui,Arial,sans-serif;color:#826c58;min-height:19px}
   .l1wb-purchase{display:flex;gap:18px;justify-content:space-between;align-items:center;flex-shrink:0;min-height:58px;padding:0 4px}
   .l1wb-purchase button{border-radius:26px;border:3px solid #fff;color:#fff;box-shadow:0 2px 5px #0003;
     font:900 22px/1.2 system-ui,Arial,sans-serif;padding:8px 19px;cursor:pointer}
@@ -938,7 +939,7 @@ function ensureCampaignL1WorkbenchStyle() {
   .l1wb-offer-logistics{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;line-height:1.15;color:#38505c;white-space:nowrap}
   .l1wb-offer-logistics strong{font-size:12px;color:#183b4d}
   .l1wb-offer-flag{font-size:11px;font-weight:800;color:#157549}
-  .l1wb-fobbing{font-weight:750;color:#3a423a;margin:9px 0 4px!important;font-size:17px!important}
+  .l1wb-fobbing{font-weight:750;color:#3a423a;margin:9px 0 4px!important;font-size:20px!important}
   /* Sob demanda: modal compacto central, nunca aberto permanentemente. */
   .l1wb-focus-backdrop{position:fixed;inset:0;background:rgba(7,16,27,.49);z-index:10040;
     display:flex;align-items:center;justify-content:center;padding:16px}
@@ -5540,6 +5541,11 @@ function advanceCampaignToNextRound(){
 
 function openCampaignAdvanceModal(){
   closeCampaignAdvanceModal();
+  if(isCampaignMode() && Number(state.campaign?.levelId)===1){
+    // O letreiro de troca de rodada não pode ficar sobre os detalhes da compra.
+    state.campaign.roundSplashUntil=0;
+    document.getElementById('txt_campaign_round_splash')?.remove();
+  }
   const modal = document.createElement('div');
   modal.id = 'campaignAdvanceModal';
   modal.className = 'modal-backdrop';
