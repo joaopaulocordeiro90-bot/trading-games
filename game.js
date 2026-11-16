@@ -2475,6 +2475,11 @@ const totalRounds = state.totalRounds || getActiveRules()?.rounds || 5;
 }
 
 function renderStage() {
+  // Mapa real exclusivo do Level 1. Em resultados, menu ou outros modos,
+  // libera a camada visual sem alterar o estado comercial do game.js.
+  if (window.CampaignL1Map && !(isCampaignMode() && Number(state.campaign?.levelId) === 1 && ['r1_home','r1_exw'].includes(state.stage))) {
+    window.CampaignL1Map.unmount();
+  }
   const rd = getRoundData(state.round || 1);
 
   if (state.stage === "mode_select") return renderPrimaryModeSelect();
@@ -2661,7 +2666,33 @@ function renderImageScreen(screenId, imgSrc, rd) {
     if (wrap) { wrap.style.opacity = "1"; }
     renderOverlaysForScreen(screenId, rd);
     if (window.updateLinkBidLaterButton) window.updateLinkBidLaterButton(screenId);
-    if (!state.guideOverlayOpen) {
+    const level1RealMap = isCampaignMode() && Number(state.campaign?.levelId) === 1 && (screenId === 'r1_home' || screenId === 'r1_exw');
+    if (level1RealMap) {
+      // Mantém o canvas e seus hotspots originais funcionando por baixo do mapa.
+      // A interface Leaflet/Esri só representa o estado, nunca substitui compras, cálculos e score.
+      if (!window.__campaignL1MapAssetsStarted) {
+        window.__campaignL1MapAssetsStarted = true;
+        const style = document.createElement('link');
+        style.rel = 'stylesheet'; style.href = './campaign-level1-map.css?v=20261116';
+        document.head.appendChild(style);
+        const leafletStyle = document.createElement('link');
+        leafletStyle.rel = 'stylesheet';
+        leafletStyle.href = 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css';
+        leafletStyle.crossOrigin = 'anonymous';
+        document.head.appendChild(leafletStyle);
+        const script = document.createElement('script');
+        script.src = './campaign-level1-map.js?v=20261116';
+        script.onload = () => { if (state.stage === 'r1_home' || state.stage === 'r1_exw') window.CampaignL1Map?.mount(); };
+        script.onerror = () => {
+          window.__campaignL1MapAssetsStarted = false;
+          console.error('Não foi possível carregar a interface real do Level 1; tela anterior preservada.');
+        };
+        document.head.appendChild(script);
+      } else {
+        window.CampaignL1Map?.mount();
+      }
+    }
+    if (!state.guideOverlayOpen && !level1RealMap) {
       setTimeout(() => maybeOpenGuideForScreen(screenId), 0);
     }
     setTimerText();
