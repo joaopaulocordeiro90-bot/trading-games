@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Trading Games — Campanha Level 2 | Prévia do mapa real</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+<style>
+:root{--ink:#192b35;--ink-soft:#566a73;--border:rgba(30,51,60,.12);--white:#fff;--accent:#15765e;--accent-dark:#075540;--shadow:0 12px 50px rgba(28,43,47,.12);font-family:Inter,Arial,Helvetica,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#e8eeec;color:var(--ink)}button{font:inherit;cursor:pointer}button:focus-visible,select:focus-visible{outline:3px solid #f8bb4a;outline-offset:3px}
+#map{position:absolute;inset:0;background:#e7efeb;z-index:1}.leaflet-container{font-family:inherit}.leaflet-control-attribution{font-size:10px!important;background:rgba(255,255,255,.8)!important}.leaflet-control-zoom{margin:0 16px 92px 0!important;border:1px solid #dce5df!important;box-shadow:var(--shadow)!important}.leaflet-control-zoom a{background:#fff!important;color:#26363d!important}
+.ui{position:absolute;inset:0;pointer-events:none;z-index:900}.ui>*{pointer-events:auto}.topbar{position:absolute;left:20px;right:20px;top:20px;min-height:70px;display:flex;align-items:center;gap:14px;padding:12px 16px 12px 18px;background:rgba(255,255,255,.96);border:1px solid var(--border);box-shadow:var(--shadow);border-radius:11px;backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:13px;min-width:240px}.logomark{display:grid;place-items:center;width:35px;height:35px;background:#153d37;color:#fff;border-radius:8px;font-weight:900;letter-spacing:-2px;font-size:18px}.brandtitle{font-size:14px;font-weight:850;letter-spacing:.02em;line-height:1.25}.brandsub{font-size:11px;color:#77878d;font-weight:600;margin-top:3px;letter-spacing:.015em}
+.sep{width:1px;height:35px;background:#e1e9e5}.rounds{display:flex;align-items:center;gap:7px;flex:1;justify-content:center}.round-label{font-size:10px;letter-spacing:.11em;color:#75868a;font-weight:800;margin-right:7px;text-transform:uppercase}.round-btn{width:35px;height:35px;border:1px solid #dee8e3;background:#f8fbf9;color:#60736b;border-radius:7px;font-size:13px;font-weight:800;transition:background .15s,color .15s}.round-btn:hover{background:#eff6f2}.round-btn.active{color:#fff;background:var(--accent-dark);border-color:var(--accent-dark)}.topright{display:flex;gap:10px;align-items:center;justify-content:flex-end;min-width:215px}.port-tag{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;white-space:nowrap}.port-dot{height:9px;width:9px;background:#e2a24d;border-radius:2px;transform:rotate(45deg)}.top-btn{border:1px solid #dce6e0;background:#f9fbfa;color:#354a46;font-weight:750;border-radius:7px;padding:10px 12px;font-size:12px;white-space:nowrap}.top-btn:hover{background:#edf4f0}
+.summary{position:absolute;top:106px;left:20px;background:rgba(255,255,255,.93);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(14,49,37,.06);padding:10px 12px;max-width:390px}.summary .summary-title{font-size:12px;font-weight:850}.summary .summary-desc{font-size:11px;line-height:1.5;color:#697e81;margin-top:3px}
+.legend{position:absolute;left:20px;bottom:31px;display:flex;align-items:center;gap:13px;padding:12px 16px;border:1px solid var(--border);border-radius:9px;background:rgba(255,255,255,.95);box-shadow:var(--shadow);font-size:11px;font-weight:750;color:#41555c}.leg-item{display:flex;align-items:center;gap:8px;white-space:nowrap}.leg-dollar{font-size:18px;font-weight:1000;color:var(--accent);line-height:1}.leg-port{height:11px;width:11px;background:#d79543;transform:rotate(45deg);border:2px solid #fff;outline:1px solid #d79543}.leg-line{height:3px;width:21px;border-radius:5px;background:#108b72}.leg-sep{height:17px;width:1px;background:#e2eae6}
+.footnote{position:absolute;bottom:12px;left:20px;font-size:10px;color:#536966;text-shadow:0 1px 5px #fff;pointer-events:none}
+.detail{position:absolute;right:20px;top:106px;width:316px;max-height:calc(100vh - 145px);overflow:auto;display:none;background:rgba(255,255,255,.98);border:1px solid var(--border);border-radius:11px;box-shadow:0 16px 50px rgba(15,37,35,.16)}.detail.visible{display:block}.detail-top{display:flex;align-items:flex-start;justify-content:space-between;padding:19px 20px 10px}.eyebrow{font-size:10px;letter-spacing:.12em;color:#79908c;font-weight:900;text-transform:uppercase}.detail-h{font-size:22px;font-weight:850;margin:6px 0 3px;line-height:1.18;letter-spacing:-.6px}.detail-uf{font-size:12px;color:#677b7a}.close{height:28px;width:28px;border:1px solid #e5ebe7;background:#fff;color:#61746d;border-radius:6px;font-weight:700}.close:hover{background:#f2f7f4}.detail-body{padding:8px 20px 20px}.quote{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-top:1px solid #eef1ef}.quote label{font-size:11px;color:#697e7a;font-weight:650}.quote strong{font-size:14px;color:#1a3630;font-variant-numeric:tabular-nums}.quote.main strong{font-size:20px;color:#075b43}.route-box{padding:13px 12px;border:1px solid #e1ede5;background:#f6faf7;border-radius:8px;margin-top:8px}.route-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;margin:5px 0;gap:12px}.route-row .muted{color:#71827c}.route-row strong{color:#245b49;font-weight:850;white-space:nowrap}.route-status{font-size:11px;line-height:1.55;margin-top:11px;color:#71817b;min-height:33px}.route-status.error{color:#a45c43}.detail-action{display:flex;gap:8px;margin-top:12px}.detail-action button{flex:1;font-size:12px;border-radius:7px;padding:11px 10px;border:1px solid #cbded4;background:#fff;color:#225746;font-weight:800}.detail-action button.primary{background:#135f4b;color:#fff;border-color:#135f4b}.detail-action button:hover{filter:brightness(.97)}
+.leaflet-div-icon{background:none;border:0}.money-pin{position:relative;display:flex;flex-direction:column;align-items:center;width:70px;transform:translate(-8px,-2px);cursor:pointer}.money-shell{display:grid;place-items:center;width:44px;height:44px;animation:bob 2.45s ease-in-out infinite;transform-origin:center bottom;filter:drop-shadow(0 5px 4px rgba(2,65,39,.2))}.money-face{display:grid;place-items:center;width:39px;height:39px;border:2px solid white;border-radius:12px;background:linear-gradient(135deg,#168e63,#064d3d);box-shadow:0 2px 10px #0b634e26;color:white;perspective:100px;transform-style:preserve-3d}.money-value{font-weight:950;font-size:26px;line-height:1;animation:spin 5.2s ease-in-out infinite;transform-style:preserve-3d;text-shadow:0 1px 2px #0c4b32}.money-name{background:rgba(255,255,255,.97);border:1px solid #dcebe2;box-shadow:0 1px 7px rgba(14,51,41,.1);margin-top:3px;border-radius:5px;white-space:nowrap;padding:4px 7px;font-size:11px;font-weight:850;color:#263c35}.money-pin.selected .money-face{background:linear-gradient(135deg,#f0ac4b,#b8692c);box-shadow:0 0 0 4px #eea94838,0 2px 12px #d98d4050}.money-pin.selected .money-name{border-color:#daab71;color:#7a4b1a}.money-pin:nth-child(2n) .money-shell{animation-delay:-1s}.money-pin:nth-child(3n) .money-shell{animation-delay:-.5s}
+.port-pin{display:flex;align-items:center;gap:7px;white-space:nowrap}.port-symbol{display:grid;place-items:center;background:#ca8538;border:2px solid #fff;border-radius:8px;height:32px;width:32px;color:#fff;font-size:18px;font-weight:900;box-shadow:0 3px 12px #7c521d55}.port-name{font-size:11px;font-weight:900;letter-spacing:.04em;color:#795221;background:rgba(255,255,255,.96);padding:6px 8px;border-radius:5px;border:1px solid #ead9b9}
+@keyframes bob{0%,100%{transform:translateY(1px)}50%{transform:translateY(-10px)}}@keyframes spin{0%,18%{transform:rotateY(0deg)}48%,65%{transform:rotateY(180deg)}90%,100%{transform:rotateY(360deg)}}
+@media(prefers-reduced-motion:reduce){.money-shell,.money-value{animation:none}}
+@media(max-width:800px){.topbar{left:9px;right:9px;top:9px;padding:10px;gap:8px;flex-wrap:wrap;min-height:67px}.brand{min-width:0;flex:1}.logomark{width:31px;height:31px}.brandsub{display:none}.sep{display:none}.rounds{order:3;width:100%;justify-content:center;flex:auto;gap:5px}.round-label{font-size:10px}.round-btn{width:30px;height:29px}.topright{min-width:0}.port-tag{font-size:10px}.top-btn{font-size:10px;padding:9px}.summary{top:115px;left:9px;max-width:calc(100vw - 18px);padding:8px 10px}.summary-desc{font-size:10px}.detail{left:9px;right:9px;top:auto;bottom:79px;width:auto;max-height:46vh;border-radius:10px}.detail-top{padding:13px 15px 6px}.detail-h{font-size:18px}.detail-body{padding:0 15px 12px}.quote{padding:8px 0}.quote.main strong{font-size:18px}.route-box{padding:9px;margin-top:5px}.legend{left:9px;bottom:18px;gap:8px;padding:9px 10px;font-size:10px}.leg-sep{display:none}.footnote{display:none}.leaflet-control-zoom{margin:0 9px 82px 0!important}}
+@media(max-width:380px){.topright #reset{display:none}.brandtitle{font-size:12px}.legend{font-size:9px;gap:6px}.round-label{margin-right:1px}}
+
+/* Mapas reais por raster Esri: independente de WebGL/MapLibre e API keys no protótipo. */
+.base-control{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:#677d79;white-space:nowrap}
+.base-control select{appearance:none;min-width:108px;border:1px solid #d7e5dc;border-radius:7px;background:#f7faf8;color:#234b3c;font-size:12px;font-weight:750;letter-spacing:0;text-transform:none;outline:none;padding:9px 23px 9px 9px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23617468' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-position:right 5px center;background-size:15px;background-repeat:no-repeat}
+.tile-state{position:absolute;right:17px;bottom:43px;max-width:360px;display:flex;align-items:center;gap:8px;padding:8px 11px;background:rgba(255,255,255,.96);border:1px solid #dce7df;border-radius:8px;box-shadow:0 4px 18px #0f2b241f;font-size:11px;color:#305a4b;font-weight:750}
+.tile-state i{width:8px;height:8px;flex:none;background:#d99a32;border-radius:50%}.tile-state.ready i{background:#0e9566}.tile-state.error i{background:#d35a4c}.tile-state button{border:0;color:#176849;background:none;text-decoration:underline;padding:0;font-weight:750}
+.tile-state[hidden]{display:none}
+@media(max-width:1050px){.base-control{font-size:0}.base-control select{max-width:100px;min-width:90px}.port-tag{display:none}}
+@media(max-width:800px){.tile-state{right:9px;bottom:53px;font-size:10px;max-width:245px;padding:6px 8px}.base-control select{font-size:11px;padding:7px 20px 7px 7px}.topbar{gap:7px}}
+</style>
+</head>
+<body>
+<div id="map" role="application" aria-label="Mapa geográfico real com origens de soja e Porto de Santos"></div>
+<div class="ui">
+<header class="topbar">
+  <div class="brand"><div class="logomark" aria-hidden="true">TG</div><div><div class="brandtitle">TRADING GAMES <span style="color:#0e7558">/ LEVEL 2</span></div><div class="brandsub">Prévia do Level 2 · ofertas simuladas do Level 1</div></div></div>
+  <div class="sep" aria-hidden="true"></div>
+  <nav class="rounds" id="rounds" aria-label="Selecionar rodada"><span class="round-label">Rodada</span><button class="round-btn active" data-round="1">1</button><button class="round-btn" data-round="2">2</button><button class="round-btn" data-round="3">3</button><button class="round-btn" data-round="4">4</button><button class="round-btn" data-round="5">5</button></nav>
+  <div class="topright"><button class="top-btn" id="returnGame" title="Voltar ao Trading Games">← Voltar ao jogo</button><label class="base-control">Mapa <select id="baseStyle" title="Escolher camada de mapa"><option value="street">Ruas</option><option value="topo">Topográfico</option><option value="satellite">Satélite</option></select></label><div class="port-tag"><i class="port-dot" aria-hidden="true"></i> Porto de Santos</div><button class="top-btn" id="reset">Visão geral</button></div>
+</header>
+<div class="summary"><div class="summary-title">Selecione uma origem no mapa</div><div class="summary-desc" id="news">Clique em um cifrão para consultar a oferta e visualizar a rota rodoviária até o porto.</div></div>
+<aside class="detail" id="detail" aria-live="polite">
+  <div class="detail-top"><div><div class="eyebrow">Origem selecionada</div><div class="detail-h" id="city">—</div><div class="detail-uf" id="cityUF">—</div></div><button class="close" id="close" title="Fechar detalhes" aria-label="Fechar detalhes">×</button></div>
+  <div class="detail-body">
+    <div class="quote main"><label>Preço EXW</label><strong id="price">—</strong></div>
+    <div class="quote"><label>Volume da oferta</label><strong id="volume">—</strong></div>
+    <div class="quote"><label>Frete de referência a Santos</label><strong id="freight">—</strong></div>
+    <div class="route-box"><div class="route-row"><span class="muted">Destino</span><strong>Santos · SP</strong></div><div class="route-row"><span class="muted">Distância rodoviária</span><strong id="distance">—</strong></div><div class="route-row"><span class="muted">Tempo de percurso modelado</span><strong id="duration">—</strong></div></div>
+    <div class="route-status" id="routeStatus">Selecione uma origem para calcular a rota.</div>
+    <div class="detail-action"><button id="clear">Limpar</button><button class="primary" id="fit">Enquadrar rota</button></div>
+  </div>
+</aside>
+<div class="legend"><span class="leg-item"><b class="leg-dollar">$</b> Oferta EXW</span><span class="leg-sep"></span><span class="leg-item"><i class="leg-port"></i> Porto de destino</span><span class="leg-sep"></span><span class="leg-item"><i class="leg-line"></i> Rota rodoviária</span></div>
+<div class="tile-state" id="tileState"><i id="tileDot"></i><span id="tileMessage">Inicializando mapa real…</span><button id="tileRetry" hidden>Tentar outra camada</button></div>
+<div class="footnote">Prévia Level 2: dados simulados do Level 1 · Mapa: Esri · Rotas (se disponíveis): OSRM · Sem decisões comerciais nesta tela</div>
+</div>
+
+<script>
+'use strict';
+// As ofertas abaixo reproduzem o cenário de treinamento do Level 1 no repositório oficial
+// em 16/11/2026. Nenhuma oferta ou decisão do Level 2 está sendo criada ou publicada.
+const ROUNDS=[
+{date:'06/11/2026',news:'China reduz o ritmo das compras; Chicago perde sustentação.',offers:[['Querência','MT',122,10000,450],['Porto Nacional','TO',128,11000,440],['Rio Verde','GO',125.5,18000,290],['Dourados','MS',130.5,12000,340]]},
+{date:'09/11/2026',news:'Problemas de qualidade nos EUA aumentam a disputa pelo produto.',offers:[['Sapezal','MT',121.5,15000,525],['Porto Nacional','TO',127.5,10000,440],['Jataí','GO',125.5,14000,295],['Maracaju','MS',129,13000,345]]},
+{date:'10/11/2026',news:'Compradores voltam ao físico, mas o produtor limita ofertas.',offers:[['Rondonópolis','MT',124.5,14000,400],['Porto Nacional','TO',129,11000,440],['Rio Verde','GO',125.5,18000,290],['Dourados','MS',130.5,15000,340]]},
+{date:'11/11/2026',news:'Dólar sobe; Chicago sente pressão de oferta.',offers:[['Sorriso','MT',121.5,17000,520],['Porto Nacional','TO',128,10000,440],['Jataí','GO',131,13000,295],['Maracaju','MS',129,15000,345]]},
+{date:'12/11/2026',news:'Chicago recua, mas dólar firme limita repasse no físico.',offers:[['Primavera do Leste','MT',127.5,16000,430],['Porto Nacional','TO',129,12000,440],['Rio Verde','GO',133,18000,290],['Dourados','MS',130.5,20000,340]]}
+];
+// Latitude/longitude de referência dos CENTROS URBANOS, não das fazendas simuladas.
+const COORDS={
+'Querência|MT':[-12.6093,-52.1828], 'Porto Nacional|TO':[-10.7082,-48.4117],
+'Rio Verde|GO':[-17.7923,-50.9192], 'Dourados|MS':[-22.2231,-54.8120],
+'Sapezal|MT':[-13.5429,-58.8145], 'Jataí|GO':[-17.8790,-51.7217],
+'Maracaju|MS':[-21.6145,-55.1672], 'Rondonópolis|MT':[-16.4673,-54.6372],
+'Sorriso|MT':[-12.5425,-55.7211], 'Primavera do Leste|MT':[-15.5608,-54.2979]
+};
+const PORT={name:'Porto de Santos',lat:-23.9539,lon:-46.3093};
+const fmtBRL=n=>'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtInt=n=>Math.round(n).toLocaleString('pt-BR');
+let map,markerLayer,routeLayer,round=1,selected=null,markers=[],requestController=null,routeBounds=null;
+let activeLayer=null,activeStyle='street',providerFailures=0,loadTimer=null,tileOK=false,booted=false;
+const BASES={
+  street:{label:'Ruas',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'},
+  topo:{label:'Topográfico',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'},
+  satellite:{label:'Satélite',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'}
+};
+const TILE_FALLBACKS=['street','topo','satellite'];
+function tileStatus(msg,kind=''){const el=document.getElementById('tileState');el.className='tile-state'+(kind?' '+kind:'');document.getElementById('tileMessage').textContent=msg;document.getElementById('tileRetry').hidden=kind!=='error';}
+function showTile(kind){clearTimeout(loadTimer);if(activeLayer){map.removeLayer(activeLayer);activeLayer=null;}activeStyle=kind;document.getElementById('baseStyle').value=kind;tileOK=false;providerFailures=0;tileStatus('Carregando '+BASES[kind].label.toLowerCase()+'…');
+ const thisLayer=L.tileLayer(BASES[kind].url,{maxZoom:19,maxNativeZoom:17,minZoom:3,attribution:'Tiles &copy; Esri — <a href="https://www.esri.com/en-us/legal/terms/full-master-agreement" target="_blank" rel="noopener">Esri</a> e provedores de dados',crossOrigin:false});
+ activeLayer=thisLayer;
+ thisLayer.on('tileload',()=>{if(activeLayer!==thisLayer)return; if(!tileOK){tileOK=true;clearTimeout(loadTimer);tileStatus('Mapa real carregado','ready');}});
+ thisLayer.on('tileerror',()=>{if(activeLayer!==thisLayer||tileOK)return;providerFailures++;if(providerFailures>=4) nextTile();});
+ thisLayer.addTo(map);
+ loadTimer=setTimeout(()=>{if(!tileOK&&activeLayer===thisLayer)nextTile()},8500);
+}
+function nextTile(){const i=TILE_FALLBACKS.indexOf(activeStyle);if(i<TILE_FALLBACKS.length-1){showTile(TILE_FALLBACKS[i+1]);}else{clearTimeout(loadTimer);tileStatus('Acesso aos mapas bloqueado; selecione outra camada ou tente novamente.','error');}}
+
+const $=id=>document.getElementById(id);
+function setStatus(msg,kind){$('routeStatus').textContent=msg;$('routeStatus').className='route-status'+(kind==='error'?' error':'');}
+function resetRoute(){if(requestController){requestController.abort();requestController=null}if(routeLayer){routeLayer.clearLayers()}routeBounds=null;}
+function generalView(){if(!map)return;const pts=ROUNDS[round-1].offers.map(x=>COORDS[x[0]+'|'+x[1]]).concat([[PORT.lat,PORT.lon]]);map.fitBounds(L.latLngBounds(pts).pad(.15),{paddingTopLeft:[35,100],paddingBottomRight:[40,90],maxZoom:6,animate:true});}
+function moneyIcon(name,active=false){const delay=(name.length%3)*.7;return L.divIcon({className:'',iconSize:[70,73],iconAnchor:[35,54],html:`<div class="money-pin${active?' selected':''}"><div class="money-shell" style="animation-delay:-${delay}s"><div class="money-face"><span class="money-value" style="animation-delay:-${delay}s">$</span></div></div><div class="money-name">${name}</div></div>`});}
+function select(offer){if(!map)return;resetRoute();selected=offer;markers.forEach(m=>m.setIcon(moneyIcon(m.options.offer[0],m.options.offer===offer)));const [city,uf,price,volume,freight]=offer;
+ $('city').textContent=city;$('cityUF').textContent=uf+' · Centro urbano de referência';$('price').textContent=fmtBRL(price)+'/sc';$('volume').textContent=fmtInt(volume)+' t';$('freight').textContent=fmtBRL(freight)+'/t';$('distance').textContent='—';$('duration').textContent='—';$('detail').classList.add('visible');setStatus('Consultando a malha rodoviária...');fetchRoute(offer);
+}
+async function fetchRoute(offer){const [city,uf]=offer;const p=COORDS[city+'|'+uf];if(!p){setStatus('Coordenada não encontrada.', 'error');return}
+ const c=new AbortController();requestController=c;const timeout=setTimeout(()=>c.abort(),22000);
+ const url=`https://router.project-osrm.org/route/v1/driving/${p[1]},${p[0]};${PORT.lon},${PORT.lat}?overview=full&geometries=geojson&steps=false&alternatives=false`;
+ try{const resp=await fetch(url,{signal:c.signal});if(!resp.ok)throw new Error('HTTP '+resp.status);const data=await resp.json();if(data.code!=='Ok'||!data.routes?.length)throw new Error('Sem rota retornada');if(selected!==offer||round!==Number($('rounds').querySelector('.active')?.dataset.round))return;
+ const r=data.routes[0];const geom=r.geometry;if(!geom||!geom.coordinates?.length)throw new Error('Sem geometria');const line=L.geoJSON(geom,{style:{color:'#10785f',weight:5,opacity:.92,lineCap:'round',lineJoin:'round'}}).addTo(routeLayer);routeBounds=line.getBounds();$('distance').textContent=fmtInt(r.distance/1000)+' km';const h=Math.floor(r.duration/3600),m=Math.round((r.duration%3600)/60);$('duration').textContent=(h?`${h} h `:'')+`${m} min`;setStatus('Rota modelada sobre rodovias reais. Tempo sem trânsito, paradas ou restrições operacionais.');map.fitBounds(routeBounds,{paddingTopLeft:[70,130],paddingBottomRight:[355,90],maxZoom:7,animate:true});
+ }catch(e){if(!c.signal.aborted){setStatus('Não foi possível calcular a rota rodoviária agora. Confira sua conexão e tente selecionar novamente.','error')}}finally{clearTimeout(timeout);if(requestController===c)requestController=null}
+}
+function clearSelection(){resetRoute();selected=null;$('detail').classList.remove('visible');markers.forEach(m=>m.setIcon(moneyIcon(m.options.offer[0])));}
+function renderRound(n){round=n;clearSelection();markerLayer.clearLayers();markers=[];const data=ROUNDS[n-1];$('news').textContent=`${data.date} · ${data.news} Clique em $ para consultar a oferta e a rota.`;
+ document.querySelectorAll('.round-btn').forEach(b=>{b.classList.toggle('active',Number(b.dataset.round)===n);b.setAttribute('aria-pressed',String(Number(b.dataset.round)===n));});
+ data.offers.forEach(offer=>{const p=COORDS[offer[0]+'|'+offer[1]];if(!p)return;const marker=L.marker(p,{icon:moneyIcon(offer[0]),keyboard:true,riseOnHover:true,offer,title:offer[0]+'/'+offer[1]+' — selecionar oferta'}).addTo(markerLayer);marker.on('click',()=>select(offer));markers.push(marker)});generalView();}
+function init(){if(booted)return;if(!window.L){tileStatus('Não foi possível carregar o motor cartográfico.','error');return;}booted=true;
+ map=L.map('map',{zoomControl:false,preferCanvas:true,minZoom:3,maxZoom:13}).setView([-17.5,-52],5);
+ showTile(activeStyle);
+ L.control.zoom({position:'bottomright'}).addTo(map);routeLayer=L.layerGroup().addTo(map);markerLayer=L.layerGroup().addTo(map);
+ const portIcon=L.divIcon({className:'',iconSize:[120,40],iconAnchor:[16,17],html:'<div class="port-pin"><span class="port-symbol">⚓</span><span class="port-name">SANTOS</span></div>'});
+ L.marker([PORT.lat,PORT.lon],{icon:portIcon,zIndexOffset:-100,title:'Porto de Santos'}).addTo(map);
+ document.querySelectorAll('.round-btn').forEach(b=>b.addEventListener('click',()=>renderRound(Number(b.dataset.round))));
+ $('returnGame').addEventListener('click',()=>{const ref=document.referrer;try{if(ref && new URL(ref).origin===location.origin && new URL(ref).pathname.endsWith('/index.html')){history.back();return;}}catch(_e){}location.href='./index.html';});$('baseStyle').addEventListener('change',e=>showTile(e.target.value));$('tileRetry').addEventListener('click',()=>showTile('street'));$('reset').addEventListener('click',()=>{clearSelection();generalView()});$('close').addEventListener('click',clearSelection);$('clear').addEventListener('click',clearSelection);$('fit').addEventListener('click',()=>{if(routeBounds?.isValid())map.fitBounds(routeBounds,{paddingTopLeft:[70,130],paddingBottomRight:[355,90],maxZoom:7});else generalView()});
+ renderRound(1);
+}
+// Diferentes CDNs para a mesma versão estável do Leaflet; nenhum depende de chave de API.
+(function loadLeaflet(n=0){
+ const urls=['https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js','https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js'];
+ if(window.L){init();return;}
+ if(n>=urls.length){tileStatus('Biblioteca Leaflet bloqueada nos três CDNs.','error');return;}
+ const s=document.createElement('script');s.src=urls[n];s.async=true;
+ let done=false;const timer=setTimeout(()=>{if(done)return;done=true;s.remove();loadLeaflet(n+1)},8500);
+ s.onload=()=>{if(done)return;done=true;clearTimeout(timer);if(window.L)init();else loadLeaflet(n+1)};
+ s.onerror=()=>{if(done)return;done=true;clearTimeout(timer);loadLeaflet(n+1)};
+ document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>
