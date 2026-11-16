@@ -3276,6 +3276,8 @@ function renderOverlaysForScreen(screenId, rd) {
       const record = level.id === 1 ? readCampaignL1Record() : null;
       const actions = level.id === 1
         ? `<button class="campaign-btn campaign-btn-dark" ${isUnlocked ? `onclick="window.startCampaignLevel(${level.id})"` : ''}>Iniciar</button>${record?`<span class="l1-best-score">Melhor nota: ${record.bestScore}/100 ${record.approved?'· aprovado':'· não aprovado'}</span>`:''}`
+        : level.id === 2
+        ? `<a class="campaign-btn campaign-btn-light" href="./level2-mapa.html" style="position:relative;z-index:3;display:inline-flex;align-items:center;justify-content:center;flex:1;padding:11px 12px;font-size:13px;text-decoration:none;background:#135f4b;color:#fff" aria-label="Abrir prévia do mapa real do Level 2">Explorar mapa real · prévia</a>`
         : `<button class="campaign-btn campaign-btn-light" type="button" disabled>${isUnlocked?'Desbloqueado · em preparação':'Em breve'}</button>`;
       return `
         <article class="campaign-level-card2 ${isUnlocked ? '' : 'is-locked'}">
@@ -3288,7 +3290,7 @@ function renderOverlaysForScreen(screenId, rd) {
           </div>
           <p>${level.summary || 'Próximo desafio da campanha.'}</p>
           <div class="campaign-actions campaign-card-actions">${actions}</div>
-          ${!isUnlocked ? `<div class="campaign-lock-overlay" data-tip="${lockedTip}"></div>` : ''}
+          ${!isUnlocked && level.id !== 2 ? `<div class="campaign-lock-overlay" data-tip="${lockedTip}"></div>` : ''}
         </article>`;
     }).join('');
 
