@@ -81,6 +81,21 @@ function icon(offer,active,confirmed){
  return L.divIcon({className:'',iconSize:[86,69],iconAnchor:[43,47],
  html:'<div class="l1m-money-pin'+(active?' selected':'')+(confirmed?' confirmed':'')+'"><div class="l1m-money-icon">$</div><div class="l1m-money-name">'+name+'</div></div>'});
 }
+function fitSelectedRoute(bounds){
+ if(!map||!bounds||!bounds.isValid())return;
+ // Reserve visible space for the floating news card / right drawer (desktop),
+ // or the lower drawer (mobile), keeping BOTH endpoints on the visible map.
+ const size=map.getSize(),w=size.x||window.innerWidth,h=size.y||window.innerHeight;
+ const mobile=w<=760;
+ const top=mobile?Math.min(158,Math.round(h*.2)):Math.min(136,Math.round(h*.16));
+ const bottom=mobile?Math.min(Math.round(h*.51),Math.max(36,h-top-130)):Math.min(74,Math.round(h*.1));
+ const left=mobile?22:Math.min(105,Math.max(25,Math.round(w*.05)));
+ const right=mobile?20:Math.min(402,Math.max(265,Math.round(w*.29)));
+ map.fitBounds(bounds.pad(.08),{
+  paddingTopLeft:[left,top],paddingBottomRight:[right,bottom],
+  maxZoom:7,animate:true,duration:.45
+ });
+}
 function general(){
  if(!map||!window.L)return;
  const coords=offers().map(o=>COORDS[o.city+'|'+o.uf]).filter(Boolean).concat([PORT]);
@@ -116,6 +131,8 @@ function loadMap(){
  portMarker=L.marker(PORT,{zIndexOffset:-100,icon:L.divIcon({className:'',iconAnchor:[15,15],iconSize:[120,35],
   html:'<div class="l1m-port"><b>⚓</b>SANTOS</div>'}),title:'Porto de Santos'}).addTo(map);
  tile(style);renderedRound=0;renderMarkersIfNeeded();
+ // A selection made while Leaflet was still loading must also show its route.
+ if(chosen())requestRoute();
  setTimeout(()=>map&&map.invalidateSize(),40);
 }
 function loadLeaflet(){
@@ -205,6 +222,9 @@ function selectOffer(id){
  state.campaign.l1Tab='offers';
  selectExwOfferForCurrentRound(offer,current(),'r1_exw');
  panel();
+ // The route and zoom are part of selecting an offer, not an extra button.
+ // This applies equally to an animated map marker or a sidebar list item.
+ requestRoute();
 }
 function useOriginalHot(action){
  const hotspot=document.querySelector('[data-l1-hot="'+action+'"]');
@@ -227,21 +247,44 @@ function calculator(){
 }
 async function requestRoute(){
  if(!window.L||!map||!chosen())return;
- const s=chosen(),p=COORDS[s.city+'|'+s.uf];if(!p){status('Origem sem coordenadas urbanas de referência.',true);return;}
+ const s=chosen(),p=COORDS[s.city+'|'+s.uf];
+ if(!p){status('Origem sem coordenadas urbanas de referência.',true);return;}
+ // Cancel previous HTTP request and remove old line when a different lot is selected.
  stopRoute();
- const id=state.round+':'+s.id;selectedRouteId=id;status('Consultando rota rodoviária…');
- const c=new AbortController();req=c;const timer=setTimeout(()=>c.abort(),22000);
+ const id=state.round+':'+s.id;
+ selectedRouteId=id;
+ // Draw a visibly provisional straight line immediately; never represent it as a road.
+ const preview=L.polyline([p,PORT],{color:'#cb903e',weight:3,opacity:.95,
+  dashArray:'7 8',lineCap:'round',interactive:false}).addTo(routeLayer);
+ routeBounds=L.latLngBounds([p,PORT]);
+ fitSelectedRoute(routeBounds);
+ status('Ligação visual origem–Santos exibida · calculando trajeto rodoviário…');
+ const c=new AbortController();req=c;
+ const timer=setTimeout(()=>c.abort(),18000);
  try{
   const url='https://router.project-osrm.org/route/v1/driving/'+p[1]+','+p[0]+';'+PORT[1]+','+PORT[0]+'?overview=full&geometries=geojson&steps=false';
-  const response=await fetch(url,{signal:c.signal});if(!response.ok)throw new Error('HTTP '+response.status);
-  const data=await response.json();if(data.code!=='Ok'||!data.routes?.length)throw new Error('Sem rota');
-  if(selectedRouteId!==id||!chosen()||String(chosen().id)!==String(s.id))return;
-  const result=data.routes[0],shape=L.geoJSON(result.geometry,{style:{color:'#128466',weight:5,opacity:.85}}).addTo(routeLayer);
-  routeBounds=shape.getBounds();
-  status('Rota rodoviária aprox. '+fmt(result.distance/1000,0)+' km · sem trânsito, pedágios ou restrições operacionais. O frete do jogo não é recalculado.');
-  map.fitBounds(routeBounds,{paddingTopLeft:[55,115],paddingBottomRight:[390,65],maxZoom:7});
- }catch(e){if(!c.signal.aborted)status('Rota externa temporariamente indisponível; o preço e o frete do exercício permanecem válidos.',true);}
- finally{clearTimeout(timer);if(req===c)req=null;}
+  const response=await fetch(url,{signal:c.signal});
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const data=await response.json();
+  if(data.code!=='Ok'||!data.routes?.length)throw new Error('Sem rota');
+  // Stale responses must never redraw the prior offer on top of a newer choice.
+  if(selectedRouteId!==id||!map||!chosen()||String(chosen().id)!==String(s.id))return;
+  const result=data.routes[0];
+  if(result.geometry?.type!=='LineString'||!Array.isArray(result.geometry.coordinates)||result.geometry.coordinates.length<2)throw new Error('Geometria inválida');
+  routeLayer.clearLayers(); // Replace preview with actual road geometry.
+  const shape=L.geoJSON(result.geometry,{style:{color:'#128466',weight:5,opacity:.93,lineCap:'round',lineJoin:'round'}}).addTo(routeLayer);
+  routeBounds=shape.getBounds().extend(L.latLngBounds([p,PORT]));
+  fitSelectedRoute(routeBounds);
+  status('Rota rodoviária: aprox. '+fmt(result.distance/1000,0)+' km até Santos · sem restrições de caminhão. Frete do jogo inalterado.');
+ }catch(e){
+  if(selectedRouteId!==id||!map)return;
+  // Keep the already visible dashed segment rather than leaving a blank map.
+  // A straight link is NOT a calculated road route.
+  status('Trajeto rodoviário indisponível. Linha pontilhada = ligação visual, não rota por rodovias. Frete do jogo inalterado.',true);
+ }finally{
+  clearTimeout(timer);
+  if(req===c)req=null;
+ }
 }
 function onClick(e){
  const tab=e.target.closest('[data-l1m-tab]');
@@ -251,7 +294,12 @@ function onClick(e){
  const action=btn.dataset.l1mAction;
  if(action==='back'){unmount();backToCampaignMenu();return;}
  if(action==='buy'){if(chosen()&&!bought()){useOriginalHot('confirm');}return;}
- if(action==='discard'){useOriginalHot('discard');return;}
+ if(action==='discard'){
+  useOriginalHot('discard');
+  // Discard removes the offer selection, so the visual route must disappear too.
+  if(!chosen()){stopRoute();general();status('');}
+  return;
+ }
  if(action==='next'){next();return;}
  if(action==='general'){stopRoute();general();status('');return;}
  if(action==='calculator'){calculator();return;}
