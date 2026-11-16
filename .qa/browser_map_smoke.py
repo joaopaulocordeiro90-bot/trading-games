@@ -47,6 +47,7 @@ try:
         wait.until(lambda d:js("return state.round")==rd)
         wait.until(lambda d:len(d.find_elements(By.CSS_SELECTOR,'#l1m-panel'))==1)
         if rd<=4:
+            click('#l1m-tabs [data-l1m-tab="offers"]')
             click('#l1m-panel .l1m-offer:nth-of-type(3)')
             wait.until(lambda d:js("return Number(state.choices?.exw?.[state.round]?.id)===3"))
             if rd==1:
