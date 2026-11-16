@@ -43,6 +43,35 @@ try:
         'Esri' in Path(ROOT/'campaign-level1-map.js').read_text())
     click('[data-l1m-tab="offers"]')
     assert len(driver.find_elements(By.CSS_SELECTOR,'#l1m-panel .l1m-offer'))==4
+    # Keep routing deterministic in CI: a mock OSRM shape checks the visual
+    # auto-routing flow; the real public OSRM endpoint remains unchanged in production.
+    wait.until(lambda d:js("return !!window.L && document.querySelectorAll('#l1m-map .l1m-money-pin').length===4"))
+    js("""window.__l1OsrmCalls=[];
+        const realFetch=window.fetch.bind(window);
+        window.fetch=(url, opts)=>{
+          const address=String(url);
+          if(!address.startsWith('https://router.project-osrm.org/route/v1/driving/'))return realFetch(url,opts);
+          window.__l1OsrmCalls.push(address);
+          const matches=address.match(/driving\\/([^;]+);([^?]+)/);
+          if(!matches)throw Error('URL de rota incorreta '+address);
+          const start=matches[1].split(',').map(Number),end=matches[2].split(',').map(Number);
+          const middle=[(start[0]+end[0])/2+1.3,(start[1]+end[1])/2-.7];
+          return Promise.resolve({ok:true,json:async()=>({code:'Ok',routes:[{
+            distance:1234000,geometry:{type:'LineString',coordinates:[start,middle,end]}
+          }]})});
+        };""")
+    # First test the real marker click, not only the sidebar.
+    click('#l1m-map .l1m-money-pin')
+    wait.until(lambda d:js("return Number(state.choices?.exw?.[1]?.id)===1"))
+    wait.until(lambda d:js("return document.querySelector('#l1m-status')?.textContent?.includes('Rota rodoviária')"))
+    assert js("return window.__l1OsrmCalls.length")==1
+    assert len(driver.find_elements(By.CSS_SELECTOR,'#l1m-map .leaflet-interactive'))>=1
+    # A second selection must replace the previous segment, not stack routes.
+    click('#l1m-panel .l1m-offer:nth-of-type(3)')
+    wait.until(lambda d:js("return Number(state.choices?.exw?.[1]?.id)===3"))
+    wait.until(lambda d:js("return window.__l1OsrmCalls.length===2"))
+    wait.until(lambda d:js("return document.querySelector('#l1m-status')?.textContent?.includes('Rota rodoviária')"))
+    driver.save_screenshot(str(OUT/'l1-map-rota-automatica.png'))
     for rd in range(1,6):
         wait.until(lambda d:js("return state.round")==rd)
         wait.until(lambda d:len(d.find_elements(By.CSS_SELECTOR,'#l1m-panel'))==1)
@@ -90,7 +119,7 @@ try:
         js("state.primaryMode='scenarios';state.gameMode='"+mode+"';state.campaign.active=false;state.guideOverlayOpen=false;state.guideFlow=null;setStage('r1_exw')")
         wait.until(lambda d:len(d.find_elements(By.ID,'overlayLayer'))==1)
         assert not driver.find_elements(By.ID,'campaign-l1-realmap')
-    print('OK: Leaflet/Esri L1 integrado; ofertas, compra real, 5 rodadas, score e isolamento dos outros modos.')
+    print('OK: rota automática por pin/lista, substituição da rota, compra real, 5 rodadas, score e isolamento.')
 finally:
     driver.quit()
     server.shutdown()
