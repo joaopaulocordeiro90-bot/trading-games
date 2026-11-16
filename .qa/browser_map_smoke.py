@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""Smoke do Level 1 no mapa real, exercitando hotspots e engine canônicos."""
+import functools
+import http.server
+import threading
+from pathlib import Path
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoAlertPresentException, UnexpectedAlertPresentException
+
+ROOT=Path(__file__).resolve().parents[1]
+OUT=ROOT/'test-artifacts'
+OUT.mkdir(exist_ok=True)
+handler=functools.partial(http.server.SimpleHTTPRequestHandler,directory=str(ROOT))
+server=http.server.ThreadingHTTPServer(('127.0.0.1',0),handler)
+threading.Thread(target=server.serve_forever,daemon=True).start()
+options=webdriver.ChromeOptions()
+for flag in ('--headless=new','--no-sandbox','--disable-dev-shm-usage','--window-size=1550,980'):
+    options.add_argument(flag)
+driver=webdriver.Chrome(options=options)
+wait=WebDriverWait(driver,40)
+def js(s):return driver.execute_script(s)
+def click(css):return js("var e=document.querySelector("+repr(css)+");if(!e)throw new Error('missing "+css+"');e.click();")
+def close_alert():
+    try:driver.switch_to.alert.accept()
+    except NoAlertPresentException:pass
+
+try:
+    driver.get('http://127.0.0.1:%s/'%server.server_address[1])
+    wait.until(lambda d:js("return typeof initCampaignRun==='function' && !!getCampaignLevel(1)?.scenario"))
+    js("""initCampaignRun(1);
+      state.campaign.introRedirectPending=false;
+      state.guideSeen={campaign_exw:true,campaign_home:true,r1_exw_first_offer:true};
+      state.guideOverlayOpen=false;state.guideFlow=null;
+      setStage('r1_exw');""")
+    wait.until(lambda d:len(d.find_elements(By.ID,'campaign-l1-realmap'))==1)
+    wait.until(lambda d:js("return typeof window.CampaignL1Map?.selectOffer==='function'"))
+    wait.until(lambda d:len(d.find_elements(By.CSS_SELECTOR,'#l1m-panel'))==1)
+    assert 'LEVEL 1' in driver.find_element(By.ID,'campaign-l1-realmap').text
+    assert 'China reduz' in driver.find_element(By.ID,'l1m-news').text
+    assert 'Esri' in js("return window.CampaignL1Map.mount.toString()") or (
+        'Esri' in Path(ROOT/'campaign-level1-map.js').read_text())
+    click('[data-l1m-tab="offers"]')
+    assert len(driver.find_elements(By.CSS_SELECTOR,'#l1m-panel .l1m-offer'))==4
+    for rd in range(1,6):
+        wait.until(lambda d:js("return state.round")==rd)
+        wait.until(lambda d:len(d.find_elements(By.CSS_SELECTOR,'#l1m-panel'))==1)
+        if rd<=4:
+            click('#l1m-panel .l1m-offer:nth-of-type(3)')
+            wait.until(lambda d:js("return Number(state.choices?.exw?.[state.round]?.id)===3"))
+            if rd==1:
+                assert 'Basis CFR equivalente' in driver.find_element(By.ID,'l1m-panel').text
+                click('[data-l1m-action="calculator"]')
+                wait.until(lambda d:len(d.find_elements(By.ID,'l1m-calc-backdrop'))==1)
+                assert 'Exemplo resolvido' in driver.find_element(By.ID,'l1m-calc-backdrop').text
+                click('#l1m-calc-backdrop [data-l1-action="close"]')
+            else:
+                assert 'Basis CFR equivalente' not in driver.find_element(By.ID,'l1m-panel').text
+                click('[data-l1m-action="calculator"]')
+                wait.until(lambda d:len(d.find_elements(By.ID,'l1m-calc-backdrop'))==1)
+                assert 'Digite o resultado' in js("return document.querySelector('#l1m-calc-backdrop')?.innerHTML") or \
+                    len(driver.find_elements(By.CSS_SELECTOR,'#l1m-calc-backdrop input[data-l1-answer]'))==4
+                click('#l1m-calc-backdrop [data-l1-action="close"]')
+            try:click('#l1m-buy')
+            except UnexpectedAlertPresentException:pass
+            close_alert()
+            wait.until(lambda d:js("return !!state.confirmed.exw[state.round]"))
+            wait.until(lambda d:len(d.find_elements(By.ID,'campaignAdvanceModal'))==1)
+            assert js("return Number(state.confirmed.exw[state.round].volume_t)")>0
+            if rd==4:
+                assert js("return calculateCampaignBookSnapshot().totalUsedT")==60000
+        if rd==1:
+            driver.save_screenshot(str(OUT/'l1-map-round1.png'))
+        if rd==4:
+            driver.save_screenshot(str(OUT/'l1-map-round4.png'))
+        if rd<5:
+            if driver.find_elements(By.ID,'campaignAdvanceModal'):
+                click('#campaignAdvanceModal .btn-dark')
+            else:click('#l1m-next')
+        else:click('#l1m-next')
+    wait.until(lambda d:js("return state.stage==='campaign_result'"))
+    result=js("return buildCampaignLevel1Result()")
+    assert result['approved'],result
+    assert result['scorecard']['total']>=70,result
+    assert not driver.find_elements(By.ID,'campaign-l1-realmap')
+    driver.save_screenshot(str(OUT/'l1-map-final-score.png'))
+    for mode in ('guided','expert'):
+        js("state.primaryMode='scenarios';state.gameMode='"+mode+"';state.campaign.active=false;state.guideOverlayOpen=false;state.guideFlow=null;setStage('r1_exw')")
+        wait.until(lambda d:len(d.find_elements(By.ID,'overlayLayer'))==1)
+        assert not driver.find_elements(By.ID,'campaign-l1-realmap')
+    print('OK: Leaflet/Esri L1 integrado; ofertas, compra real, 5 rodadas, score e isolamento dos outros modos.')
+finally:
+    driver.quit()
+    server.shutdown()
