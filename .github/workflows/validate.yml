@@ -31,6 +31,9 @@ jobs:
       - name: Testar o Level 1 em navegador real
         if: github.event_name == 'pull_request'
         run: python .qa/browser_smoke.py
+      - name: Testar mapa real integrado do Level 1
+        if: github.event_name == 'pull_request'
+        run: python .qa/browser_map_smoke.py
       - name: Registrar capturas da interface
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4

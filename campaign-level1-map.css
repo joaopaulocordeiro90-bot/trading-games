@@ -1,0 +1,85 @@
+/* Level 1 — mapa real; estilos isolados do jogo existente. */
+#campaign-l1-realmap{--l1ink:#192b35;--l1muted:#60736e;--l1green:#135f4b;--l1border:#dee7e2;--l1white:#fff;position:fixed;inset:0;z-index:9600;background:#e9efed;color:var(--l1ink);font:13px/1.45 Inter,Arial,Helvetica,sans-serif;isolation:isolate;overflow:hidden}
+#campaign-l1-realmap *{box-sizing:border-box}
+#campaign-l1-realmap button,#campaign-l1-realmap select{font:inherit;cursor:pointer}
+#campaign-l1-realmap button:focus-visible,#campaign-l1-realmap select:focus-visible{outline:3px solid #e7a147;outline-offset:2px}
+#l1m-map{position:absolute;inset:0;z-index:1;background:#e9efed}
+#campaign-l1-realmap .leaflet-container{font-family:Arial,sans-serif}
+#campaign-l1-realmap .leaflet-control-attribution{font-size:10px!important;background:#ffffffdf!important}
+#campaign-l1-realmap .leaflet-control-zoom{margin:0 16px 28px 0!important}
+#campaign-l1-realmap .l1m-ui{position:absolute;inset:0;pointer-events:none;z-index:900}
+#campaign-l1-realmap .l1m-ui>*{pointer-events:auto}
+#campaign-l1-realmap .l1m-top{position:absolute;top:17px;left:18px;right:18px;display:flex;align-items:center;gap:14px;min-height:65px;padding:9px 15px;background:#ffffffef;border:1px solid var(--l1border);border-radius:10px;box-shadow:0 10px 40px #173b2b16;backdrop-filter:blur(10px)}
+#campaign-l1-realmap .l1m-brand{display:flex;align-items:center;gap:10px;min-width:244px}
+#campaign-l1-realmap .l1m-logo{width:35px;height:35px;display:grid;place-items:center;border-radius:7px;background:#173d35;color:white;font-size:16px;font-weight:950}
+#campaign-l1-realmap .l1m-title{font-weight:900;font-size:13px;letter-spacing:.02em;white-space:nowrap}
+#campaign-l1-realmap .l1m-title b{color:#176f52}
+#campaign-l1-realmap .l1m-sub{font-size:10px;font-weight:600;color:#7a8b88}
+#campaign-l1-realmap .l1m-rounds{display:flex;flex:1;justify-content:center;align-items:center;gap:6px}
+#campaign-l1-realmap .l1m-rounds span{font-size:10px;letter-spacing:.08em;color:#81908b;font-weight:850;margin-right:5px}
+#campaign-l1-realmap .l1m-round{width:33px;height:33px;display:grid;place-items:center;border:1px solid #dde8e1;background:#f8fbf9;border-radius:7px;color:#6d8175;font-size:12px;font-weight:850}
+#campaign-l1-realmap .l1m-round.active{background:#0d5944;color:#fff}
+#campaign-l1-realmap .l1m-round.done{border-color:#b8d9c8;color:#166b50;background:#e7f6ee}
+#campaign-l1-realmap .l1m-top-right{display:flex;align-items:center;gap:11px}
+#campaign-l1-realmap .l1m-market{display:flex;flex-direction:column;align-items:flex-end;min-width:106px;font-size:11px;color:#60766e}
+#campaign-l1-realmap .l1m-market strong{font-size:12px;color:#23483a}
+#campaign-l1-realmap .l1m-select{height:34px;border:1px solid #d7e5dc;background:#f7faf8;border-radius:6px;color:#234b3c;padding:0 8px;font-weight:700}
+#campaign-l1-realmap .l1m-btn{border:1px solid #d8e5dd;border-radius:7px;padding:10px 12px;background:#fff;color:#2b5745;font-weight:800;transition:background .16s}
+#campaign-l1-realmap .l1m-btn:hover{background:#f0f7f3}
+#campaign-l1-realmap .l1m-btn.primary{background:#135f4b;border-color:#135f4b;color:white}
+#campaign-l1-realmap .l1m-btn.primary:hover{background:#0d4e3d}
+#campaign-l1-realmap .l1m-btn:disabled{opacity:.48;cursor:not-allowed}
+#campaign-l1-realmap .l1m-news{position:absolute;top:98px;left:18px;max-width:390px;padding:12px 14px;background:#fffffff5;border:1px solid #e1e9e4;border-radius:8px;box-shadow:0 9px 30px #163d2c12}
+#campaign-l1-realmap .l1m-eyebrow{font-size:10px;letter-spacing:.095em;color:#6d877b;font-weight:900}
+#campaign-l1-realmap .l1m-news h3{margin:6px 0;font-size:14px;line-height:1.35}
+#campaign-l1-realmap .l1m-news p{margin:3px 0;font-size:11px;color:#516b60;line-height:1.5}
+#campaign-l1-realmap .l1m-side{position:absolute;right:18px;top:98px;bottom:22px;width:362px;background:#fffffff6;border:1px solid #dfe8e2;border-radius:10px;box-shadow:0 12px 42px #123d271b;display:flex;flex-direction:column;overflow:hidden}
+#campaign-l1-realmap .l1m-side-head{padding:14px 17px 11px;border-bottom:1px solid #e7eee8}
+#campaign-l1-realmap .l1m-side-head h2{font-size:20px;margin:4px 0 2px;font-weight:850}
+#campaign-l1-realmap .l1m-side-head p{font-size:11px;color:#637a70;margin:0}
+#campaign-l1-realmap .l1m-tabs{display:flex;padding:9px 12px;gap:5px;border-bottom:1px solid #e7eee8}
+#campaign-l1-realmap .l1m-tabs button{flex:1;border:1px solid transparent;background:#f3f7f4;border-radius:5px;padding:8px 4px;font-size:11px;font-weight:800;color:#526b5d}
+#campaign-l1-realmap .l1m-tabs button.active{background:#135f4b;color:white}
+#campaign-l1-realmap .l1m-side-scroll{flex:1;overflow-y:auto;min-height:0;padding:12px 15px 9px}
+#campaign-l1-realmap .l1m-offer{display:block;text-align:left;width:100%;background:#fff;border:1px solid #e1ebe4;border-radius:8px;padding:10px 11px;margin:0 0 7px;color:#254c3d}
+#campaign-l1-realmap .l1m-offer.selected{border-color:#d59a49;background:#fff9f0}
+#campaign-l1-realmap .l1m-offer.confirmed{border-color:#21946f;background:#effaf3}
+#campaign-l1-realmap .l1m-offer-top{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px}
+#campaign-l1-realmap .l1m-offer-top strong{font-size:12px}
+#campaign-l1-realmap .l1m-offer-sub{color:#75887f;margin-top:4px;font-size:10px;display:flex;justify-content:space-between;gap:6px}
+#campaign-l1-realmap .l1m-stat{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #e8efeb;padding:10px 1px;gap:8px;font-size:12px}
+#campaign-l1-realmap .l1m-stat span{color:#678075}
+#campaign-l1-realmap .l1m-stat strong{color:#153e2e;font-size:14px;font-variant-numeric:tabular-nums;text-align:right}
+#campaign-l1-realmap .l1m-note{font-size:11px;color:#617b6e;line-height:1.55;margin:9px 0}
+#campaign-l1-realmap .l1m-action-row{display:flex;gap:6px;margin:12px 0 3px}
+#campaign-l1-realmap .l1m-action-row>*{flex:1}
+#campaign-l1-realmap .l1m-foot{border-top:1px solid #e6ece7;padding:11px 12px;background:#fbfdfb}
+#campaign-l1-realmap .l1m-progress{height:6px;background:#e8eee9;border-radius:5px;overflow:hidden;margin-bottom:8px}
+#campaign-l1-realmap .l1m-progress>div{height:100%;background:#198866;transition:width .2s}
+#campaign-l1-realmap .l1m-progress-text{display:flex;justify-content:space-between;font-size:11px;color:#526e60;font-weight:800}
+#campaign-l1-realmap .l1m-commit{display:flex;gap:7px;margin-top:10px}
+#campaign-l1-realmap .l1m-commit button{flex:1}
+#campaign-l1-realmap .l1m-bottom{position:absolute;left:18px;bottom:20px;display:flex;gap:8px;align-items:center;background:#fffffff5;border:1px solid #e3eae5;border-radius:8px;padding:10px 12px;font-size:10px;color:#667a71;box-shadow:0 6px 20px #153d2d1a}
+#campaign-l1-realmap .l1m-money-pin{display:flex;flex-direction:column;align-items:center;width:86px;cursor:pointer;transform:translate(-9px,-3px)}
+#campaign-l1-realmap .l1m-money-icon{display:grid;place-items:center;width:37px;height:37px;border:2px solid white;border-radius:10px;background:linear-gradient(135deg,#148c62,#07503c);color:#fff;font-size:25px;font-weight:950;animation:l1mbob 2.5s ease-in-out infinite;box-shadow:0 4px 13px #176b4c50}
+#campaign-l1-realmap .l1m-money-pin.selected .l1m-money-icon{background:linear-gradient(135deg,#efa84a,#b97424)}
+#campaign-l1-realmap .l1m-money-pin.confirmed .l1m-money-icon{background:#206d54}
+#campaign-l1-realmap .l1m-money-name{white-space:nowrap;background:white;border:1px solid #dce9e0;padding:4px 7px;border-radius:4px;font-size:10px;font-weight:850;color:#2a4539;box-shadow:0 1px 6px #1639271e;margin-top:4px}
+#campaign-l1-realmap .l1m-port{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:900;color:#795221;background:#fffef5;padding:4px 6px;border-radius:5px}
+#campaign-l1-realmap .l1m-port b{background:#b97f35;color:white;padding:5px 7px;border-radius:5px}
+#campaign-l1-realmap .l1m-status{position:absolute;bottom:80px;left:18px;max-width:360px;background:#fff;border:1px solid #e4ebe5;border-radius:7px;padding:7px 11px;font-size:11px;color:#446c55}
+#campaign-l1-realmap .l1m-status.error{color:#a04738}
+#campaign-l1-realmap .l1m-calc-backdrop{position:fixed;inset:0;z-index:10500;display:flex;align-items:center;justify-content:center;background:#061e18aa;padding:20px}
+#campaign-l1-realmap .l1m-calc{width:min(690px,95vw);max-height:88vh;overflow:auto;background:white;border-radius:11px;padding:20px}
+#campaign-l1-realmap .l1m-calc .l1wb-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#campaign-l1-realmap .l1m-calc .l1wb-dialog-head h2{font-size:19px;margin:0}
+#campaign-l1-realmap .l1m-calc .l1wb-exercise{border-top:1px solid #e2eae3;padding:10px 0}
+#campaign-l1-realmap .l1m-calc .l1wb-exercise-controls{display:flex;gap:6px}
+#campaign-l1-realmap .l1m-calc input{border:1px solid #d5e3da;border-radius:6px;padding:9px;min-width:0;flex:1}
+#campaign-l1-realmap .l1m-calc button{border:1px solid #cce1d5;border-radius:6px;background:#f5faf7;padding:8px;color:#235c47;font-weight:750}
+#campaign-l1-realmap .l1m-calc .l1wb-costrow{display:flex;justify-content:space-between;border-top:1px solid #ebf0eb;padding:9px 0;gap:12px}
+#campaign-l1-realmap .l1m-calc .l1wb-hint{font-size:12px;color:#617d6c;line-height:1.55}
+@keyframes l1mbob{0%,100%{transform:translateY(2px)}50%{transform:translateY(-7px)}}
+@media(max-width:1060px){#campaign-l1-realmap .l1m-news{max-width:300px}#campaign-l1-realmap .l1m-brand{min-width:180px}#campaign-l1-realmap .l1m-market{display:none}}
+@media(max-width:760px){#campaign-l1-realmap .l1m-top{top:8px;left:8px;right:8px;gap:7px;flex-wrap:wrap;padding:8px 10px;min-height:82px}#campaign-l1-realmap .l1m-brand{min-width:0;flex:1}#campaign-l1-realmap .l1m-sub{display:none}#campaign-l1-realmap .l1m-top-right{gap:5px}#campaign-l1-realmap .l1m-rounds{order:3;width:100%;flex:auto;gap:4px}#campaign-l1-realmap .l1m-round{height:27px;width:29px}#campaign-l1-realmap .l1m-news{top:104px;left:8px;max-width:calc(100vw - 16px);right:8px;padding:8px 10px}#campaign-l1-realmap .l1m-news h3{font-size:12px}#campaign-l1-realmap .l1m-news p{display:none}#campaign-l1-realmap .l1m-side{left:8px;right:8px;top:auto;bottom:8px;width:auto;height:48vh;max-height:410px}#campaign-l1-realmap .l1m-side-head{padding:8px 11px 5px}#campaign-l1-realmap .l1m-side-head h2{font-size:15px;margin:2px 0}#campaign-l1-realmap .l1m-tabs{padding:6px}#campaign-l1-realmap .l1m-side-scroll{padding:8px 11px}#campaign-l1-realmap .l1m-foot{padding:8px 10px}#campaign-l1-realmap .l1m-bottom{display:none}#campaign-l1-realmap .l1m-status{bottom:50vh;font-size:10px;left:8px;padding:5px 8px}#campaign-l1-realmap .leaflet-control-zoom{display:none}}
+@media(prefers-reduced-motion:reduce){#campaign-l1-realmap .l1m-money-icon{animation:none}}

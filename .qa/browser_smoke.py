@@ -106,7 +106,7 @@ try:
     assert js("return getComputedStyle(document.getElementById('txt_l1_text_cambio')).fontSize")=='34px'
     js("setStage('r1_news')")
     wait.until(lambda d:len(d.find_elements(By.ID,'txt_text_news'))==1)
-    assert 'China reduz' in driver.find_element(By.ID,'txt_text_news').text
+    wait.until(lambda d:js("return (document.getElementById('txt_text_news')?.textContent||'').includes('China reduz')"))
     js("setStage('r1_exw')")
     screen_ready()
     # Voltar deve desfazer o caminho, não recair no Book do Trader.
