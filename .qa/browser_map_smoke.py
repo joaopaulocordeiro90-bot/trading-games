@@ -75,8 +75,17 @@ try:
     for rd in range(1,6):
         wait.until(lambda d:js("return state.round")==rd)
         wait.until(lambda d:len(d.find_elements(By.CSS_SELECTOR,'#l1m-panel'))==1)
+        click('#l1m-tabs [data-l1m-tab="offers"]')
+        expected=['Sorriso','Primavera do Leste','Mineiros','Jataí','Sinop'][rd-1]
+        wait.until(lambda d:js("return document.querySelectorAll('#l1m-map .l1m-money-pin').length===4"))
+        assert expected in js("return document.querySelectorAll('#l1m-panel .l1m-offer')[1].textContent")
+        if rd==4:
+            assert js("return [...document.querySelectorAll('#l1m-map .l1m-money-name')].map(x=>x.textContent).includes('Jataí A') && [...document.querySelectorAll('#l1m-map .l1m-money-name')].map(x=>x.textContent).includes('Jataí B')")
+        click('#l1m-panel .l1m-offer:nth-of-type(2)')
+        wait.until(lambda d:js("return Number(state.choices?.exw?.[state.round]?.id)===2"))
+        wait.until(lambda d:js("return document.querySelector('#l1m-status')?.textContent?.includes('Rota rodoviária')"))
+        click('[data-l1m-action="discard"]')
         if rd<=4:
-            click('#l1m-tabs [data-l1m-tab="offers"]')
             click('#l1m-panel .l1m-offer:nth-of-type(3)')
             wait.until(lambda d:js("return Number(state.choices?.exw?.[state.round]?.id)===3"))
             if rd==1:

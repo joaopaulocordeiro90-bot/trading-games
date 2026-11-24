@@ -9,9 +9,17 @@ const level=JSON.parse(fs.readFileSync(path.join(root,'data/campaign/levels/leve
 const rounds=level.scenario.rounds;
 assert.equal(rounds.length,5);
 const close=(a,b)=>Math.abs(a-b)<0.00001;
-const pn=r=>r.offers_exw.find(o=>o.city==='Porto Nacional').price_brl_saca;
+const newOrigins=['Sorriso/MT','Primavera do Leste/MT','Mineiros/GO','Jataí/GO','Sinop/MT'];
+const compatibility=JSON.parse(fs.readFileSync(path.join(root,'data/campaign/campaignData.json'),'utf8')).scenarios.find(s=>s.id===1).rounds;
+const mapSource=fs.readFileSync(path.join(root,'campaign-level1-map.js'),'utf8');
 for(let i=0;i<rounds.length;i++){
   const rd=rounds[i];
+  const offer=rd.offers_exw.find(o=>o.id===2);
+  assert.equal(offer.city+'/'+offer.uf,newOrigins[i]);
+  assert.deepEqual(rd.offers_exw,compatibility[i].offers_exw,'Fontes de L1 divergentes');
+  assert(!rd.offers_exw.some(o=>o.city==='Porto Nacional'),'Origem antiga presente');
+  assert(mapSource.includes("'"+offer.city+"|"+offer.uf+"':"),'Coordenadas não cadastradas');
+  if(i===3)assert.equal(new Set(rd.offers_exw.filter(o=>o.city==='Jataí').map(o=>o.label)).size,2,'Ofertas de Jataí devem ser distinguíveis');
   assert(rd.master_news&&rd.market_signal&&rd.decision_prompt,'Radar e decisão ausentes na rodada '+(i+1));
   for(const field of [rd.news,rd.master_news,rd.market_headline,rd.market_signal,rd.decision_prompt,rd.market_note]){
     assert(!/\bBRZ\b|\bH27\b|(?:Fev|Mar)\/27|\b20\d{2}-\d\d-\d\d/.test(field),'Referência indevida no texto do jogador');
@@ -21,7 +29,7 @@ for(let i=0;i<rounds.length;i++){
   assert.equal(impact.driver,'news');
   assert(close(next.cbot_cent_bu-rd.cbot_cent_bu,impact.cbot_cent_bu),'Chicago desconectada da notícia');
   assert(close(next.usd-rd.usd,impact.usd_brl),'Câmbio desconectado da notícia');
-  assert(close(pn(next)-pn(rd),impact.portonacional_brl_sc),'Mercado físico desconectado da notícia');
+  assert.equal(impact.portonacional_brl_sc,undefined,'Comparação obsoleta de praça removida');
 }
 const ui=game.slice(game.indexOf('function campaignL1WorkbenchMarkup('),game.indexOf('function renderCampaignL1Workbench(',game.indexOf('function campaignL1WorkbenchMarkup(')));
 assert(ui.includes('Notícia-mestre')&&ui.includes('Efeito da notícia anterior'),'Notícia mestre não é protagonista');

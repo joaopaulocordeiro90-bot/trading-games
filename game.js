@@ -1009,10 +1009,7 @@ function campaignL1WorkbenchMarkup(rd) {
     const news=String(rd.master_news||rd.market_headline||rd.news||'Observe o mercado antes de comprar.');
     const previous=round>1?getRoundData(round-1):null;
     const fmtMove=(v,d=1)=>`${Number(v)>=0?'+':''}${num(v,d)}`;
-    const currentPx=rd.offers_exw?.find(x=>x.city==='Porto Nacional');
-    const previousPx=previous?.offers_exw?.find(x=>x.city==='Porto Nacional');
-    const physical=(currentPx&&previousPx)?` · Físico TO ${fmtMove(Number(currentPx.price_brl_saca)-Number(previousPx.price_brl_saca),2)} R$/sc`:'';
-    const reaction=previous?`<p class="l1wb-mini"><strong>Efeito da notícia anterior:</strong> Chicago ${fmtMove(Number(rd.cbot_cent_bu)-Number(previous.cbot_cent_bu),2)} ¢/bu · dólar ${fmtMove(Number(rd.usd)-Number(previous.usd),4)} R$/US$${physical}.</p>`:'';
+    const reaction=previous?`<p class="l1wb-mini"><strong>Efeito da notícia anterior:</strong> Chicago ${fmtMove(Number(rd.cbot_cent_bu)-Number(previous.cbot_cent_bu),2)} ¢/bu · dólar ${fmtMove(Number(rd.usd)-Number(previous.usd),4)} R$/US$.</p>`:'';
     content=`<span class="l1wb-label">1. Notícia-mestre · rodada ${round}</span>
       <h3>${escapeHtml(news)}</h3>
       ${reaction}
@@ -2681,7 +2678,7 @@ function renderImageScreen(screenId, imgSrc, rd) {
         leafletStyle.crossOrigin = 'anonymous';
         document.head.appendChild(leafletStyle);
         const script = document.createElement('script');
-        script.src = './campaign-level1-map.js?v=20261116';
+        script.src = './campaign-level1-map.js?v=20261124-origens';
         script.onload = () => { if (state.stage === 'r1_home' || state.stage === 'r1_exw') window.CampaignL1Map?.mount(); };
         script.onerror = () => {
           window.__campaignL1MapAssetsStarted = false;
