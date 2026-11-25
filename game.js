@@ -2674,15 +2674,15 @@ function renderImageScreen(screenId, imgSrc, rd) {
       if (!window.__campaignL1MapAssetsStarted) {
         window.__campaignL1MapAssetsStarted = true;
         const style = document.createElement('link');
-        style.rel = 'stylesheet'; style.href = './campaign-level1-map.css?v=20261116';
+        style.rel = 'stylesheet'; style.href = './campaign-level1-map.css?v=20261125-mapfix2';
         document.head.appendChild(style);
         const leafletStyle = document.createElement('link');
         leafletStyle.rel = 'stylesheet';
-        leafletStyle.href = 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css';
+        leafletStyle.href = './vendor/leaflet/leaflet.css?v=1.9.4';
         leafletStyle.crossOrigin = 'anonymous';
         document.head.appendChild(leafletStyle);
         const script = document.createElement('script');
-        script.src = './campaign-level1-map.js?v=20261125-final-v1';
+        script.src = './campaign-level1-map.js?v=20261125-mapfix2';
         script.onload = () => { if (state.stage === 'r1_home' || state.stage === 'r1_exw') window.CampaignL1Map?.mount(); };
         script.onerror = () => {
           window.__campaignL1MapAssetsStarted = false;

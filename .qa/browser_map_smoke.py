@@ -18,6 +18,7 @@ threading.Thread(target=server.serve_forever,daemon=True).start()
 options=webdriver.ChromeOptions()
 for flag in ('--headless=new','--no-sandbox','--disable-dev-shm-usage','--window-size=1550,980'):
     options.add_argument(flag)
+options.set_capability('goog:loggingPrefs', {'browser':'ALL'})
 driver=webdriver.Chrome(options=options)
 wait=WebDriverWait(driver,40)
 def js(s):return driver.execute_script(s)
@@ -46,6 +47,16 @@ try:
     # Keep routing deterministic in CI: a mock OSRM shape checks the visual
     # auto-routing flow; the real public OSRM endpoint remains unchanged in production.
     wait.until(lambda d:js("return !!window.L && document.querySelectorAll('#l1m-map .l1m-money-pin').length===4"))
+    assert js("return [...document.scripts].some(s=>s.src.includes('/vendor/leaflet/leaflet.js'))"), 'Leaflet must load from local vendor'
+    assert js("return document.querySelector('#l1m-map').clientWidth>100 && document.querySelector('#l1m-map').clientHeight>100")
+    assert js("return !!document.querySelector('#l1m-map .leaflet-control-zoom')"), 'Zoom controls missing'
+    assert js("return [...document.styleSheets].some(s=>s.href?.includes('/vendor/leaflet/leaflet.css'))"), 'Local Leaflet CSS missing'
+    # Actual raster tiles, not merely existence of the Leaflet DOM. A network
+    # failure must be explicitly visible rather than leaving a silent blank map.
+    wait.until(lambda d:js("return [...document.querySelectorAll('#l1m-map img.leaflet-tile')].some(i=>i.complete && i.naturalWidth>0) || document.querySelector('#l1m-health')?.dataset.state==='error'"))
+    assert js("return [...document.querySelectorAll('#l1m-map img.leaflet-tile')].some(i=>i.complete && i.naturalWidth>0)"), 'Esri tiles failed to load in CI'
+    assert js("return document.querySelector('#l1m-health').hidden"), 'Map loading notice should clear after actual tiles'
+    driver.save_screenshot(str(OUT/'l1-map-cartografia-renderizada.png'))
     js("""window.__l1OsrmCalls=[];
         const realFetch=window.fetch.bind(window);
         window.fetch=(url, opts)=>{
