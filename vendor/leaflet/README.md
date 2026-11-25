@@ -1,0 +1,1 @@
+Leaflet 1.9.4 (BSD-2-Clause). JavaScript distribution retrieved from qgis2web/qgis2web master, blob a3bf693d0fcaff885cc5f21b3a699aaa567b3533; stylesheet and license from Leaflet/Leaflet v1.9.4. Vendored to avoid runtime CDN dependency. Custom divIcon markers are used, so default PNG marker assets are not required.

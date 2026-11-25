@@ -27,6 +27,9 @@ const bought=()=>state.confirmed?.exw?.[state.round]||null;
 let map=null,markLayer=null,routeLayer=null,portMarker=null,markers=[];
 let activeTile=null,style='street',failures=0,tileLoaded=false,tileTimer=null,renderedRound=0;
 let req=null,selectedRouteId=null,loadingLeaflet=false,routeBounds=null;
+let mapNode=null,bootTimer=null,bootGeneration=0;
+const leafletReady=()=>!!(window.L&&typeof window.L.map==='function'&&typeof window.L.tileLayer==='function');
+function mapHealth(message='',failed=false){const box=el('l1m-health');if(!box)return;box.hidden=!message;box.querySelector('span').textContent=message;box.querySelector('button').hidden=!failed;box.dataset.state=failed?'error':message?'loading':'ready';}
 function status(message='',bad=false){
  const x=el('l1m-status');if(!x)return;
  x.textContent=message;
@@ -36,6 +39,7 @@ function status(message='',bad=false){
 function shell(){
  return '<div id="'+ROOT_ID+'" aria-label="Level 1 — mapa real de originação">'+
  '<div id="l1m-map" aria-label="Mapa cartográfico real com as origens das ofertas EXW"></div>'+
+ '<div id="l1m-health" role="status" data-state="loading"><span>Inicializando mapa real…</span><button type="button" data-l1m-action="retry-map" hidden>Tentar novamente</button></div>'+
  '<div class="l1m-ui">'+
  '<header class="l1m-top">'+
  '<div class="l1m-brand"><div class="l1m-logo">TG</div><div><div class="l1m-title">TRADING GAMES / <b>LEVEL 1</b></div><div class="l1m-sub">Originação pura · cinco rodadas</div></div></div>'+
@@ -57,16 +61,16 @@ function shell(){
 function isMapStage(){return good()&&['r1_home','r1_exw'].includes(state.stage);}
 function stopRoute(){if(req){try{req.abort()}catch(_){ }req=null;}if(routeLayer)routeLayer.clearLayers();selectedRouteId=null;routeBounds=null;}
 function tile(next){
- if(!map||!window.L)return;
+ if(!map||!leafletReady())return;
  clearTimeout(tileTimer);
  if(activeTile)map.removeLayer(activeTile);
  style=next;failures=0;tileLoaded=false;
  const select=el('l1m-style');if(select)select.value=next;
- status('Carregando cartografia '+BASES[style].name.toLowerCase()+'…');
+ mapHealth('Carregando cartografia '+BASES[style].name.toLowerCase()+'…');
  const layer=L.tileLayer(BASES[style].url,{maxZoom:19,maxNativeZoom:17,minZoom:3,
  attribution:'Cartografia © Esri e provedores de dados · dados de referência OSM'});
  activeTile=layer;
- layer.on('tileload',()=>{if(activeTile!==layer)return;if(!tileLoaded){tileLoaded=true;clearTimeout(tileTimer);if(!selectedRouteId)status('');}});
+ layer.on('tileload',()=>{if(activeTile!==layer)return;if(!tileLoaded){tileLoaded=true;clearTimeout(tileTimer);mapHealth('');}});
  layer.on('tileerror',()=>{if(activeTile!==layer||tileLoaded)return;if(++failures>=5)fallback();});
  layer.addTo(map);
  tileTimer=setTimeout(()=>{if(activeTile===layer&&!tileLoaded)fallback()},8500);
@@ -74,7 +78,7 @@ function tile(next){
 function fallback(){
  if(style==='street')tile('topo');
  else if(style==='topo')tile('satellite');
- else {clearTimeout(tileTimer);status('Não foi possível carregar a cartografia. Tente outra camada.',true);}
+ else {clearTimeout(tileTimer);mapHealth('Cartografia Esri indisponível nesta conexão. Selecione outra camada ou tente novamente. As ofertas permanecem disponíveis.',true);}
 }
 function icon(offer,active,confirmed){
  const peers=offers().filter(o=>o.city===offer.city&&o.uf===offer.uf);
@@ -125,32 +129,61 @@ function renderMarkersIfNeeded(){
   markers.forEach(m=>m.marker.setIcon(icon(m.offer,!!s&&Number(m.offer.id)===Number(s.id),!!b&&Number(m.offer.id)===Number(b.id))));
  }
 }
+function destroyMap(){
+ stopRoute();clearTimeout(tileTimer);clearTimeout(bootTimer);
+ if(map){try{map.remove()}catch(e){console.warn('Leaflet remove',e);}}
+ map=null;mapNode=null;markLayer=null;routeLayer=null;activeTile=null;portMarker=null;markers=[];renderedRound=0;tileLoaded=false;
+}
 function loadMap(){
- if(!el(ROOT_ID)||map)return;
- if(!window.L){status('Preparando biblioteca cartográfica…');loadLeaflet();return;}
- map=L.map('l1m-map',{zoomControl:false,preferCanvas:true,minZoom:3,maxZoom:13}).setView([-17.5,-52],5);
- L.control.zoom({position:'bottomright'}).addTo(map);
- routeLayer=L.layerGroup().addTo(map);
- markLayer=L.layerGroup().addTo(map);
- portMarker=L.marker(PORT,{zIndexOffset:-100,icon:L.divIcon({className:'',iconAnchor:[15,15],iconSize:[120,35],
-  html:'<div class="l1m-port"><b>⚓</b>SANTOS</div>'}),title:'Porto de Santos'}).addTo(map);
- tile(style);renderedRound=0;renderMarkersIfNeeded();
- // A selection made while Leaflet was still loading must also show its route.
- if(chosen())requestRoute();
- setTimeout(()=>map&&map.invalidateSize(),40);
+ const node=el('l1m-map');if(!node||!isMapStage())return;
+ if(map&&mapNode!==node)destroyMap();
+ if(map){map.invalidateSize({pan:false});return;}
+ if(!leafletReady()){mapHealth('Carregando biblioteca cartográfica…');loadLeaflet();return;}
+ if(node.clientWidth<10||node.clientHeight<10){
+  mapHealth('Preparando área do mapa…');
+  clearTimeout(bootTimer);bootTimer=setTimeout(loadMap,120);return;
+ }
+ try{
+  mapHealth('Inicializando mapa real…');
+  // Use the actual current element, not an id that may have been remounted.
+  map=window.L.map(node,{zoomControl:false,preferCanvas:false,minZoom:3,maxZoom:13});
+  mapNode=node;map.setView([-17.5,-52],5);
+  window.L.control.zoom({position:'bottomright'}).addTo(map);
+  routeLayer=window.L.layerGroup().addTo(map);markLayer=window.L.layerGroup().addTo(map);
+  portMarker=window.L.marker(PORT,{zIndexOffset:-100,icon:window.L.divIcon({className:'',iconAnchor:[15,15],iconSize:[120,35],
+   html:'<div class="l1m-port"><b>⚓</b>SANTOS</div>'}),title:'Porto de Santos'}).addTo(map);
+  renderedRound=0;renderMarkersIfNeeded();tile(style);
+  if(chosen())requestRoute();
+  const initialized=map;
+  requestAnimationFrame(()=>{if(map===initialized){map.invalidateSize({pan:false});if(!chosen())general();}});
+  setTimeout(()=>{if(map===initialized){map.invalidateSize({pan:false});}},350);
+ }catch(e){
+  console.error('Level 1 — erro de inicialização do mapa',e);
+  destroyMap();
+  // Recreate a clean element after a partially failed Leaflet constructor.
+  const old=el('l1m-map');if(old){const clean=old.cloneNode(false);clean.className='';clean.removeAttribute('style');old.replaceWith(clean);}
+  mapHealth('Não foi possível iniciar o mapa. '+String(e?.message||e)+'.',true);
+ }
 }
 function loadLeaflet(){
  if(loadingLeaflet)return;
- loadingLeaflet=true;
- const urls=['https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js','https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js'];
- function tryNext(n){if(window.L){loadingLeaflet=false;loadMap();return;}if(n>=urls.length){loadingLeaflet=false;status('Biblioteca Leaflet bloqueada. Atualize a página.',true);return;}
+ loadingLeaflet=true;const generation=++bootGeneration;
+ const urls=['./vendor/leaflet/leaflet.js?v=1.9.4','https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js','https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js'];
+ function tryNext(n){
+  if(generation!==bootGeneration)return;
+  if(leafletReady()){loadingLeaflet=false;loadMap();return;}
+  if(n>=urls.length){loadingLeaflet=false;mapHealth('Biblioteca cartográfica indisponível. Tente novamente.',true);return;}
   const s=document.createElement('script');s.src=urls[n];s.async=true;
-  let done=false;const timer=setTimeout(()=>{if(done)return;done=true;s.remove();tryNext(n+1)},8500);
-  s.onload=()=>{if(done)return;done=true;clearTimeout(timer);tryNext(n+1);};
-  s.onerror=()=>{if(done)return;done=true;clearTimeout(timer);tryNext(n+1);};
-  document.head.appendChild(s);}
+  let done=false;const finish=()=>{if(done)return;done=true;clearTimeout(timer);if(!leafletReady())s.remove();tryNext(n+1);};
+  const timer=setTimeout(finish,6500);
+  s.onload=finish;s.onerror=finish;document.head.appendChild(s);
+ }
  tryNext(0);
 }
+function retryMap(){
+ bootGeneration++;loadingLeaflet=false;destroyMap();style=el('l1m-style')?.value||'street';loadMap();
+}
+
 function panel(){
  if(!good()||!el(ROOT_ID))return;
  const rd=current();if(!rd)return;
@@ -318,7 +351,8 @@ function onClick(e){
   return;
  }
  if(action==='next'){next();return;}
- if(action==='general'){stopRoute();general();status('');return;}
+ if(action==='retry-map'){retryMap();return;}
+ if(action==='general'){stopRoute();if(!map){retryMap();return;}general();status('');return;}
  if(action==='calculator'){calculator();return;}
  if(action==='route'){requestRoute();return;}
 }
@@ -331,15 +365,14 @@ function mount(){
   document.body.appendChild(root.firstElementChild);
   root=el(ROOT_ID);
   root.addEventListener('click',onClick);
-  el('l1m-style').addEventListener('change',e=>tile(e.target.value));
+  el('l1m-style').addEventListener('change',e=>{style=e.target.value;if(map)tile(style);else retryMap();});
  }
- panel();
+ // Start cartography independently; rendering a market panel must not block boot.
  loadMap();
+ try{panel();}catch(e){console.error('Level 1 — painel',e);}
 }
 function unmount(){
- stopRoute();clearTimeout(tileTimer);
- if(map){try{map.remove()}catch(_){ }map=null;}
- markers=[];portMarker=null;markLayer=null;routeLayer=null;activeTile=null;renderedRound=0;
+ bootGeneration++;loadingLeaflet=false;destroyMap();
  const root=el(ROOT_ID);if(root)root.remove();
 }
 window.CampaignL1Map={mount,unmount,panel,selectOffer,next,requestRoute};
