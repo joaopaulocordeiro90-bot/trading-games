@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 const ROOT_ID='campaign-l1-realmap',COORDS={
-'Querência|MT':[-12.6093,-52.1828],'Porto Nacional|TO':[-10.7082,-48.4117],
+'Querência|MT':[-12.6093,-52.1828],'Mineiros|GO':[-17.5694,-52.5511],'Sinop|MT':[-11.85801,-55.50092],
 'Rio Verde|GO':[-17.7923,-50.9192],'Dourados|MS':[-22.2231,-54.8120],
 'Sapezal|MT':[-13.5429,-58.8145],'Jataí|GO':[-17.8790,-51.7217],
 'Maracaju|MS':[-21.6145,-55.1672],'Rondonópolis|MT':[-16.4673,-54.6372],
@@ -77,8 +77,12 @@ function fallback(){
  else {clearTimeout(tileTimer);status('Não foi possível carregar a cartografia. Tente outra camada.',true);}
 }
 function icon(offer,active,confirmed){
- const name=esc(String(offer.city||'Origem'));
- return L.divIcon({className:'',iconSize:[86,69],iconAnchor:[43,47],
+ const peers=offers().filter(o=>o.city===offer.city&&o.uf===offer.uf);
+ const idx=peers.findIndex(o=>Number(o.id)===Number(offer.id));
+ const offset=peers.length>1?(idx-(peers.length-1)/2)*100:0;
+ const name=esc(String(offer.city||'Origem')+(peers.length>1?' '+String.fromCharCode(65+idx):''));
+ // Offset the icons in screen pixels, preserving the actual geographic origin.
+ return L.divIcon({className:'',iconSize:[86,69],iconAnchor:[43-offset,47],
  html:'<div class="l1m-money-pin'+(active?' selected':'')+(confirmed?' confirmed':'')+'"><div class="l1m-money-icon">$</div><div class="l1m-money-name">'+name+'</div></div>'});
 }
 function fitSelectedRoute(bounds){
@@ -108,7 +112,7 @@ function redrawMarkers(){
  offers().forEach(o=>{
   const p=COORDS[o.city+'|'+o.uf];if(!p)return;
   const m=L.marker(p,{icon:icon(o,!!s&&Number(o.id)===Number(s.id),!!b&&Number(o.id)===Number(b.id)),
-   title:o.city+'/'+o.uf+' · oferta EXW',keyboard:true,riseOnHover:true}).addTo(markLayer);
+   title:formatOfferDisplayName(o)+' · oferta EXW',keyboard:true,riseOnHover:true}).addTo(markLayer);
   m.on('click',()=>selectOffer(o.id));
   markers.push({offer:o,marker:m});
  });
@@ -163,11 +167,8 @@ function panel(){
   let reaction='';
   if(prev){
    const diff=(x,y,dec)=>{let v=Number(x)-Number(y);return (v>=0?'+':'')+fmt(v,dec);};
-   const po=rd.offers_exw?.find(o=>o.city==='Porto Nacional');
-   const pp=prev.offers_exw?.find(o=>o.city==='Porto Nacional');
    reaction='<div class="l1m-stat"><span>Chicago ante rodada anterior</span><strong>'+diff(rd.cbot_cent_bu,prev.cbot_cent_bu,2)+' ¢/bu</strong></div>'+
-     '<div class="l1m-stat"><span>Dólar ante rodada anterior</span><strong>'+diff(rd.usd,prev.usd,4)+'</strong></div>'+
-     (po&&pp?'<div class="l1m-stat"><span>Físico TO</span><strong>'+diff(po.price_brl_saca,pp.price_brl_saca,2)+' R$/sc</strong></div>':'');
+     '<div class="l1m-stat"><span>Dólar ante rodada anterior</span><strong>'+diff(rd.usd,prev.usd,4)+'</strong></div>';
   }
   html='<div class="l1m-eyebrow">LEITURA DE MERCADO</div><h3>'+esc(headline)+'</h3>'+reaction+
    '<p class="l1m-note">'+esc(rd.market_signal||'Compare Chicago, câmbio e preço físico.')+'</p>'+
