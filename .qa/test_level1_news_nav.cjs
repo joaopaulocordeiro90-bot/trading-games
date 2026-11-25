@@ -19,7 +19,19 @@ for(let i=0;i<rounds.length;i++){
   assert.deepEqual(rd.offers_exw,compatibility[i].offers_exw,'Fontes de L1 divergentes');
   assert(!rd.offers_exw.some(o=>o.city==='Porto Nacional'),'Origem antiga presente');
   assert(mapSource.includes("'"+offer.city+"|"+offer.uf+"':"),'Coordenadas não cadastradas');
-  if(i===3)assert.equal(new Set(rd.offers_exw.filter(o=>o.city==='Jataí').map(o=>o.label)).size,2,'Ofertas de Jataí devem ser distinguíveis');
+  assert.equal(new Set(rd.offers_exw.map(o=>o.city+'/'+o.uf)).size,4,'Quatro origens distintas por rodada');
+  assert.equal(rd.physical_reference.city,'Rio Verde');
+  assert(rd.previous_news_review);
+  for(const o of rd.offers_exw){
+    assert.equal(o.destination_port,'Santos');
+    assert.deepEqual(Object.keys(o.inland_by_corridor),['santos']);
+    assert(close(o.freight_brl_t_santos/rd.usd,o.inland_by_corridor.santos));
+    assert(close(o.freight_brl_t_santos*.06,o.freight_brl_saca_santos));
+    assert(close(o.price_reference_brl_sc+o.price_scenario_adjustment_brl_sc,o.price_brl_saca));
+    assert(close(o.freight_reference_brl_t+o.freight_scenario_adjustment_brl_t,o.freight_brl_t_santos));
+    assert.equal(o.ref_cambio,rd.usd);assert.equal(o.ref_cbot_cent_bu,rd.cbot_cent_bu);
+    assert.equal(o.freight_reference_kind,o.city==='Mineiros'?'estimated_proxy':'quoted_spot_reference');
+  }
   assert(rd.master_news&&rd.market_signal&&rd.decision_prompt,'Radar e decisão ausentes na rodada '+(i+1));
   for(const field of [rd.news,rd.master_news,rd.market_headline,rd.market_signal,rd.decision_prompt,rd.market_note]){
     assert(!/\bBRZ\b|\bH27\b|(?:Fev|Mar)\/27|\b20\d{2}-\d\d-\d\d/.test(field),'Referência indevida no texto do jogador');
@@ -30,6 +42,8 @@ for(let i=0;i<rounds.length;i++){
   assert(close(next.cbot_cent_bu-rd.cbot_cent_bu,impact.cbot_cent_bu),'Chicago desconectada da notícia');
   assert(close(next.usd-rd.usd,impact.usd_brl),'Câmbio desconectado da notícia');
   assert.equal(impact.portonacional_brl_sc,undefined,'Comparação obsoleta de praça removida');
+  assert.equal(impact.physical_reference_city,'Rio Verde/GO');
+  assert(close(next.physical_reference.price_brl_sc-rd.physical_reference.price_brl_sc,impact.physical_reference_brl_sc),'Físico desconectado da notícia');
 }
 const ui=game.slice(game.indexOf('function campaignL1WorkbenchMarkup('),game.indexOf('function renderCampaignL1Workbench(',game.indexOf('function campaignL1WorkbenchMarkup(')));
 assert(ui.includes('Notícia-mestre')&&ui.includes('Efeito da notícia anterior'),'Notícia mestre não é protagonista');

@@ -80,14 +80,15 @@ try:
         wait.until(lambda d:js("return document.querySelectorAll('#l1m-map .l1m-money-pin').length===4"))
         assert expected in js("return document.querySelectorAll('#l1m-panel .l1m-offer')[1].textContent")
         if rd==4:
-            assert js("return [...document.querySelectorAll('#l1m-map .l1m-money-name')].map(x=>x.textContent).includes('Jataí A') && [...document.querySelectorAll('#l1m-map .l1m-money-name')].map(x=>x.textContent).includes('Jataí B')")
+            assert js("return [...document.querySelectorAll('#l1m-map .l1m-money-name')].map(x=>x.textContent).includes('Jataí') && [...document.querySelectorAll('#l1m-map .l1m-money-name')].map(x=>x.textContent).includes('Rio Verde')")
         click('#l1m-panel .l1m-offer:nth-of-type(2)')
         wait.until(lambda d:js("return Number(state.choices?.exw?.[state.round]?.id)===2"))
         wait.until(lambda d:js("return document.querySelector('#l1m-status')?.textContent?.includes('Rota rodoviária')"))
         click('[data-l1m-action="discard"]')
-        if rd<=4:
-            click('#l1m-panel .l1m-offer:nth-of-type(3)')
-            wait.until(lambda d:js("return Number(state.choices?.exw?.[state.round]?.id)===3"))
+        if rd<=5:
+            pick=[3,2,1,4,1][rd-1]
+            click(f'#l1m-panel .l1m-offer:nth-of-type({pick})')
+            wait.until(lambda d:js(f"return Number(state.choices?.exw?.[state.round]?.id)==={pick}"))
             if rd==1:
                 assert 'Basis CFR equivalente' in driver.find_element(By.ID,'l1m-panel').text
                 click('[data-l1m-action="calculator"]')
@@ -107,16 +108,21 @@ try:
             wait.until(lambda d:js("return !!state.confirmed.exw[state.round]"))
             wait.until(lambda d:len(d.find_elements(By.ID,'campaignAdvanceModal'))==1)
             assert js("return Number(state.confirmed.exw[state.round].volume_t)")>0
-            if rd==4:
+            assert js("return document.querySelector('#l1m-buy').disabled")
+            assert js("return document.querySelector('[data-l1m-action=discard]').disabled")
+            # Engine guard: attempts to replace or discard a confirmed purchase have no effect.
+            js("selectExwOfferForCurrentRound(getRoundData(state.round).offers_exw[0],getRoundData(state.round),'r1_exw')")
+            assert js("return Number(state.confirmed.exw[state.round].id)")==pick
+            assert js("return Number(state.choices.exw[state.round].id)")==pick
+            if rd==5:
                 assert js("return calculateCampaignBookSnapshot().totalUsedT")==60000
+                assert js("return state.confirmed.exw[5].volume_t")==3000
         if rd==1:
             driver.save_screenshot(str(OUT/'l1-map-round1.png'))
         if rd==4:
             driver.save_screenshot(str(OUT/'l1-map-round4.png'))
-        if rd<5:
-            if driver.find_elements(By.ID,'campaignAdvanceModal'):
-                click('#campaignAdvanceModal .btn-dark')
-            else:click('#l1m-next')
+        if driver.find_elements(By.ID,'campaignAdvanceModal'):
+            click('#campaignAdvanceModal .btn-dark')
         else:click('#l1m-next')
     wait.until(lambda d:js("return state.stage==='campaign_result'"))
     result=js("return buildCampaignLevel1Result()")

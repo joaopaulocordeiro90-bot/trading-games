@@ -155,7 +155,8 @@ try:
         driver.save_screenshot(str(ARTIFACTS/f'R{rnd}-mapa-sem-colisao.png'))
         assert js('return state.round')==rnd
         assert not driver.find_elements(By.ID,'l1wb-dialog')
-        click('#l1wb-offers .l1wb-offer:nth-of-type(3)')
+        pick={2:2,3:1,4:4,5:1}[rnd]
+        click(f'#l1wb-offers .l1wb-offer:nth-of-type({pick})')
         screen_ready()
         if js('return calculateCampaignBookSnapshot().missingT<=0'):
             continue

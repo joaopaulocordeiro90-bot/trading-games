@@ -652,6 +652,8 @@ function getCampaignOfferMapBox(offer, idx, roundNum = state.round) {
 
 function selectExwOfferForCurrentRound(offer, rd, screenId = "r1_exw") {
   if (!offer) return;
+  // L1: compra confirmada é definitiva nesta rodada; não troca o draft por outra origem.
+  if (isCampaignLevel1Exw(screenId) && state.confirmed?.exw?.[state.round]) return;
   const draft = { ...offer, ref_cbot_cent_bu: rd.cbot_cent_bu, ref_cambio: rd.usd };
   if (isCampaignMode()) {
     const fixedKey = getCampaignLevel(state.campaign.levelId || 1).fixedPort || 'santos';
@@ -1009,7 +1011,8 @@ function campaignL1WorkbenchMarkup(rd) {
     const news=String(rd.master_news||rd.market_headline||rd.news||'Observe o mercado antes de comprar.');
     const previous=round>1?getRoundData(round-1):null;
     const fmtMove=(v,d=1)=>`${Number(v)>=0?'+':''}${num(v,d)}`;
-    const reaction=previous?`<p class="l1wb-mini"><strong>Efeito da notícia anterior:</strong> Chicago ${fmtMove(Number(rd.cbot_cent_bu)-Number(previous.cbot_cent_bu),2)} ¢/bu · dólar ${fmtMove(Number(rd.usd)-Number(previous.usd),4)} R$/US$.</p>`:'';
+    const physical=previous?.physical_reference&&rd.physical_reference?` · Físico indicativo Rio Verde ${fmtMove(Number(rd.physical_reference.price_brl_sc)-Number(previous.physical_reference.price_brl_sc),2)} R$/sc`:'';
+    const reaction=previous?`<p class="l1wb-mini"><strong>Efeito da notícia anterior:</strong> Chicago ${fmtMove(Number(rd.cbot_cent_bu)-Number(previous.cbot_cent_bu),2)} ¢/bu · dólar ${fmtMove(Number(rd.usd)-Number(previous.usd),4)} R$/US${physical}.</p><p class="l1wb-mini">${escapeHtml(rd.previous_news_review||'')}</p>`:'';
     content=`<span class="l1wb-label">1. Notícia-mestre · rodada ${round}</span>
       <h3>${escapeHtml(news)}</h3>
       ${reaction}
@@ -1329,7 +1332,8 @@ function buildCampaignRoundSummaryHtml(roundNum = state.round) {
    Sempre usa o mesmo cálculo CFR/basis da origem. Não é P&L realizado.
    Originação 35 + margem 30 + ocupação 20 + disciplina 15 = 100 pontos.
    ========================================================================== */
-const CAMPAIGN_L1_RECORD_KEY = 'tg_campaign_l1_scorecard_v2';
+// New calibration has its own record; previous browser progress/unlocks remain historical.
+const CAMPAIGN_L1_RECORD_KEY = 'tg_campaign_l1_scorecard_final_v1';
 const CAMPAIGN_L1_MIN_SCORE = 70;
 const CAMPAIGN_L1_MARGIN_FULL_SCORE_CENT_BU = 40;
 const CAMPAIGN_L1_ORIGIN_REGRET_CENT_BU = 45;
@@ -2678,7 +2682,7 @@ function renderImageScreen(screenId, imgSrc, rd) {
         leafletStyle.crossOrigin = 'anonymous';
         document.head.appendChild(leafletStyle);
         const script = document.createElement('script');
-        script.src = './campaign-level1-map.js?v=20261124-origens';
+        script.src = './campaign-level1-map.js?v=20261125-final-v1';
         script.onload = () => { if (state.stage === 'r1_home' || state.stage === 'r1_exw') window.CampaignL1Map?.mount(); };
         script.onerror = () => {
           window.__campaignL1MapAssetsStarted = false;
@@ -4698,7 +4702,7 @@ addHot("hot_calib", () => toggleCalib(!calibEnabled));
 
     addHot("hot_confirm", () => {
       const chosen = state.choices.exw[state.round];
-      if (!chosen) return;
+      if (!chosen || (isCampaignLevel1Exw(screenId) && state.confirmed?.exw?.[state.round])) return;
 
       const confirmChosen = ({ key, inland }) => {
         chosen.corredor = key;
@@ -4734,6 +4738,7 @@ addHot("hot_calib", () => toggleCalib(!calibEnabled));
     });
 
     addHot("hot_discard", () => {
+      if (isCampaignLevel1Exw(screenId) && state.confirmed?.exw?.[state.round]) return;
       delete state.choices.exw[state.round];
       delete state.confirmed.exw[state.round];
       removeExwPositionForRound(state.round);

@@ -66,7 +66,7 @@ function tile(next){
  const layer=L.tileLayer(BASES[style].url,{maxZoom:19,maxNativeZoom:17,minZoom:3,
  attribution:'Cartografia © Esri e provedores de dados · dados de referência OSM'});
  activeTile=layer;
- layer.on('tileload',()=>{if(activeTile!==layer)return;if(!tileLoaded){tileLoaded=true;clearTimeout(tileTimer);status('');}});
+ layer.on('tileload',()=>{if(activeTile!==layer)return;if(!tileLoaded){tileLoaded=true;clearTimeout(tileTimer);if(!selectedRouteId)status('');}});
  layer.on('tileerror',()=>{if(activeTile!==layer||tileLoaded)return;if(++failures>=5)fallback();});
  layer.addTo(map);
  tileTimer=setTimeout(()=>{if(activeTile===layer&&!tileLoaded)fallback()},8500);
@@ -155,7 +155,7 @@ function panel(){
  if(!good()||!el(ROOT_ID))return;
  const rd=current();if(!rd)return;
  const lv=getCampaignLevel(1),bk=calculateCampaignBookSnapshot(),ls=state.campaign.l1Tab||'market';
- const s=chosen(),b=bought(),left=Math.max(0,Number(lv.targetVolumeT)-Number(bk.totalUsedT)),p=Number(bk.totalUsedT)/Math.max(1,Number(lv.targetVolumeT));
+ const b=bought(),s=b||chosen(),left=Math.max(0,Number(lv.targetVolumeT)-Number(bk.totalUsedT)),p=Number(bk.totalUsedT)/Math.max(1,Number(lv.targetVolumeT));
  const prev=state.round>1?getRoundData(state.round-1):null;
  el('l1m-rounds').innerHTML='<span>RODADA</span>'+[1,2,3,4,5].map(n=>'<span class="l1m-round '+(n===state.round?'active':n<state.round?'done':'')+'" title="Rodadas seguem a sequência obrigatória">'+(n<state.round?'✓':n)+'</span>').join('');
  el('l1m-market').innerHTML='<span>CBOT <strong>'+fmt(rd.cbot_cent_bu,2)+' ¢/bu</strong></span><span>USDBRL <strong>'+fmt(rd.usd,4)+'</strong></span>';
@@ -168,9 +168,14 @@ function panel(){
   if(prev){
    const diff=(x,y,dec)=>{let v=Number(x)-Number(y);return (v>=0?'+':'')+fmt(v,dec);};
    reaction='<div class="l1m-stat"><span>Chicago ante rodada anterior</span><strong>'+diff(rd.cbot_cent_bu,prev.cbot_cent_bu,2)+' ¢/bu</strong></div>'+
-     '<div class="l1m-stat"><span>Dólar ante rodada anterior</span><strong>'+diff(rd.usd,prev.usd,4)+'</strong></div>';
+     '<div class="l1m-stat"><span>Dólar ante rodada anterior</span><strong>'+diff(rd.usd,prev.usd,4)+'</strong></div>'+
+     (rd.physical_reference&&prev.physical_reference?'<div class="l1m-stat"><span>Físico indicativo Rio Verde</span><strong>'+diff(rd.physical_reference.price_brl_sc,prev.physical_reference.price_brl_sc,2)+' R$/sc</strong></div>':'')+
+     '<p class="l1m-note"><b>Reação da sessão:</b> '+esc(rd.previous_news_review||'')+'</p>';
   }
-  html='<div class="l1m-eyebrow">LEITURA DE MERCADO</div><h3>'+esc(headline)+'</h3>'+reaction+
+  const reference=rd.physical_reference?'<div class="l1m-stat"><span>Físico indicativo Rio Verde</span><strong>R$ '+fmt(rd.physical_reference.price_brl_sc,2)+'/sc</strong></div>':'';
+  html='<div class="l1m-eyebrow">MISSÃO · ORIGINAÇÃO PURA</div><p class="l1m-note">60.000 t de soja · Santos → Norte da China · venda CFR +'+fmt(lv.fixedSaleBasisCentBu)+' ¢/bu · meta de compra até +'+fmt(lv.targetBasisCentBu)+' ¢/bu · nota mínima 70/100.</p>'+
+   '<p class="l1m-note">Considere o fobbing: US$ '+fmt(lv.fixedFobbingUsdT,2)+'/t · marítimo: US$ '+fmt(lv.fixedFreightUsdT,2)+'/t. Uma compra definitiva por rodada ou avance sem comprar.</p>'+
+   '<div class="l1m-eyebrow">LEITURA DE MERCADO · CENÁRIO SIMULADO</div><h3>'+esc(headline)+'</h3>'+reference+reaction+
    '<p class="l1m-note">'+esc(rd.market_signal||'Compare Chicago, câmbio e preço físico.')+'</p>'+
    '<p class="l1m-note"><b>Decisão:</b> '+esc(rd.decision_prompt||'Selecione uma origem ou aguarde.')+'</p>'+
    '<div class="l1m-action-row"><button class="l1m-btn primary" type="button" data-l1m-tab="offers">Comparar ofertas →</button></div>';
@@ -178,9 +183,10 @@ function panel(){
   html='<div class="l1m-eyebrow">OFERTAS EXW · ORIGENS SIMULADAS</div><p class="l1m-note">Selecione uma origem no mapa ou na lista. O frete cotado permanece o do cenário, independentemente do serviço de rotas.</p>';
   html+=offers().map(o=>{
    const isSelected=!!s&&Number(s.id)===Number(o.id),isConfirmed=!!b&&Number(b.id)===Number(o.id);
-   return '<button type="button" class="l1m-offer '+(isSelected?'selected ':'')+(isConfirmed?'confirmed':'')+'" data-l1m-offer="'+o.id+'">'+
+   return '<button type="button" class="l1m-offer '+(isSelected?'selected ':'')+(isConfirmed?'confirmed':'')+'" data-l1m-offer="'+o.id+'"'+(b&&Number(b.id)!==Number(o.id)?' disabled':'')+'>'+
+
     '<div class="l1m-offer-top"><strong>'+esc(formatOfferDisplayName(o))+'</strong><b>R$ '+fmt(o.price_brl_saca,2)+'/sc</b></div>'+
-    '<div class="l1m-offer-sub"><span>'+fmt(o.volume_t)+' t disponíveis</span><span>Frete R$ '+fmt(o.freight_brl_t_santos,0)+'/t</span></div></button>';
+    '<div class="l1m-offer-sub"><span>'+fmt(o.volume_t)+' t disponíveis</span><span>Frete R$ '+fmt(o.freight_brl_t_santos,0)+'/t'+(o.freight_reference_kind==='estimated_proxy'?' · estimado':'')+'</span></div></button>';
   }).join('');
   if(s){
    const vol=b?Number(b.volume_t):Math.min(Number(s.available_volume_t||s.volume_t),left);
@@ -188,7 +194,10 @@ function panel(){
     '<div class="l1m-stat"><span>Origem</span><strong>'+esc(formatOfferDisplayName(s))+'</strong></div>'+
     '<div class="l1m-stat"><span>Volume da operação</span><strong>'+fmt(vol)+' t</strong></div>'+
     '<div class="l1m-stat"><span>Preço EXW</span><strong>R$ '+fmt(s.price_brl_saca,2)+'/sc</strong></div>'+
-    '<div class="l1m-stat"><span>Frete para Santos</span><strong>R$ '+fmt(s.freight_brl_t_santos,2)+'/t</strong></div>';
+    '<div class="l1m-stat"><span>Frete rodoviário para Santos'+(s.freight_reference_kind==='estimated_proxy'?' (estimado)':'')+'</span><strong>R$ '+fmt(s.freight_brl_t_santos,2)+'/t</strong></div>'+
+    '<p class="l1m-note">Considere o fobbing: US$ '+fmt(lv.fixedFobbingUsdT,2)+'/t · marítimo: US$ '+fmt(lv.fixedFreightUsdT,2)+'/t.</p>'+
+    (s.freight_reference_kind==='estimated_proxy'?'<p class="l1m-note">Frete de Mineiros estimado pela referência de Jataí com ajuste didático; não é cotação observada.</p>':'')+
+    (b?'<p class="l1m-note"><b>Compra confirmada e definitiva nesta rodada.</b></p>':'');
    if(state.round===1){
     const snap=calculateCampaignOfferBasisSnapshot({...s,volume_t:vol},state.round);
     html+='<div class="l1m-stat"><span>Basis CFR equivalente</span><strong>'+fmt(snap.basisCentBu,1)+' ¢/bu</strong></div>';
@@ -212,13 +221,19 @@ function panel(){
  el('l1m-progress-fill').style.width=Math.max(0,Math.min(100,p*100))+'%';
  el('l1m-volume').textContent=fmt(bk.totalUsedT)+' / '+fmt(lv.targetVolumeT)+' t';
  el('l1m-missing').textContent=fmt(left)+' t restantes';
- const buy=el('l1m-buy');buy.disabled=!s||!!b;buy.textContent=b?'Compra confirmada':'Comprar';
+ const buy=el('l1m-buy');buy.disabled=!s||!!b||left<=0;buy.textContent=b?'Compra confirmada':left<=0?'Navio completo':'Comprar';
+ const discard=el(ROOT_ID).querySelector('[data-l1m-action="discard"]');if(discard)discard.disabled=!!b||!s;
  el('l1m-next').textContent=state.round===lv.rounds?'Encerrar Level 1':'Avançar rodada';
  renderMarkersIfNeeded();
 }
 function selectOffer(id){
  if(!good())return;
  const offer=offers().find(o=>String(o.id)===String(id));if(!offer)return;
+ if(bought()){
+  if(String(bought().id)===String(id))requestRoute();
+  else status('Compra já confirmada nesta rodada. Avance para a próxima sessão.',true);
+  return;
+ }
  if(state.stage!=='r1_exw')setStage('r1_exw');
  state.campaign.l1Tab='offers';
  selectExwOfferForCurrentRound(offer,current(),'r1_exw');
@@ -269,7 +284,7 @@ async function requestRoute(){
   const data=await response.json();
   if(data.code!=='Ok'||!data.routes?.length)throw new Error('Sem rota');
   // Stale responses must never redraw the prior offer on top of a newer choice.
-  if(selectedRouteId!==id||!map||!chosen()||String(chosen().id)!==String(s.id))return;
+  if(req!==c||selectedRouteId!==id||!map||!chosen()||String(chosen().id)!==String(s.id))return;
   const result=data.routes[0];
   if(result.geometry?.type!=='LineString'||!Array.isArray(result.geometry.coordinates)||result.geometry.coordinates.length<2)throw new Error('Geometria inválida');
   routeLayer.clearLayers(); // Replace preview with actual road geometry.
@@ -278,7 +293,7 @@ async function requestRoute(){
   fitSelectedRoute(routeBounds);
   status('Rota rodoviária: aprox. '+fmt(result.distance/1000,0)+' km até Santos · sem restrições de caminhão. Frete do jogo inalterado.');
  }catch(e){
-  if(selectedRouteId!==id||!map)return;
+  if(req!==c||selectedRouteId!==id||!map)return;
   // Keep the already visible dashed segment rather than leaving a blank map.
   // A straight link is NOT a calculated road route.
   status('Trajeto rodoviário indisponível. Linha pontilhada = ligação visual, não rota por rodovias. Frete do jogo inalterado.',true);
@@ -294,8 +309,9 @@ function onClick(e){
  const btn=e.target.closest('[data-l1m-action]');if(!btn)return;
  const action=btn.dataset.l1mAction;
  if(action==='back'){unmount();backToCampaignMenu();return;}
- if(action==='buy'){if(chosen()&&!bought()){useOriginalHot('confirm');}return;}
+ if(action==='buy'){if(chosen()&&!bought()&&calculateCampaignBookSnapshot().missingT>0){useOriginalHot('confirm');}return;}
  if(action==='discard'){
+  if(bought())return;
   useOriginalHot('discard');
   // Discard removes the offer selection, so the visual route must disappear too.
   if(!chosen()){stopRoute();general();status('');}
