@@ -1,10 +1,10 @@
 {
-  "version": "campaign-l2-l3-2026-11-26",
+  "version": "campaign-dual-terminal-v2",
   "files": {
     "data/guided/gameData.json": "66e770ce11050dfc4eee3aed3a5065f30643eaf0ef4da04d644d3ebc34fd1081",
     "data/expert/gameData.json": "66e770ce11050dfc4eee3aed3a5065f30643eaf0ef4da04d644d3ebc34fd1081",
-    "data/campaign/levels/level2.json": "45aff0f555a82a188c4c60578cb47e8682ac5bb0c0a893e1b2d0b5d68ebe75c3",
-    "data/campaign/levels/level3.json": "eab7c157400ac69e33518896b0348159deac4e7f29b424f5840cdb3b65667a27",
+    "data/campaign/levels/level2.json": "834b7f63c8370bcf784532109e388cbdd2ea20a4a65117ac2cd48e7078a05c32",
+    "data/campaign/levels/level3.json": "f073dbe4e189a552ce201d1f4c4be9a4f955ffda687d409a9ebc246404b7fe70",
     "index.html": "96211a8bb0f2777441c219ef9d283274b360f15721d84f0077e8f82170f16ac1",
     "styles.css": "6cf547cdf6b222085832ec0d33ab863f0de228b69cdf418a06f9a82ddac2d984",
     "style.css": "dd805e6959e58eb4845a761cba6100544dfb902be38add26b74f02d3875e4e86",

@@ -565,7 +565,7 @@ const CAMPAIGN_LEVELS = [
       "Você pode comprar no máximo uma oferta por rodada. Se o lote não fecha conta, descarte ou avance; proteger o basis médio vale mais que completar volume a qualquer custo."
 ]
   },
-  { id: 2, code: "L2", name: "Mais alternativas logísticas", summary: "5 rodadas · Santos · escolha rodo direto ou rodo + ferro via Rio Verde." },
+  { id: 2, code: "L2", name: "Mais alternativas logísticas", summary: "5 rodadas · Santos · escolha rodo direto ou rodo + ferro via Rio Verde ou Rondonópolis." },
   { id: 3, code: "L3", name: "Mercado em movimento", summary: "6 rodadas · Santos · CBOT, dólar, físico e fretes interligados." }
 ];
 
@@ -3307,7 +3307,7 @@ function renderOverlaysForScreen(screenId, rd) {
       const lockedTip = isUnlocked ? '' : 'Desbloqueie os próximos níveis';
       let record = level.id === 1 ? readCampaignL1Record() : null;
       if (level.id !== 1) {
-        try { record = JSON.parse(localStorage.getItem('tg_campaign_multimodal_l'+level.id+'_v1')||'null'); } catch (_) {}
+        try { record = JSON.parse(localStorage.getItem('tg_campaign_multimodal_l'+level.id+'_v2')||'null'); } catch (_) {}
       }
       const ready = level.id === 1 || !!getCampaignLevelData(level.id)?.scenario?.rounds?.length;
       const actions = `<button class="campaign-btn campaign-btn-${isUnlocked&&ready?'dark':'light'}" type="button" ${isUnlocked&&ready?`onclick="window.startCampaignLevel(${level.id})"`:'disabled'}>${isUnlocked&&ready?'Iniciar':isUnlocked?'Em preparação':'Bloqueado'}</button>${record?`<span class="l1-best-score">Melhor nota: ${Number(record.bestScore)||0}/100 ${record.approved?'· aprovado':'· não aprovado'}</span>`:''}`;

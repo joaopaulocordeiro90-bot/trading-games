@@ -27,12 +27,15 @@ try:
     assert 'Mais alternativas logísticas' in js("return document.getElementById('campaignLevelsContainer').textContent")
     assert 'Mercado em movimento' in js("return document.getElementById('campaignLevelsContainer').textContent")
     click('[onclick="window.startCampaignLevel(2)"]')
-    for level,seq in [(2,'03481'),(3,'050831')]:
+    for level in (2,3):
         waitjs("return !!document.getElementById('multi-panel')")
         waitjs("return document.querySelectorAll('#l1m-map .l1m-money-pin').length===4")
         waitjs("return [...document.querySelectorAll('#l1m-map img.leaflet-tile')].some(i=>i.complete&&i.naturalWidth>0) || document.querySelector('#l1m-health')?.dataset.state==='error'")
-        assert js("return !!document.querySelector('#l1m-map .multi-terminal')")
-        assert js("return document.querySelectorAll('#multi-rounds .l1m-round').length")==len(seq)
+        assert js("return document.querySelectorAll('#l1m-map .multi-terminal').length") == 2
+        import json
+        cfg=json.loads((ROOT/f'data/campaign/levels/level{level}.json').read_text())
+        seq=driver.execute_script("""const l=arguments[0],E=window.TGMulti;let answer=null;function dfs(i,lots,picks){if(answer)return;if(i===l.rounds){if(E.result(l,lots).approved&&lots.some(x=>x.mode==='road')&&lots.some(x=>x.mode!=='road'))answer=picks;return;}let r=l.scenario.rounds[i];let candidates=r.offers_exw.flatMap(o=>E.modes(o).map(m=>({o,m,b:E.calc(l,r,o,m).basis}))).sort((a,b)=>a.b-b.b);if(E.result(l,lots).remaining)for(const c of candidates){dfs(i+1,[...lots,E.decision(l,i+1,c.o.id,c.m,lots)],[...picks,[c.o.id,c.m]]);if(answer)return;}dfs(i+1,lots,[...picks,null]);}dfs(0,[],[]);return answer;""",cfg)
+        assert seq and len(seq)==cfg['rounds']
         js("""window.__osrm=[];const real=window.fetch.bind(window);window.fetch=(u,o)=>{
         if(!String(u).includes('router.project-osrm.org'))return real(u,o);
         window.__osrm.push(String(u));const route=String(u).split('/driving/')[1].split('?')[0].split(';').map(x=>x.split(',').map(Number));
@@ -40,12 +43,12 @@ try:
         for r,a in enumerate(seq,1):
             waitjs("return document.querySelector('#multi-rounds .active')?.textContent==="+repr(str(r)))
             if r>1:assert 'REAÇÃO À NOTÍCIA ANTERIOR' in js("return document.getElementById('multi-panel').textContent")
-            n=int(a)
+            n=a
             if n:
-                offer=(n+1)//2;mode='road' if n%2 else 'rail'
+                offer,mode=n
                 click('[data-tab=offers]')
                 click('[data-offer="'+str(offer)+'"]')
-                assert js("return document.querySelectorAll('.multi-mode').length")==2
+                assert js("return document.querySelectorAll('.multi-mode').length") in (2,3)
                 assert js("return document.querySelectorAll('.multi-mode.active').length")==0
                 assert js("return document.getElementById('multi-buy').disabled")
                 click('[data-mode="'+mode+'"]')
@@ -71,7 +74,7 @@ try:
             assert js("return localStorage.getItem('tg_campaign_unlocked_level')")=='3'
             click('a[href="./campaign-multimodal.html?level=3"]')
         else:
-            assert js("return JSON.parse(localStorage.getItem('tg_campaign_multimodal_l3_v1')).approved")
+            assert js("return JSON.parse(localStorage.getItem('tg_campaign_multimodal_l3_v2')).approved")
     print('OK: gates, L2→L3, four origins, real Leaflet, both modals, manual calculator, immutable purchases, 5/6 rounds, approval and progression.')
 finally:
     driver.quit();server.shutdown()
