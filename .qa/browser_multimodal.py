@@ -32,6 +32,12 @@ try:
         waitjs("return document.querySelectorAll('#l1m-map .l1m-money-pin').length===4")
         waitjs("return [...document.querySelectorAll('#l1m-map img.leaflet-tile')].some(i=>i.complete&&i.naturalWidth>0) || document.querySelector('#l1m-health')?.dataset.state==='error'")
         assert js("return document.querySelectorAll('#l1m-map .multi-terminal').length") == 2
+        # The complete terminal label must be enclosed by the badge at 100% and 125% zoom.
+        for zoom in ('1','1.25'):
+            js("document.documentElement.style.zoom="+repr(zoom))
+            assert js("return [...document.querySelectorAll('.multi-terminal')].every(t=>{const a=t.getBoundingClientRect(),b=t.querySelector('strong').getBoundingClientRect();return t.scrollWidth<=t.clientWidth+2 && b.right<=a.right+1 && b.left>=a.left-1 && b.bottom<=a.bottom+1})"),'Terminal name overflows'
+        js("document.documentElement.style.zoom='1'")
+        driver.save_screenshot(str(OUT/f'l{level}-terminal-label.png'))
         geo=json_geo=driver.execute_async_script("const cb=arguments[arguments.length-1];fetch('./data/campaign/rail-corridors.geojson').then(r=>r.json()).then(cb).catch(e=>cb({error:String(e)}));")
         assert len(geo.get('features',[]))==2
         assert all(f['properties']['port_reference_distance_km']<=5 for f in geo['features'])
@@ -96,7 +102,7 @@ try:
             assert js("return localStorage.getItem('tg_campaign_unlocked_level')")=='3'
             click('a[href="./campaign-multimodal.html?level=3"]')
         else:
-            assert js("return JSON.parse(localStorage.getItem('tg_campaign_multimodal_l3_v2')).approved")
+            assert js("return JSON.parse(localStorage.getItem('tg_campaign_multimodal_l3_v3')).approved")
     print('OK: gates, L2→L3, four origins, real Leaflet, both modals, manual calculator, immutable purchases, 5/6 rounds, approval and progression.')
 finally:
     driver.quit();server.shutdown()

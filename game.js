@@ -3310,7 +3310,7 @@ function renderOverlaysForScreen(screenId, rd) {
       const lockedTip = isUnlocked ? '' : 'Desbloqueie os próximos níveis';
       let record = level.id === 1 ? readCampaignL1Record() : null;
       if (level.id !== 1) {
-        try { record = JSON.parse(localStorage.getItem('tg_campaign_multimodal_l'+level.id+'_v2')||'null'); } catch (_) {}
+        try { record = JSON.parse(localStorage.getItem('tg_campaign_multimodal_l'+level.id+'_v3')||'null'); } catch (_) {}
       }
       const ready = level.id === 1 || !!getCampaignLevelData(level.id)?.scenario?.rounds?.length;
       const actions = `<button class="campaign-btn campaign-btn-${isUnlocked&&ready?'dark':'light'}" type="button" ${isUnlocked&&ready?`onclick="window.startCampaignLevel(${level.id})"`:'disabled'}>${isUnlocked&&ready?'Iniciar':isUnlocked?'Em preparação':'Bloqueado'}</button>${record?`<span class="l1-best-score">Melhor nota: ${Number(record.bestScore)||0}/100 ${record.approved?'· aprovado':'· não aprovado'}</span>`:''}`;
