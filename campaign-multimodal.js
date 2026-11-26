@@ -71,7 +71,7 @@ async function drawRoutes(){
  const keys=E.modes(o).filter(x=>x!=='road').map(x=>o.logistics[x].terminal);
  if(!m){const points=[p,PORT];L.polyline([p,PORT],{color:'#128466',dashArray:'6 6',weight:3,opacity:.65}).addTo(routeLayer);for(const k of keys){const t=termPoint(k);points.push(t);L.polyline([p,t],{color:'#128466',dashArray:'6 6',weight:3}).addTo(routeLayer);const g=railLink(k);if(g)points.push(g.getBounds().getSouthWest(),g.getBounds().getNorthEast());}fit(points);status('Escolha o modal. Linhas verdes pontilhadas: ligações provisórias; ferrovia '+(keys.every(k=>railGeometry[k])?'georreferenciada ANTT/Infra S.A.':'indisponível para um ou mais terminais (sem traçado inventado).'));return;}
  const k=m==='road'?null:o.logistics[m].terminal,dest=k?termPoint(k):PORT,preview=L.polyline([p,dest],{color:'#128466',dashArray:'6 7',weight:4}).addTo(routeLayer);
- const gRail=k?railLink(k):null,points=k?[p,dest,PORT]:[p,PORT];if(gRail)points.push(gRail.getBounds().getSouthWest(),gRail.getBounds().getNorthEast());fit(points);
+ const gRail=k?railLink(k):null,points=k?[p,dest,PORT]:[p,PORT];if(gRail){const end=railGeometry[k].properties.port_rail_coordinate;L.circleMarker(end,{radius:5,color:'#8d4b24',fillColor:'#fff',fillOpacity:1,weight:2}).bindTooltip('Acesso ferroviário à região portuária · referência ANTT').addTo(routeLayer);}if(gRail)points.push(gRail.getBounds().getSouthWest(),gRail.getBounds().getNorthEast());fit(points);
  const railStatus=k?(gRail?' · ferrovia ANTT/Infra S.A. ('+termLabel(k)+')':' · traçado ferroviário indisponível'):'';
  status('Consultando trecho rodoviário…'+railStatus);
  const controller=new AbortController();routeAbort=controller;const timer=setTimeout(()=>controller.abort(),14000);

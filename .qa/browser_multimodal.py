@@ -32,6 +32,10 @@ try:
         waitjs("return document.querySelectorAll('#l1m-map .l1m-money-pin').length===4")
         waitjs("return [...document.querySelectorAll('#l1m-map img.leaflet-tile')].some(i=>i.complete&&i.naturalWidth>0) || document.querySelector('#l1m-health')?.dataset.state==='error'")
         assert js("return document.querySelectorAll('#l1m-map .multi-terminal').length") == 2
+        geo=json_geo=driver.execute_async_script("const cb=arguments[arguments.length-1];fetch('./data/campaign/rail-corridors.geojson').then(r=>r.json()).then(cb).catch(e=>cb({error:String(e)}));")
+        assert len(geo.get('features',[]))==2
+        assert all(f['properties']['port_reference_distance_km']<=5 for f in geo['features'])
+        assert all(f['geometry']['type']=='MultiLineString' for f in geo['features'])
         import json
         cfg=json.loads((ROOT/f'data/campaign/levels/level{level}.json').read_text())
         seq=driver.execute_script("""const l=arguments[0],E=window.TGMulti;let answer=null;function dfs(i,lots,picks){if(answer)return;if(i===l.rounds){if(E.result(l,lots).approved&&lots.some(x=>x.mode==='road')&&lots.some(x=>x.mode!=='road'))answer=picks;return;}let r=l.scenario.rounds[i];let candidates=r.offers_exw.flatMap(o=>E.modes(o).map(m=>({o,m,b:E.calc(l,r,o,m).basis}))).sort((a,b)=>a.b-b.b);if(E.result(l,lots).remaining)for(const c of candidates){dfs(i+1,[...lots,E.decision(l,i+1,c.o.id,c.m,lots)],[...picks,[c.o.id,c.m]]);if(answer)return;}dfs(i+1,lots,[...picks,null]);}dfs(0,[],[]);return answer;""",cfg)
@@ -54,6 +58,9 @@ try:
                 click('[data-mode="'+mode+'"]')
                 waitjs("return document.querySelector('#multi-status').textContent.includes('Trecho rodoviário aprox.')")
                 assert js("return !document.getElementById('multi-buy').disabled")
+                if mode!='road':
+                    waitjs("return [...document.querySelectorAll('#l1m-map .leaflet-overlay-pane path')].some(x=>['#b47c2d','#8d4b24'].includes(x.getAttribute('stroke')))")
+                    assert 'ANTT/Infra S.A.' in js("return document.querySelector('#multi-status').textContent")
                 if r==2:
                     click('[data-action=calc]')
                     waitjs("return document.getElementById('multi-dialog').open")
