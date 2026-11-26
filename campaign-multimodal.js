@@ -110,14 +110,24 @@ function select(n){if(ended)return;const c=confirmed();if(c&&c.id!==n){status('C
 function chooseModal(m){if(confirmed()||!offer()||!E.modes(offer()).includes(m))return;mode=m;render();drawRoutes();}
 function dialog(html){const d=$('multi-dialog');d.innerHTML=html;if(!d.open)d.showModal();return d;}
 function closeDialog(){$('multi-dialog').close();}
-function confirmBuy(){if(!offer()||!mode||confirmed()||!book().remaining)return;const x=E.decision(level,round,selected,mode,lots);const d=dialog('<h2>Confirmar compra EXW</h2><p><b>'+esc(x.city+'/'+x.uf)+'</b> · '+modalName(x.mode,x.terminal)+'</p><p>'+fmt(x.volume)+' t a R$ '+fmt(x.price,2)+'/sc · logística R$ '+fmt(x.freight)+'/t.</p>'+(x.volume<x.available?'<p>Compra parcial: o saldo do navio comporta '+fmt(x.volume)+' t das '+fmt(x.available)+' t disponíveis.</p>':'')+'<p>A compra e o modal serão definitivos nesta rodada.</p><div class="multi-dialog-row"><button class="multi-btn" data-close>Cancelar</button><button class="multi-btn primary" id="multi-confirm">Confirmar</button></div>');
- d.querySelector('[data-close]').onclick=closeDialog;$('multi-confirm').onclick=()=>{if(confirmed())return;lots.push(x);closeDialog();render();status('Compra confirmada: '+fmt(x.volume)+' t · '+modalName(x.mode,x.terminal));};}
+function confirmBuy(){
+ if(!offer()||!mode||confirmed()||!book().remaining||ended)return;
+ const r=round,x=E.decision(level,round,selected,mode,lots),log=offer().logistics[mode],b=book();
+ const terminal=x.terminal?termLabel(x.terminal):null;
+ TGRoundUI.open({kind:'purchase',level:id,round,rounds:level.rounds,final:round===level.rounds,origin:x.city+'/'+x.uf,modal:modalName(x.mode,x.terminal),route:x.city+' → '+(terminal?terminal+' → ':'')+'Santos',volume:x.volume,available:x.available,price:x.price,freight:x.freight,cbot:x.cbot,fx:x.fx,fobbing:x.fob,sea:x.sea,projectedVolume:b.volume+x.volume,target:level.targetVolumeT,components:terminal?[['Rodo até '+terminal,'R$ '+fmt(log.feeder_brl_t)+'/t'],['Ferrovia até Santos','R$ '+fmt(log.rail_brl_t)+'/t']]:[]},()=>{
+  if(ended||round!==r||confirmed()||selected!==x.id||mode!==x.mode)return;
+  lots.push(x);advanceNow();
+ });
+}
 function calculator(){if(!offer()||!mode)return;const x=E.calc(level,rd(),offer(),mode);const entries=[['Frete interno (US$/t)',x.inlandUsd,.06],['EXW (US$/t)',x.exwUsd,.06],['CFR equivalente (¢/bu)',x.cfr,.16],['Basis CFR (¢/bu)',x.basis,.17]];
  const d=dialog('<h2>Caderno de cálculos</h2><p>'+esc(x.city)+' · '+modalName(mode)+' · frete '+fmt(x.freight)+' R$/t · dólar '+fmt(x.fx,4)+' · Chicago '+fmt(x.cbot,2)+' ¢/bu.</p><p>Fobbing US$ '+fmt(x.fob,2)+'/t · marítimo US$ '+fmt(x.sea,2)+'/t. Soja: saca 60 kg e 1 ¢/bu = US$ 0,367437/t.</p>'+entries.map((a,i)=>'<label for="answer-'+i+'">'+esc(a[0])+'</label><div class="multi-dialog-row" style="justify-content:flex-start;margin:5px 0 10px"><input id="answer-'+i+'" inputmode="decimal" placeholder="Sua resposta" style="font:inherit;padding:8px;width:150px;border:1px solid #c8d9d0;border-radius:6px"><button class="multi-btn" data-check="'+i+'">Conferir</button><span id="check-'+i+'"></span></div>').join('')+'<div class="multi-dialog-row"><button class="multi-btn" data-close>Fechar</button></div>');
  d.querySelector('[data-close]').onclick=closeDialog;d.querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.check),raw=$('answer-'+i).value.trim(),n=Number(raw.replace(',','.'));$('check-'+i).textContent=raw!==''&&Number.isFinite(n)&&Math.abs(n-entries[i][1])<=entries[i][2]?'✓ Correto':'Revise o cálculo';});
 }
-function advance(){if(ended)return;const b=book();if(!confirmed()&&b.remaining>0){const d=dialog('<h2>'+(round===level.rounds?'Encerrar sem comprar?':'Avançar sem comprar?')+'</h2><p>Saldo atual: '+fmt(b.remaining)+' t. As ofertas desta rodada não ficarão disponíveis depois.</p><div class="multi-dialog-row"><button class="multi-btn" data-close>Voltar</button><button class="multi-btn primary" id="multi-advance-confirm">Continuar</button></div>');d.querySelector('[data-close]').onclick=closeDialog;$('multi-advance-confirm').onclick=()=>{closeDialog();advanceNow();};}else advanceNow();}
-function advanceNow(){if(round>=level.rounds){finish();return;}clearRoutes();round++;selected=null;mode=null;tab='market';render();general();}
+function advance(){
+ if(ended)return;const b=book(),r=round;
+ TGRoundUI.open({kind:'advance',level:id,round,rounds:level.rounds,final:round===level.rounds,target:level.targetVolumeT,projectedVolume:b.volume,complete:!b.remaining},()=>{if(!ended&&round===r)advanceNow();});
+}
+function advanceNow(){if(round>=level.rounds){finish();return;}clearRoutes();round++;selected=null;mode=null;tab='market';render();general();TGRoundUI.splash(round);}
 function finish(){
  ended=true;clearRoutes();clearTimeout(tileTimer);if(map){map.remove();map=null;}
  const b=book();let previous={};try{previous=JSON.parse(localStorage.getItem(recordKey())||'{}')||{};localStorage.setItem(recordKey(),JSON.stringify({bestScore:Math.max(Number(previous.bestScore)||0,b.score.total),approved:!!previous.approved||b.approved,lastScore:b.score.total,version:1}));if(b.approved)localStorage.setItem(KEY,String(Math.max(unlocked(),Math.min(3,id+1))));}catch(_){}

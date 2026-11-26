@@ -67,11 +67,26 @@ try:
                     assert js("return document.querySelectorAll('#multi-dialog input').length")==4
                     click('#multi-dialog [data-close]')
                     driver.save_screenshot(str(OUT/f'l{level}-modal.png'))
-                click('#multi-buy');click('#multi-confirm')
-                waitjs("return document.getElementById('multi-buy').disabled")
-                assert js("return document.getElementById('multi-discard').disabled")
-            click('#multi-next')
-            if not n and js("return document.getElementById('multi-dialog').open"):click('#multi-advance-confirm')
+                click('#multi-buy')
+                waitjs("return document.getElementById('tg-round-dialog')?.open")
+                assert 'POSIÇÃO PROJETADA' in js("return document.getElementById('tg-round-dialog').textContent")
+                assert 'Margem bruta indicada' not in js("return document.getElementById('tg-round-dialog').textContent")
+                if r==1:
+                    before=js("return document.getElementById('multi-volume').textContent")
+                    click('#tg-ru-cancel')
+                    assert js("return document.getElementById('multi-volume').textContent")==before
+                    assert js("return document.querySelector('#multi-rounds .active').textContent")==str(r)
+                    click('#multi-buy')
+                    waitjs("return document.getElementById('tg-round-dialog')?.open")
+                driver.save_screenshot(str(OUT/f'l{level}-compra-r{r}.png'))
+                click('#tg-ru-confirm')
+            else:
+                click('#multi-next')
+                waitjs("return document.getElementById('tg-round-dialog')?.open")
+                click('#tg-ru-advance')
+            if r<len(seq):
+                waitjs("return document.querySelector('#multi-rounds .active')?.textContent==="+repr(str(r+1)))
+                waitjs("return document.getElementById('campaignRoundSplashFixed')?.textContent.includes('RODADA "+str(r+1)+"')")
         waitjs("return !!document.querySelector('.multi-result')")
         assert 'RESULTADO SATISFATÓRIO' in js("return document.querySelector('.multi-result').textContent")
         assert '60.000 t' in js("return document.querySelector('.multi-result').textContent")

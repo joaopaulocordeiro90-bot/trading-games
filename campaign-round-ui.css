@@ -1,0 +1,56 @@
+/* Shared, scoped campaign UX. No changes to economic engines or map geometries. */
+#tg-round-dialog{font:14px/1.48 Inter,Arial,Helvetica,sans-serif;color:#192b35;background:#fff;border:1px solid #dce7e1;border-radius:14px;padding:0;width:min(760px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:min(88dvh,860px);box-sizing:border-box;box-shadow:0 22px 80px #081d1660;overflow:hidden;text-align:left}
+#tg-round-dialog:not([open]){display:none}
+#tg-round-dialog::backdrop{background:#071b1499}
+#tg-round-dialog *{box-sizing:border-box}
+#tg-round-dialog .tg-ru-shell{display:flex;flex-direction:column;max-height:min(88dvh,860px);min-height:0}
+#tg-round-dialog .tg-ru-head{padding:20px 24px 14px;border-bottom:1px solid #e4ece7;background:#fff;flex-shrink:0}
+#tg-round-dialog .tg-ru-label{font-size:10px;font-weight:850;letter-spacing:.085em;color:#628174;text-transform:uppercase}
+#tg-round-dialog h2{font:800 24px/1.2 Inter,Arial,sans-serif;color:#192b35;margin:5px 0 6px}
+#tg-round-dialog p{margin:0;color:#526d60}
+#tg-round-dialog .tg-ru-head p{font-size:12px}
+#tg-round-dialog .tg-ru-body{padding:16px 24px;overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:12px}
+#tg-round-dialog .tg-ru-operation{background:#f7faf8;border:1px solid #dce9e1;border-radius:10px;padding:14px}
+#tg-round-dialog .tg-ru-operation-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#tg-round-dialog h3{font-size:18px;line-height:1.2;margin:4px 0 0;color:#174a37}
+#tg-round-dialog .tg-ru-chip{background:#e6f1eb;color:#245944;padding:6px 10px;border-radius:6px;font-weight:800;font-size:11px;overflow-wrap:anywhere}
+#tg-round-dialog .tg-ru-route{font-size:12px;margin:7px 0 11px;overflow-wrap:anywhere}
+#tg-round-dialog .tg-ru-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#tg-round-dialog .tg-ru-field{background:#fff;border:1px solid #e2ebe5;border-radius:7px;padding:10px;min-width:0}
+#tg-round-dialog .tg-ru-field span{display:block;color:#688175;font-size:10px;font-weight:750;line-height:1.3;margin-bottom:4px}
+#tg-round-dialog .tg-ru-field strong{display:block;font-size:15px;line-height:1.3;color:#183f30;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#tg-round-dialog .tg-ru-components,#tg-round-dialog .tg-ru-context{display:flex;flex-wrap:wrap;gap:5px 16px;font-size:11px;color:#5a7266}
+#tg-round-dialog .tg-ru-components{margin-top:9px}
+#tg-round-dialog .tg-ru-context{padding:10px 12px;border:1px solid #e4ece7;border-radius:7px}
+#tg-round-dialog .tg-ru-context b,#tg-round-dialog .tg-ru-components b{color:#224e3d}
+#tg-round-dialog .tg-ru-review,#tg-round-dialog .tg-ru-partial{border-left:3px solid #47866c;background:#f2f7f4;padding:9px 11px;border-radius:4px;font-size:12px;color:#365e4b}
+#tg-round-dialog .tg-ru-partial{border-left-color:#b8853a;background:#fff8ed;color:#735326}
+#tg-round-dialog .tg-ru-muted{font-size:12px;color:#61796d}
+#tg-round-dialog .tg-ru-details{border:1px solid #e0e9e3;border-radius:8px;padding:10px 12px;font-size:12px}
+#tg-round-dialog .tg-ru-details summary{cursor:pointer;font-weight:800;color:#234c3c}
+#tg-round-dialog .tg-ru-details[open] .tg-ru-grid{margin:10px 0}
+#tg-round-dialog .tg-ru-book{border:1px solid #dce8e1;padding:12px;border-radius:9px;background:#f7faf8}
+#tg-round-dialog .tg-ru-book>.tg-ru-grid{margin-top:8px}
+#tg-round-dialog .tg-ru-progress{height:7px;background:#e0ebe4;border-radius:8px;overflow:hidden;margin-top:10px}
+#tg-round-dialog .tg-ru-progress i{display:block;height:100%;background:#21865a}
+#tg-round-dialog .tg-ru-economics{grid-template-columns:repeat(2,minmax(0,1fr))}
+#tg-round-dialog .tg-ru-footer{display:flex;justify-content:flex-end;gap:9px;padding:14px 24px;border-top:1px solid #e4ece7;background:#fff;flex-shrink:0}
+#tg-round-dialog .tg-ru-btn{font:800 13px/1.25 Inter,Arial,sans-serif;color:#245c47;background:#fff;border:1px solid #d8e5dd;padding:12px 16px;min-height:44px;border-radius:7px;cursor:pointer}
+#tg-round-dialog .tg-ru-btn.primary{background:#135f4b;border-color:#135f4b;color:#fff}
+#tg-round-dialog .tg-ru-btn:focus-visible{outline:3px solid #b78b42;outline-offset:2px}
+#tg-round-dialog .tg-ru-btn:disabled{opacity:.55;cursor:not-allowed}
+.tg-ru-splash{position:fixed;inset:0;z-index:10080;display:grid;place-items:center;pointer-events:none}
+.tg-ru-splash>div{font:italic 950 clamp(45px,9vw,108px)/1.1 Inter,Arial,sans-serif;color:#fff;text-align:center;letter-spacing:.07em;text-shadow:0 0 12px #fff,0 0 26px #ffdc78,0 0 56px #ff9600,5px 6px 0 #0007;animation:tg-round-shock 2s ease-out both}
+@keyframes tg-round-shock{0%{transform:scale(.78) rotate(-3deg);opacity:0}15%{transform:scale(1.04);opacity:1}75%{transform:scale(1);opacity:1}100%{transform:scale(1.02);opacity:0}}
+@media(max-width:550px){#tg-round-dialog{width:calc(100vw - 18px);max-width:calc(100vw - 18px);max-height:92dvh}#tg-round-dialog .tg-ru-shell{max-height:92dvh}#tg-round-dialog .tg-ru-head{padding:14px 13px 10px}#tg-round-dialog h2{font-size:20px}#tg-round-dialog .tg-ru-body{padding:12px 13px;gap:9px}#tg-round-dialog .tg-ru-operation{padding:10px}#tg-round-dialog .tg-ru-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}#tg-round-dialog .tg-ru-grid:not(.tg-ru-economics)>.tg-ru-field:last-child:nth-child(odd){grid-column:1/-1}#tg-round-dialog .tg-ru-field{padding:8px}#tg-round-dialog .tg-ru-field strong{font-size:14px}#tg-round-dialog .tg-ru-footer{padding:10px 13px;gap:6px}#tg-round-dialog .tg-ru-btn{padding:10px 9px;flex:1;font-size:12px}#tg-round-dialog .tg-ru-btn.primary{flex:2}}
+@media(prefers-reduced-motion:reduce){.tg-ru-splash>div{animation:none}}
+/* Sidebar and pin labels remain legible at desktop zoom and narrow viewports. */
+#campaign-l1-realmap .l1m-side{min-width:0}
+#campaign-l1-realmap .l1m-side-scroll{overflow-x:hidden;overscroll-behavior:contain}
+#campaign-l1-realmap .l1m-offer-top{min-width:0;align-items:flex-start}
+#campaign-l1-realmap .l1m-offer-top strong{min-width:0;overflow-wrap:anywhere}
+#campaign-l1-realmap .l1m-offer-top>b{flex-shrink:0;white-space:nowrap}
+#campaign-l1-realmap .l1m-stat>span{min-width:0;overflow-wrap:anywhere}
+#campaign-l1-realmap .l1m-stat>strong{max-width:58%;overflow-wrap:anywhere}
+#campaign-l1-realmap .l1m-money-name{max-width:132px;white-space:normal;text-align:center;line-height:1.15}
+#campaign-l1-realmap .l1m-commit button{min-width:0;white-space:normal}
