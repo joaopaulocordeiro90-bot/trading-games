@@ -1,31 +1,839 @@
 {
   "id": 3,
   "code": "L3",
-  "name": "Janelas de embarque",
-  "status": "locked",
-  "summary": "Disponível quando você concluir os níveis anteriores. A estrutura de dados fica preparada para receber as rodadas próprias deste level.",
+  "name": "Mercado em movimento",
+  "status": "active",
+  "rounds": 6,
+  "scenarioId": 3,
+  "targetVolumeT": 60000,
+  "targetBasisCentBu": 135,
+  "fixedSaleBasisCentBu": 145,
+  "fixedPort": "santos",
+  "fixedPortLabel": "Santos",
+  "fixedDestination": "N. China",
+  "fixedFreightUsdT": 44.8,
+  "fixedFobbingUsdT": 11.8,
+  "summary": "Seis rodadas: interprete Chicago, câmbio, físico e fretes com efeitos encadeados.",
   "rules": {
     "ship_sizes_t": [
-      60000,
-      120000
+      60000
     ],
-    "rounds": 5,
-    "time_per_round_s": 600,
+    "rounds": 6,
+    "time_control_enabled": false,
     "conversion": {
-      "centbu_to_usd_t_default": 0.367454,
+      "centbu_to_usd_t_default": 0.367437,
       "saca_to_t_default": 0.06
     },
-    "penalties": {
-      "sale_cancel_no_full_ship_usd": 5000000,
-      "unused_ocean_freight_penalty_usd": 1500000,
-      "single_ship_overbuy_usd_per_t": 500
-    },
-    "time_control_enabled": false
+    "fobbing_usd_t": 11.8,
+    "penalties": {}
+  },
+  "terminal": {
+    "city": "Rio Verde",
+    "uf": "GO",
+    "lat": -17.7923,
+    "lng": -50.9192,
+    "location_kind": "referência urbana, não coordenada exata do terminal"
+  },
+  "sourceInfo": {
+    "market": "Cenário integralmente ficcional; preços, lotes, Chicago, câmbio, fretes e índices são parâmetros didáticos, não cotações BRZ ou tarifas comerciais vigentes.",
+    "rail": "Corredor confirmado pela ANTT: Ferrovia Norte-Sul → Estrela d’Oeste → Malha Paulista → Santos. Tarifa simulada inclui transbordo. Não há restrição de capacidade de trens no exercício.",
+    "source": "https://www.gov.br/antt/pt-br/assuntos/ultimas-noticias/antt-realizou-visita-tecnica-na-ferrovia-norte-sul"
   },
   "scenario": {
     "id": 3,
-    "name": "L3 — Janelas de embarque",
-    "active": false,
-    "rounds": []
+    "name": "Mercado em movimento",
+    "active": true,
+    "rounds": [
+      {
+        "round": 1,
+        "usd": 5.48,
+        "cbot_cent_bu": 1155,
+        "rail_brl_t": 205,
+        "road_index": 100,
+        "feeder_index": 100,
+        "physical_reference": {
+          "city": "Rio Verde",
+          "uf": "GO",
+          "price_brl_sc": 126
+        },
+        "news": "Mapas apontam calor e menor chuva nas áreas produtoras dos EUA durante o enchimento de grãos. O mercado reduz expectativas de produtividade. No Brasil, vendedores aguardam a reação de Chicago.",
+        "master_news": "Mapas apontam calor e menor chuva nas áreas produtoras dos EUA durante o enchimento de grãos. O mercado reduz expectativas de produtividade. No Brasil, vendedores aguardam a reação de Chicago.",
+        "market_headline": "Mapas apontam calor e menor chuva nas áreas produtoras dos EUA durante o enchimento de grãos. O mercado reduz expectativas de produtividade. No Brasil, vendedores aguardam a reação de Chicago.",
+        "market_signal": "CBOT pode subir antes do físico brasileiro ajustar integralmente; preços mais firmes podem destravar o farmer selling.",
+        "previous_news_review": "Abertura: compradores cautelosos, logística equilibrada e dólar relativamente estável.",
+        "decision_prompt": "Escolha uma origem e um modal, ou avance sem comprar.",
+        "offers_exw": [
+          {
+            "id": 1,
+            "city": "Perolândia",
+            "uf": "GO",
+            "lat": -17.524,
+            "lng": -52.066,
+            "label": "Perolândia GO",
+            "price_brl_saca": 117.5,
+            "volume_t": 14000,
+            "freight_brl_t_santos": 315,
+            "freight_brl_t_rio_verde": 90,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 315
+              },
+              "rail": {
+                "feeder_brl_t": 90,
+                "rail_brl_t": 205,
+                "brl_t": 295
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.48,
+            "ref_cbot_cent_bu": 1155
+          },
+          {
+            "id": 2,
+            "city": "Prata",
+            "uf": "MG",
+            "lat": -19.308,
+            "lng": -48.927,
+            "label": "Prata MG",
+            "price_brl_saca": 127,
+            "volume_t": 13000,
+            "freight_brl_t_santos": 195,
+            "freight_brl_t_rio_verde": 195,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 195
+              },
+              "rail": {
+                "feeder_brl_t": 195,
+                "rail_brl_t": 205,
+                "brl_t": 400
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.48,
+            "ref_cbot_cent_bu": 1155
+          },
+          {
+            "id": 3,
+            "city": "Edéia",
+            "uf": "GO",
+            "lat": -17.338,
+            "lng": -49.93,
+            "label": "Edéia GO",
+            "price_brl_saca": 120.5,
+            "volume_t": 17000,
+            "freight_brl_t_santos": 290,
+            "freight_brl_t_rio_verde": 65,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 290
+              },
+              "rail": {
+                "feeder_brl_t": 65,
+                "rail_brl_t": 205,
+                "brl_t": 270
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.48,
+            "ref_cbot_cent_bu": 1155
+          },
+          {
+            "id": 4,
+            "city": "Chapadão do Sul",
+            "uf": "MS",
+            "lat": -18.795,
+            "lng": -52.623,
+            "label": "Chapadão do Sul MS",
+            "price_brl_saca": 120,
+            "volume_t": 15000,
+            "freight_brl_t_santos": 345,
+            "freight_brl_t_rio_verde": 120,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 345
+              },
+              "rail": {
+                "feeder_brl_t": 120,
+                "rail_brl_t": 205,
+                "brl_t": 325
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.48,
+            "ref_cbot_cent_bu": 1155
+          }
+        ],
+        "impact_next": {
+          "cbot_cent_bu": 45,
+          "usd_brl": -0.01,
+          "rail_brl_t": 0,
+          "road_index": -2,
+          "feeder_index": -2,
+          "physical_reference_brl_sc": 3
+        }
+      },
+      {
+        "round": 2,
+        "usd": 5.47,
+        "cbot_cent_bu": 1200,
+        "rail_brl_t": 205,
+        "road_index": 98,
+        "feeder_index": 98,
+        "physical_reference": {
+          "city": "Rio Verde",
+          "uf": "GO",
+          "price_brl_sc": 129
+        },
+        "news": "Com a recuperação das cotações, produtores brasileiros aceleram vendas. As tradings programam retiradas simultâneas e as transportadoras reduzem a validade das ofertas de frete.",
+        "master_news": "Com a recuperação das cotações, produtores brasileiros aceleram vendas. As tradings programam retiradas simultâneas e as transportadoras reduzem a validade das ofertas de frete.",
+        "market_headline": "Com a recuperação das cotações, produtores brasileiros aceleram vendas. As tradings programam retiradas simultâneas e as transportadoras reduzem a validade das ofertas de frete.",
+        "market_signal": "Mais soja ofertada pode limitar o basis físico, mas a concentração de retiradas tende a encarecer caminhões na sessão seguinte.",
+        "previous_news_review": "Chicago avançou com o risco climático. O físico subiu menos que a referência externa, e o real se manteve firme.",
+        "decision_prompt": "Escolha uma origem e um modal, ou avance sem comprar.",
+        "offers_exw": [
+          {
+            "id": 1,
+            "city": "Indiara",
+            "uf": "GO",
+            "lat": -17.138,
+            "lng": -49.987,
+            "label": "Indiara GO",
+            "price_brl_saca": 127,
+            "volume_t": 15000,
+            "freight_brl_t_santos": 290,
+            "freight_brl_t_rio_verde": 65,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 290
+              },
+              "rail": {
+                "feeder_brl_t": 65,
+                "rail_brl_t": 205,
+                "brl_t": 270
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.47,
+            "ref_cbot_cent_bu": 1200
+          },
+          {
+            "id": 2,
+            "city": "Tupaciguara",
+            "uf": "MG",
+            "lat": -18.593,
+            "lng": -48.7,
+            "label": "Tupaciguara MG",
+            "price_brl_saca": 129,
+            "volume_t": 14000,
+            "freight_brl_t_santos": 205,
+            "freight_brl_t_rio_verde": 175,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 205
+              },
+              "rail": {
+                "feeder_brl_t": 175,
+                "rail_brl_t": 205,
+                "brl_t": 380
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.47,
+            "ref_cbot_cent_bu": 1200
+          },
+          {
+            "id": 3,
+            "city": "Portelândia",
+            "uf": "GO",
+            "lat": -17.356,
+            "lng": -52.676,
+            "label": "Portelândia GO",
+            "price_brl_saca": 118.5,
+            "volume_t": 16000,
+            "freight_brl_t_santos": 340,
+            "freight_brl_t_rio_verde": 145,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 340
+              },
+              "rail": {
+                "feeder_brl_t": 145,
+                "rail_brl_t": 205,
+                "brl_t": 350
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.47,
+            "ref_cbot_cent_bu": 1200
+          },
+          {
+            "id": 4,
+            "city": "Ipameri",
+            "uf": "GO",
+            "lat": -17.721,
+            "lng": -48.159,
+            "label": "Ipameri GO",
+            "price_brl_saca": 130.5,
+            "volume_t": 17000,
+            "freight_brl_t_santos": 235,
+            "freight_brl_t_rio_verde": 190,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 235
+              },
+              "rail": {
+                "feeder_brl_t": 190,
+                "rail_brl_t": 205,
+                "brl_t": 395
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.47,
+            "ref_cbot_cent_bu": 1200
+          }
+        ],
+        "impact_next": {
+          "cbot_cent_bu": 8,
+          "usd_brl": 0.01,
+          "rail_brl_t": -5,
+          "road_index": 20,
+          "feeder_index": 21,
+          "physical_reference_brl_sc": 1
+        }
+      },
+      {
+        "round": 3,
+        "usd": 5.48,
+        "cbot_cent_bu": 1208,
+        "rail_brl_t": 200,
+        "road_index": 118,
+        "feeder_index": 119,
+        "physical_reference": {
+          "city": "Rio Verde",
+          "uf": "GO",
+          "price_brl_sc": 130
+        },
+        "news": "Dados de emprego nos EUA surpreendem para cima e reduzem as apostas em afrouxamento monetário. O dólar ganha força globalmente; fundos realizam lucros em commodities. O produtor brasileiro monitora a alta cambial.",
+        "master_news": "Dados de emprego nos EUA surpreendem para cima e reduzem as apostas em afrouxamento monetário. O dólar ganha força globalmente; fundos realizam lucros em commodities. O produtor brasileiro monitora a alta cambial.",
+        "market_headline": "Dados de emprego nos EUA surpreendem para cima e reduzem as apostas em afrouxamento monetário. O dólar ganha força globalmente; fundos realizam lucros em commodities. O produtor brasileiro monitora a alta cambial.",
+        "market_signal": "Chicago pode corrigir com dólar mais forte. O físico em reais pode resistir, estimular vendas e prolongar a pressão nos fretes.",
+        "previous_news_review": "O farmer selling acelerou e os fretes rodoviários subiram. O físico avançou moderadamente, com maior disponibilidade de lotes.",
+        "decision_prompt": "Escolha uma origem e um modal, ou avance sem comprar.",
+        "offers_exw": [
+          {
+            "id": 1,
+            "city": "Caçu",
+            "uf": "GO",
+            "lat": -18.559,
+            "lng": -51.132,
+            "label": "Caçu GO",
+            "price_brl_saca": 122.5,
+            "volume_t": 14000,
+            "freight_brl_t_santos": 370,
+            "freight_brl_t_rio_verde": 100,
+            "rail_brl_t": 200,
+            "logistics": {
+              "road": {
+                "brl_t": 370
+              },
+              "rail": {
+                "feeder_brl_t": 100,
+                "rail_brl_t": 200,
+                "brl_t": 300
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.48,
+            "ref_cbot_cent_bu": 1208
+          },
+          {
+            "id": 2,
+            "city": "Prata",
+            "uf": "MG",
+            "lat": -19.308,
+            "lng": -48.927,
+            "label": "Prata MG",
+            "price_brl_saca": 131,
+            "volume_t": 17000,
+            "freight_brl_t_santos": 230,
+            "freight_brl_t_rio_verde": 230,
+            "rail_brl_t": 200,
+            "logistics": {
+              "road": {
+                "brl_t": 230
+              },
+              "rail": {
+                "feeder_brl_t": 230,
+                "rail_brl_t": 200,
+                "brl_t": 430
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.48,
+            "ref_cbot_cent_bu": 1208
+          },
+          {
+            "id": 3,
+            "city": "Palmeiras de Goiás",
+            "uf": "GO",
+            "lat": -16.8,
+            "lng": -49.925,
+            "label": "Palmeiras de Goiás GO",
+            "price_brl_saca": 124,
+            "volume_t": 13000,
+            "freight_brl_t_santos": 350,
+            "freight_brl_t_rio_verde": 115,
+            "rail_brl_t": 200,
+            "logistics": {
+              "road": {
+                "brl_t": 350
+              },
+              "rail": {
+                "feeder_brl_t": 115,
+                "rail_brl_t": 200,
+                "brl_t": 315
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.48,
+            "ref_cbot_cent_bu": 1208
+          },
+          {
+            "id": 4,
+            "city": "Aporé",
+            "uf": "GO",
+            "lat": -18.968,
+            "lng": -51.926,
+            "label": "Aporé GO",
+            "price_brl_saca": 124.5,
+            "volume_t": 15000,
+            "freight_brl_t_santos": 385,
+            "freight_brl_t_rio_verde": 150,
+            "rail_brl_t": 200,
+            "logistics": {
+              "road": {
+                "brl_t": 385
+              },
+              "rail": {
+                "feeder_brl_t": 150,
+                "rail_brl_t": 200,
+                "brl_t": 350
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.48,
+            "ref_cbot_cent_bu": 1208
+          }
+        ],
+        "impact_next": {
+          "cbot_cent_bu": -30,
+          "usd_brl": 0.24,
+          "rail_brl_t": 5,
+          "road_index": 4,
+          "feeder_index": 3,
+          "physical_reference_brl_sc": 4
+        }
+      },
+      {
+        "round": 4,
+        "usd": 5.72,
+        "cbot_cent_bu": 1178,
+        "rail_brl_t": 205,
+        "road_index": 122,
+        "feeder_index": 122,
+        "physical_reference": {
+          "city": "Rio Verde",
+          "uf": "GO",
+          "price_brl_sc": 134
+        },
+        "news": "A valorização do dólar sustenta a originação e as tradings intensificam a busca por espaço ferroviário. A operadora eleva as indicações para novas janelas de Rio Verde. Em Chicago, o mercado segue atento à demanda chinesa.",
+        "master_news": "A valorização do dólar sustenta a originação e as tradings intensificam a busca por espaço ferroviário. A operadora eleva as indicações para novas janelas de Rio Verde. Em Chicago, o mercado segue atento à demanda chinesa.",
+        "market_headline": "A valorização do dólar sustenta a originação e as tradings intensificam a busca por espaço ferroviário. A operadora eleva as indicações para novas janelas de Rio Verde. Em Chicago, o mercado segue atento à demanda chinesa.",
+        "market_signal": "Tarifa ferroviária mais alta pode neutralizar parte do ganho cambial. Caminhões ainda estão comprometidos com retiradas anteriores.",
+        "previous_news_review": "O dólar subiu, Chicago recuou e o físico ficou firme em reais. A pressão sobre os caminhões persistiu.",
+        "decision_prompt": "Escolha uma origem e um modal, ou avance sem comprar.",
+        "offers_exw": [
+          {
+            "id": 1,
+            "city": "São Simão",
+            "uf": "GO",
+            "lat": -18.997,
+            "lng": -50.547,
+            "label": "São Simão GO",
+            "price_brl_saca": 128.5,
+            "volume_t": 16000,
+            "freight_brl_t_santos": 300,
+            "freight_brl_t_rio_verde": 175,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 300
+              },
+              "rail": {
+                "feeder_brl_t": 175,
+                "rail_brl_t": 205,
+                "brl_t": 380
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.72,
+            "ref_cbot_cent_bu": 1178
+          },
+          {
+            "id": 2,
+            "city": "Serranópolis",
+            "uf": "GO",
+            "lat": -18.307,
+            "lng": -51.96,
+            "label": "Serranópolis GO",
+            "price_brl_saca": 123.5,
+            "volume_t": 14000,
+            "freight_brl_t_santos": 385,
+            "freight_brl_t_rio_verde": 135,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 385
+              },
+              "rail": {
+                "feeder_brl_t": 135,
+                "rail_brl_t": 205,
+                "brl_t": 340
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.72,
+            "ref_cbot_cent_bu": 1178
+          },
+          {
+            "id": 3,
+            "city": "Ipameri",
+            "uf": "GO",
+            "lat": -17.721,
+            "lng": -48.159,
+            "label": "Ipameri GO",
+            "price_brl_saca": 130.5,
+            "volume_t": 17000,
+            "freight_brl_t_santos": 295,
+            "freight_brl_t_rio_verde": 240,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 295
+              },
+              "rail": {
+                "feeder_brl_t": 240,
+                "rail_brl_t": 205,
+                "brl_t": 445
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.72,
+            "ref_cbot_cent_bu": 1178
+          },
+          {
+            "id": 4,
+            "city": "Aparecida do Rio Doce",
+            "uf": "GO",
+            "lat": -18.294,
+            "lng": -51.151,
+            "label": "Aparecida do Rio Doce GO",
+            "price_brl_saca": 125,
+            "volume_t": 13000,
+            "freight_brl_t_santos": 350,
+            "freight_brl_t_rio_verde": 80,
+            "rail_brl_t": 205,
+            "logistics": {
+              "road": {
+                "brl_t": 350
+              },
+              "rail": {
+                "feeder_brl_t": 80,
+                "rail_brl_t": 205,
+                "brl_t": 285
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.72,
+            "ref_cbot_cent_bu": 1178
+          }
+        ],
+        "impact_next": {
+          "cbot_cent_bu": -4,
+          "usd_brl": 0.04,
+          "rail_brl_t": 60,
+          "road_index": -15,
+          "feeder_index": -10,
+          "physical_reference_brl_sc": 1
+        }
+      },
+      {
+        "round": 5,
+        "usd": 5.76,
+        "cbot_cent_bu": 1174,
+        "rail_brl_t": 265,
+        "road_index": 107,
+        "feeder_index": 112,
+        "physical_reference": {
+          "city": "Rio Verde",
+          "uf": "GO",
+          "price_brl_sc": 135
+        },
+        "news": "Importadores chineses reduzem novas consultas após antecipar parte da cobertura. Tradings ajustam seus bids e postergam novas retiradas. A ocupação ferroviária começa a normalizar, mas a tarifa contratada para novas janelas ainda não recuou.",
+        "master_news": "Importadores chineses reduzem novas consultas após antecipar parte da cobertura. Tradings ajustam seus bids e postergam novas retiradas. A ocupação ferroviária começa a normalizar, mas a tarifa contratada para novas janelas ainda não recuou.",
+        "market_headline": "Importadores chineses reduzem novas consultas após antecipar parte da cobertura. Tradings ajustam seus bids e postergam novas retiradas. A ocupação ferroviária começa a normalizar, mas a tarifa contratada para novas janelas ainda não recuou.",
+        "market_signal": "CBOT e bids podem ceder; a redução das retiradas tende a aliviar primeiro o rodo. A ferrovia pode reagir com defasagem.",
+        "previous_news_review": "A busca por capacidade elevou a tarifa ferroviária. O câmbio sustentou o físico; a volta parcial de caminhões reduziu a pressão rodoviária.",
+        "decision_prompt": "Escolha uma origem e um modal, ou avance sem comprar.",
+        "offers_exw": [
+          {
+            "id": 1,
+            "city": "Doverlândia",
+            "uf": "GO",
+            "lat": -16.72,
+            "lng": -52.318,
+            "label": "Doverlândia GO",
+            "price_brl_saca": 126,
+            "volume_t": 17000,
+            "freight_brl_t_santos": 390,
+            "freight_brl_t_rio_verde": 185,
+            "rail_brl_t": 265,
+            "logistics": {
+              "road": {
+                "brl_t": 390
+              },
+              "rail": {
+                "feeder_brl_t": 185,
+                "rail_brl_t": 265,
+                "brl_t": 450
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.76,
+            "ref_cbot_cent_bu": 1174
+          },
+          {
+            "id": 2,
+            "city": "Tupaciguara",
+            "uf": "MG",
+            "lat": -18.593,
+            "lng": -48.7,
+            "label": "Tupaciguara MG",
+            "price_brl_saca": 130,
+            "volume_t": 15000,
+            "freight_brl_t_santos": 225,
+            "freight_brl_t_rio_verde": 200,
+            "rail_brl_t": 265,
+            "logistics": {
+              "road": {
+                "brl_t": 225
+              },
+              "rail": {
+                "feeder_brl_t": 200,
+                "rail_brl_t": 265,
+                "brl_t": 465
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.76,
+            "ref_cbot_cent_bu": 1174
+          },
+          {
+            "id": 3,
+            "city": "Maurilândia",
+            "uf": "GO",
+            "lat": -18.002,
+            "lng": -50.34,
+            "label": "Maurilândia GO",
+            "price_brl_saca": 129,
+            "volume_t": 16000,
+            "freight_brl_t_santos": 280,
+            "freight_brl_t_rio_verde": 75,
+            "rail_brl_t": 265,
+            "logistics": {
+              "road": {
+                "brl_t": 280
+              },
+              "rail": {
+                "feeder_brl_t": 75,
+                "rail_brl_t": 265,
+                "brl_t": 340
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.76,
+            "ref_cbot_cent_bu": 1174
+          },
+          {
+            "id": 4,
+            "city": "Portelândia",
+            "uf": "GO",
+            "lat": -17.356,
+            "lng": -52.676,
+            "label": "Portelândia GO",
+            "price_brl_saca": 125.5,
+            "volume_t": 14000,
+            "freight_brl_t_santos": 370,
+            "freight_brl_t_rio_verde": 170,
+            "rail_brl_t": 265,
+            "logistics": {
+              "road": {
+                "brl_t": 370
+              },
+              "rail": {
+                "feeder_brl_t": 170,
+                "rail_brl_t": 265,
+                "brl_t": 435
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.76,
+            "ref_cbot_cent_bu": 1174
+          }
+        ],
+        "impact_next": {
+          "cbot_cent_bu": -26,
+          "usd_brl": -0.06,
+          "rail_brl_t": -20,
+          "road_index": -16,
+          "feeder_index": -17,
+          "physical_reference_brl_sc": -5
+        }
+      },
+      {
+        "round": 6,
+        "usd": 5.7,
+        "cbot_cent_bu": 1148,
+        "rail_brl_t": 245,
+        "road_index": 91,
+        "feeder_index": 95,
+        "physical_reference": {
+          "city": "Rio Verde",
+          "uf": "GO",
+          "price_brl_sc": 130
+        },
+        "news": "Última sessão: Chicago cedeu com a menor demanda, o dólar devolveu parte da alta e as pedidas no interior recuaram. Caminhões voltam a disputar cargas. As tarifas ferroviárias começam a normalizar, sem retornar aos níveis iniciais.",
+        "master_news": "Última sessão: Chicago cedeu com a menor demanda, o dólar devolveu parte da alta e as pedidas no interior recuaram. Caminhões voltam a disputar cargas. As tarifas ferroviárias começam a normalizar, sem retornar aos níveis iniciais.",
+        "market_headline": "Última sessão: Chicago cedeu com a menor demanda, o dólar devolveu parte da alta e as pedidas no interior recuaram. Caminhões voltam a disputar cargas. As tarifas ferroviárias começam a normalizar, sem retornar aos níveis iniciais.",
+        "market_signal": "Reavalie todos os componentes do replacement. A queda do flat price não garante um basis melhor; complete a carga dentro da meta.",
+        "previous_news_review": "A redução das consultas chinesas pressionou Chicago e o físico. O rodoviário reagiu mais rapidamente que a ferrovia, ilustrando a defasagem logística.",
+        "decision_prompt": "Última oportunidade: avalie o saldo e a meta econômica.",
+        "offers_exw": [
+          {
+            "id": 1,
+            "city": "Prata",
+            "uf": "MG",
+            "lat": -19.308,
+            "lng": -48.927,
+            "label": "Prata MG",
+            "price_brl_saca": 127,
+            "volume_t": 16000,
+            "freight_brl_t_santos": 175,
+            "freight_brl_t_rio_verde": 185,
+            "rail_brl_t": 245,
+            "logistics": {
+              "road": {
+                "brl_t": 175
+              },
+              "rail": {
+                "feeder_brl_t": 185,
+                "rail_brl_t": 245,
+                "brl_t": 430
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.7,
+            "ref_cbot_cent_bu": 1148
+          },
+          {
+            "id": 2,
+            "city": "Edéia",
+            "uf": "GO",
+            "lat": -17.338,
+            "lng": -49.93,
+            "label": "Edéia GO",
+            "price_brl_saca": 126.5,
+            "volume_t": 15000,
+            "freight_brl_t_santos": 265,
+            "freight_brl_t_rio_verde": 60,
+            "rail_brl_t": 245,
+            "logistics": {
+              "road": {
+                "brl_t": 265
+              },
+              "rail": {
+                "feeder_brl_t": 60,
+                "rail_brl_t": 245,
+                "brl_t": 305
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.7,
+            "ref_cbot_cent_bu": 1148
+          },
+          {
+            "id": 3,
+            "city": "Chapadão do Sul",
+            "uf": "MS",
+            "lat": -18.795,
+            "lng": -52.623,
+            "label": "Chapadão do Sul MS",
+            "price_brl_saca": 125.5,
+            "volume_t": 18000,
+            "freight_brl_t_santos": 315,
+            "freight_brl_t_rio_verde": 115,
+            "rail_brl_t": 245,
+            "logistics": {
+              "road": {
+                "brl_t": 315
+              },
+              "rail": {
+                "feeder_brl_t": 115,
+                "rail_brl_t": 245,
+                "brl_t": 360
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.7,
+            "ref_cbot_cent_bu": 1148
+          },
+          {
+            "id": 4,
+            "city": "Caçu",
+            "uf": "GO",
+            "lat": -18.559,
+            "lng": -51.132,
+            "label": "Caçu GO",
+            "price_brl_saca": 123,
+            "volume_t": 17000,
+            "freight_brl_t_santos": 285,
+            "freight_brl_t_rio_verde": 80,
+            "rail_brl_t": 245,
+            "logistics": {
+              "road": {
+                "brl_t": 285
+              },
+              "rail": {
+                "feeder_brl_t": 80,
+                "rail_brl_t": 245,
+                "brl_t": 325
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.7,
+            "ref_cbot_cent_bu": 1148
+          }
+        ]
+      }
+    ]
   }
 }
