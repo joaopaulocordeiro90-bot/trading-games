@@ -113,28 +113,31 @@ try:
                 assert 'Digite o resultado' in js("return document.querySelector('#l1m-calc-backdrop')?.innerHTML") or \
                     len(driver.find_elements(By.CSS_SELECTOR,'#l1m-calc-backdrop input[data-l1-answer]'))==4
                 click('#l1m-calc-backdrop [data-l1-action="close"]')
-            try:click('#l1m-buy')
-            except UnexpectedAlertPresentException:pass
-            close_alert()
-            wait.until(lambda d:js("return !!state.confirmed.exw[state.round]"))
-            wait.until(lambda d:len(d.find_elements(By.ID,'campaignAdvanceModal'))==1)
-            assert js("return Number(state.confirmed.exw[state.round].volume_t)")>0
-            assert js("return document.querySelector('#l1m-buy').disabled")
-            assert js("return document.querySelector('[data-l1m-action=discard]').disabled")
-            # Engine guard: attempts to replace or discard a confirmed purchase have no effect.
-            js("selectExwOfferForCurrentRound(getRoundData(state.round).offers_exw[0],getRoundData(state.round),'r1_exw')")
-            assert js("return Number(state.confirmed.exw[state.round].id)")==pick
-            assert js("return Number(state.choices.exw[state.round].id)")==pick
-            if rd==5:
+            click('#l1m-buy')
+            wait.until(lambda d:js("return document.getElementById('tg-round-dialog')?.open"))
+            assert not js("return !!state.confirmed.exw[state.round]")
+            summary=js("return document.getElementById('tg-round-dialog').textContent")
+            assert 'POSIÇÃO PROJETADA' in summary
+            if rd==1:
+                assert 'Basis médio projetado' in summary and 'Margem bruta indicada' in summary
+                click('#tg-ru-cancel')
+                assert not js("return !!state.confirmed.exw[state.round]")
+                assert js("return state.round")==rd
+                click('#l1m-buy')
+                wait.until(lambda d:js("return document.getElementById('tg-round-dialog')?.open"))
+            else:
+                assert 'Basis médio projetado' not in summary and 'Margem bruta indicada' not in summary
+            if rd==5: assert 'Compra parcial' in summary
+            driver.save_screenshot(str(OUT/f'l1-round-dialog-{rd}.png'))
+            click('#tg-ru-confirm')
+            wait.until(lambda d:js(f"return !!state.confirmed.exw[{rd}]"))
+            assert js(f"return Number(state.confirmed.exw[{rd}].id)")==pick
+            if rd<5:
+                wait.until(lambda d:js(f"return state.round==={rd+1}"))
+                wait.until(lambda d:js(f"return document.getElementById('campaignRoundSplashFixed')?.textContent.includes('RODADA {rd+1}')"))
+            else:
                 assert js("return calculateCampaignBookSnapshot().totalUsedT")==60000
                 assert js("return state.confirmed.exw[5].volume_t")==3000
-        if rd==1:
-            driver.save_screenshot(str(OUT/'l1-map-round1.png'))
-        if rd==4:
-            driver.save_screenshot(str(OUT/'l1-map-round4.png'))
-        if driver.find_elements(By.ID,'campaignAdvanceModal'):
-            click('#campaignAdvanceModal .btn-dark')
-        else:click('#l1m-next')
     wait.until(lambda d:js("return state.stage==='campaign_result'"))
     result=js("return buildCampaignLevel1Result()")
     assert result['approved'],result

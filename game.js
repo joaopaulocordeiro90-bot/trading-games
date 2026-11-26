@@ -2676,13 +2676,16 @@ function renderImageScreen(screenId, imgSrc, rd) {
         const style = document.createElement('link');
         style.rel = 'stylesheet'; style.href = './campaign-level1-map.css?v=20261125-mapfix2';
         document.head.appendChild(style);
+        const roundStyle=document.createElement('link');
+        roundStyle.rel='stylesheet';roundStyle.href='./campaign-round-ui.css?v=3';roundStyle.dataset.tgRoundUi='1';document.head.appendChild(roundStyle);
+        ensureCampaignRoundUI().catch(()=>{});
         const leafletStyle = document.createElement('link');
         leafletStyle.rel = 'stylesheet';
         leafletStyle.href = './vendor/leaflet/leaflet.css?v=1.9.4';
         leafletStyle.crossOrigin = 'anonymous';
         document.head.appendChild(leafletStyle);
         const script = document.createElement('script');
-        script.src = './campaign-level1-map.js?v=20261125-mapfix2';
+        script.src = './campaign-level1-map.js?v=20261126-round-v3';
         script.onload = () => { if (state.stage === 'r1_home' || state.stage === 'r1_exw') window.CampaignL1Map?.mount(); };
         script.onerror = () => {
           window.__campaignL1MapAssetsStarted = false;
@@ -4726,12 +4729,12 @@ addHot("hot_calib", () => toggleCalib(!calibEnabled));
           const offered = Number(chosen.available_volume_t || chosen.volume_t || 0);
           chosen.available_volume_t = offered;
           chosen.volume_t = Math.min(offered,remaining);
-          if (chosen.volume_t < offered) {
+          if (chosen.volume_t < offered && !campaignMapCommitInProgress) {
             alert(`Compra parcial de ${formatTon(chosen.volume_t)} t confirmada no exercício. A oferta tinha ${formatTon(offered)} t, mas o navio só comporta o saldo disponível.`);
           }
         }
         confirmChosen({ key: fixedKey, inland: Number(inlandMap?.[fixedKey] || 0) });
-        openCampaignAdvanceModal();
+        if (!campaignMapCommitInProgress) openCampaignAdvanceModal();
       } else {
         // Escolher corredor (porto) e aplicar o custo de frete interno específico da oferta
         openCorredorModal(chosen, confirmChosen);
@@ -5558,7 +5561,50 @@ function closeCampaignAdvanceModal(){
   modalEl.remove();
 }
 
+// New map-only UX: preserve the legacy canvas controls and the existing economic engine.
+let campaignMapCommitInProgress=false;
+let campaignRoundUIRequest=null;
+function ensureCampaignRoundUI(){
+  if(window.TGRoundUI)return Promise.resolve(window.TGRoundUI);
+  if(!campaignRoundUIRequest)campaignRoundUIRequest=import('./campaign-round-ui.js?v=3').then(()=>window.TGRoundUI).catch(e=>{campaignRoundUIRequest=null;throw e;});
+  return campaignRoundUIRequest;
+}
+function openCampaignMapRoundDialog(kind){
+  if(!isCampaignLevel1Exw(state.stage))return;
+  const round=state.round,lv=getCampaignLevel(1),chosen=state.choices.exw[round],confirmed=state.confirmed.exw[round],bk=calculateCampaignBookSnapshot();
+  const buy=kind==='purchase';
+  if(buy&&(!chosen||confirmed||!bk.missingT))return;
+  const volume=buy?Math.min(Number(chosen.available_volume_t||chosen.volume_t),bk.missingT):0;
+  const draft=buy?{...chosen,volume_t:volume}:null;
+  const projected=buy?calculateCampaignBookSnapshot(draft):bk;
+  const data={kind,level:1,round,rounds:lv.rounds,final:round===lv.rounds,target:lv.targetVolumeT,projectedVolume:projected.totalUsedT,complete:!bk.missingT};
+  if(buy){
+    const lot=calculateCampaignOfferBasisSnapshot(draft,round);
+    Object.assign(data,{origin:formatOfferDisplayName(chosen),modal:'Rodo direto',route:chosen.city+' → Santos',volume,available:Number(chosen.available_volume_t||chosen.volume_t),price:lot.priceBrlSc,freight:Number(chosen.freight_brl_t_santos),cbot:lot.cbotCentBu,fx:lot.fx,fobbing:lot.fobbingUsdT,sea:lot.maritimeUsdT});
+    // R1 remains a solved exercise. R2–R5 never reveal the answers before final results.
+    if(round===1)data.teaching={review:(lot.marginCentBu>=0?'Margem bruta indicativa não negativa.':'Margem bruta indicativa negativa.')+' '+(lot.basisCentBu<=lv.targetBasisCentBu?'Basis dentro da meta.':'Basis acima da meta.'),exwUsd:lot.interiorUsdT,inlandUsd:lot.inlandUsdT,cfr:lot.cfrCostCentBu,lotBasis:lot.basisCentBu,sale:lot.saleBasisCentBu,lotMargin:lot.pnlUsd,avgBasis:projected.basisAvg,bookMargin:projected.pnlUsd};
+  }
+  ensureCampaignRoundUI().then(ui=>{
+    if(!isCampaignLevel1Exw(state.stage)||state.round!==round||(buy&&(state.choices.exw[round]!==chosen||state.confirmed.exw[round])))return;
+    document.getElementById('campaignRoundSplashFixed')?.remove();
+    ui.open(data,()=>{
+      if(!isCampaignLevel1Exw(state.stage)||state.round!==round)return;
+      if(buy){
+        if(state.choices.exw[round]!==chosen||state.confirmed.exw[round])return;
+        const hot=document.querySelector('[data-l1-hot="confirm"]');
+        if(!hot){alert('Controle de compra indisponível. Selecione a oferta novamente.');return;}
+        campaignMapCommitInProgress=true;
+        try{hot.click();}finally{campaignMapCommitInProgress=false;}
+        if(!state.confirmed.exw[round])return;
+      }
+      nextRound();
+    });
+  }).catch(e=>{console.warn('Campaign dialog',e);alert('Não foi possível abrir a confirmação. Tente novamente.');});
+}
+window.openCampaignMapRoundDialog=openCampaignMapRoundDialog;
+
 function showCampaignRoundSplash(roundNum){
+  if(window.TGRoundUI){window.TGRoundUI.splash(roundNum);return;}
   const old = document.getElementById('campaignRoundSplashFixed');
   if (old) old.remove();
   const splash = document.createElement('div');

@@ -282,8 +282,8 @@ function useOriginalHot(action){
 }
 function next(){
  if(!good())return;
- if(bought())openCampaignAdvanceModal();
- else nextRound();
+ if(bought())openCampaignMapRoundDialog('advance');
+ else openCampaignMapRoundDialog('advance');
 }
 function calculator(){
  const s=chosen();if(!s){status('Selecione uma oferta antes de calcular.',true);return;}
@@ -342,7 +342,7 @@ function onClick(e){
  const btn=e.target.closest('[data-l1m-action]');if(!btn)return;
  const action=btn.dataset.l1mAction;
  if(action==='back'){unmount();backToCampaignMenu();return;}
- if(action==='buy'){if(chosen()&&!bought()&&calculateCampaignBookSnapshot().missingT>0){useOriginalHot('confirm');}return;}
+ if(action==='buy'){if(chosen()&&!bought()&&calculateCampaignBookSnapshot().missingT>0){openCampaignMapRoundDialog('purchase');}return;}
  if(action==='discard'){
   if(bought())return;
   useOriginalHot('discard');
