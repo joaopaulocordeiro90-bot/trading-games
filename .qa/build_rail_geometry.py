@@ -42,10 +42,10 @@ def simplify(p,eps=.00025):
             if d>best:best=d;idx=i
         if idx is not None and best>eps*eps:keep.add(idx);stack.extend([(a,idx),(idx,b)])
     return [p[i] for i in sorted(keep)]
-allf=features(URL,"vhr_ferrov IN ('RMC','RMN','RMP')",'vhr_ferrov,vhr_siglap,vhr_sigl_1,nome_patioinicial,nome_patiofinal')
+allf=features(URL,"vhr_ferrov IN ('RMC','RMN','RMP','MRS')",'vhr_ferrov,vhr_siglap,vhr_sigl_1,nome_patioinicial,nome_patiofinal')
 print('Network features:',len(allf),flush=True)
 try:
-    stations=features(PATIO,"vhr_ferrov IN ('RMC','RMN','RMP')",'nomeestaca,codigotres,vhr_ferrov,uf')
+    stations=features(PATIO,"vhr_ferrov IN ('RMC','RMN','RMP','MRS')",'nomeestaca,codigotres,vhr_ferrov,uf')
 except Exception as e:
     stations=[];print('Station data unavailable:',str(e),flush=True)
 def route(key,concessions,origin,origin_name):
@@ -58,9 +58,10 @@ def route(key,concessions,origin,origin_name):
         graph[a].append((b,w,gap));graph[b].append((a,w,gap))
     for f in allf:
         at=f.get('attributes',{})
-        if at.get('vhr_ferrov') not in concessions:continue
+        if at.get('vhr_ferrov') not in concessions and at.get('vhr_ferrov')!='MRS':continue
         for p in (f.get('geometry') or {}).get('paths',[]):
             if len(p)<2:continue
+            if at.get('vhr_ferrov')=='MRS' and not all(-46.8<q[0]<-46.10 and -24.10<q[1]<-23.45 for q in p):continue
             v=[node(q) for q in p];ends.update((v[0],v[-1]))
             for a,b in zip(v,v[1:]):edge(a,b)
             for n,lab,code in [(v[0],at.get('nome_patioinicial'),at.get('vhr_siglap')),(v[-1],at.get('nome_patiofinal'),at.get('vhr_sigl_1'))]:
@@ -92,7 +93,7 @@ def route(key,concessions,origin,origin_name):
     else:raise ValueError('No named station '+origin_name)
     port=(-46.3093,-23.9539)
     target=min(graph,key=lambda p:dist(p,port))
-    if dist(target,port)>18:raise ValueError('No rail endpoint near Santos')
+    if dist(target,port)>5:raise ValueError('No rail endpoint close enough to Santos: '+str(dist(target,port)))
     q=[(0,start)];d={start:0};prev={}
     while q:
         cost,a=heapq.heappop(q)
@@ -101,7 +102,9 @@ def route(key,concessions,origin,origin_name):
         for b,w,gap in graph[a]:
             nc=cost+w+(1 if gap else 0)
             if nc<d.get(b,float('inf')):d[b]=nc;prev[b]=(a,gap);heapq.heappush(q,(nc,b))
-    if target not in d:raise ValueError('Disconnected '+key)
+    if target not in d:
+        target=min(d,key=lambda p:dist(p,port))
+        if dist(target,port)>5:raise ValueError('Disconnected port approach '+key+' '+str(dist(target,port)))
     seq=[(target,False)];a=target
     while a!=start:
         b,gap=prev[a];seq[-1]=(a,gap);seq.append((b,False));a=b
