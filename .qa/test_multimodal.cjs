@@ -1,6 +1,7 @@
 const fs=require('node:fs'),assert=require('node:assert/strict'),path=require('node:path');
 const E=require('../campaign-multimodal-engine.js');
 const root=path.resolve(__dirname,'..'),near=(a,b)=>assert(Math.abs(a-b)<1e-7,String(a)+' != '+String(b));
+const roundPoints=x=>Math.round(x+1e-9);
 const load=n=>JSON.parse(fs.readFileSync(path.join(root,'data/campaign/levels/level'+n+'.json'),'utf8'));
 for(const id of [2,3]){
  const l=load(id),rounds=l.scenario.rounds,K=.367437,clamp=x=>Math.max(0,Math.min(1,x)),expected=id===2?{n:59049,full:51360,pass:3012,unique:1268,best:99,roadOnly:153,railOnly:132,mixed:2727}:{n:531441,full:504112,pass:42852,unique:11516,best:100,roadOnly:1467,railOnly:1534,mixed:39851};
@@ -20,7 +21,7 @@ for(const id of [2,3]){
  assert.deepEqual([road,rail,ties],id===2?[11,9,0]:[15,9,0]);
  let n=0,full=0,pass=0,best=0,roadOnly=0,railOnly=0,mixed=0,unique=new Set();
  function walk(i,lots,vol,bs,gs,ds,pos,comp,mask,effective){
-  if(i===rounds.length){n++;const b=vol?bs/vol:0,score=vol?Math.round(25*clamp(1-gs/vol/45))+Math.round(25*clamp((l.fixedSaleBasisCentBu-b)/40))+Math.round(20*clamp(1-ds/vol/75))+Math.round(20*clamp(vol/60000))+Math.round(5*pos/vol+5*comp/vol):0;
+  if(i===rounds.length){n++;const b=vol?bs/vol:0,score=vol?roundPoints(25*clamp(1-gs/vol/45))+roundPoints(25*clamp((l.fixedSaleBasisCentBu-b)/40))+roundPoints(20*clamp(1-ds/vol/75))+roundPoints(20*clamp(vol/60000))+roundPoints(5*pos/vol+5*comp/vol):0;
    const r=E.result(l,lots),ok=vol===60000&&b<=l.targetBasisCentBu+1e-9&&b<=l.fixedSaleBasisCentBu&&score>=70;
    near(r.basis,b);near(r.margin,(l.fixedSaleBasisCentBu-b)*K*vol);near(r.logisticsLoss,ds);assert.equal(r.volume,vol);assert.equal(r.score.total,score);assert.equal(r.approved,ok);
    if(vol===60000)full++;if(ok){pass++;unique.add(effective);best=Math.max(best,score);if(mask===1)roadOnly++;else if(mask===2)railOnly++;else mixed++;}return;

@@ -1,6 +1,7 @@
 /* Trading Games L2/L3. Independent campaign engine; no dependency on L1 state. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.TGMulti=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
+const roundPoints=x=>Math.round(x+1e-9); // Stable half-up for floating point boundary cases.
 const K=.367437, clamp=x=>Math.max(0,Math.min(1,x)),MODES=['road','rail'];
 function calc(level,rd,offer,mode){
  if(!MODES.includes(mode))throw Error('Selecione um modal');
@@ -24,7 +25,7 @@ function decision(level,round,offerId,mode,existing){
 function result(level,lots){
  const volume=lots.reduce((a,b)=>a+b.volume,0),weighted=f=>volume?lots.reduce((a,b)=>a+f(b)*b.volume,0)/volume:0;
  const basis=weighted(x=>x.basis),margin=lots.reduce((a,b)=>a+b.marginUsdT*b.volume,0),logisticsLoss=lots.reduce((a,b)=>a+b.logisticsRegretBrlT*b.volume,0);
- const score={origination:volume?Math.round(25*clamp(1-weighted(x=>x.originRegret)/45)):0,margin:volume?Math.round(25*clamp((level.fixedSaleBasisCentBu-basis)/40)):0,logistics:volume?Math.round(20*clamp(1-weighted(x=>x.logisticsRegretBrlT)/75)):0,utilization:Math.round(20*clamp(volume/level.targetVolumeT)),discipline:volume?Math.round(5*weighted(x=>x.basis<=level.fixedSaleBasisCentBu?1:0)+5*weighted(x=>x.basis<=level.targetBasisCentBu?1:0)):0};
+ const score={origination:volume?roundPoints(25*clamp(1-weighted(x=>x.originRegret)/45)):0,margin:volume?roundPoints(25*clamp((level.fixedSaleBasisCentBu-basis)/40)):0,logistics:volume?roundPoints(20*clamp(1-weighted(x=>x.logisticsRegretBrlT)/75)):0,utilization:roundPoints(20*clamp(volume/level.targetVolumeT)),discipline:volume?roundPoints(5*weighted(x=>x.basis<=level.fixedSaleBasisCentBu?1:0)+5*weighted(x=>x.basis<=level.targetBasisCentBu?1:0)):0};
  score.total=Object.values(score).reduce((a,b)=>a+b,0);
  const approved=volume===level.targetVolumeT&&basis<=level.targetBasisCentBu+1e-9&&margin>=-1e-6&&score.total>=70;
  return {volume,remaining:Math.max(0,level.targetVolumeT-volume),basis,margin,logisticsLoss,score,approved};
