@@ -2,18 +2,19 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.TGMulti=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
 const roundPoints=x=>Math.round(x+1e-9); // Stable half-up for floating point boundary cases.
-const K=.367437, clamp=x=>Math.max(0,Math.min(1,x)),MODES=['road','rail'];
+const K=.367437, clamp=x=>Math.max(0,Math.min(1,x)),MODES=['road','rail','rail_alt'];
+const modes=o=>MODES.filter(m=>o?.logistics?.[m]);
 function calc(level,rd,offer,mode){
- if(!MODES.includes(mode))throw Error('Selecione um modal');
+ if(!modes(offer).includes(mode))throw Error('Selecione um modal');
  const freight=offer.logistics?.[mode]?.brl_t;
  if(!Number.isFinite(freight)||freight<0||!(rd.usd>0))throw Error('Dados comerciais inválidos');
  const exwUsd=offer.price_brl_saca/.06/rd.usd,inlandUsd=freight/rd.usd,fob=level.fixedFobbingUsdT,sea=level.fixedFreightUsdT;
  const cfrUsd=exwUsd+inlandUsd+fob+sea,cfr=cfrUsd/K,basis=cfr-rd.cbot_cent_bu;
- const bestFreight=Math.min(offer.logistics.road.brl_t,offer.logistics.rail.brl_t);
+ const bestFreight=Math.min(...modes(offer).map(m=>offer.logistics[m].brl_t));
  const bestOriginBasis=basis-(freight-bestFreight)/rd.usd/K;
- return {round:rd.round,id:offer.id,city:offer.city,uf:offer.uf,mode,fx:rd.usd,cbot:rd.cbot_cent_bu,price:offer.price_brl_saca,freight,exwUsd,inlandUsd,fob,sea,cfrUsd,cfr,basis,marginUsdT:(level.fixedSaleBasisCentBu-basis)*K,bestOriginBasis,logisticsRegretBrlT:freight-bestFreight,available:offer.volume_t};
+ return {round:rd.round,id:offer.id,city:offer.city,uf:offer.uf,mode,terminal:offer.logistics[mode].terminal||null,fx:rd.usd,cbot:rd.cbot_cent_bu,price:offer.price_brl_saca,freight,exwUsd,inlandUsd,fob,sea,cfrUsd,cfr,basis,marginUsdT:(level.fixedSaleBasisCentBu-basis)*K,bestOriginBasis,logisticsRegretBrlT:freight-bestFreight,available:offer.volume_t};
 }
-function benchmark(level,rd){return Math.min(...rd.offers_exw.flatMap(o=>MODES.map(m=>calc(level,rd,o,m).basis)));}
+function benchmark(level,rd){return Math.min(...rd.offers_exw.flatMap(o=>modes(o).map(m=>calc(level,rd,o,m).basis)));}
 function decision(level,round,offerId,mode,existing){
  if(existing.some(x=>x.round===round))throw Error('Compra já confirmada');
  const rd=level.scenario.rounds[round-1],offer=rd?.offers_exw.find(x=>x.id===offerId);
@@ -32,8 +33,8 @@ function result(level,lots){
 }
 function evaluate(level,seq){
  const lots=[];
- for(let i=0;i<level.rounds;i++){const option=seq[i]||0;if(!option||lots.reduce((a,b)=>a+b.volume,0)>=level.targetVolumeT)continue;lots.push(decision(level,i+1,Math.ceil(option/2),option%2?'road':'rail',lots));}
+ for(let i=0;i<level.rounds;i++){const option=seq[i]||0;if(!option||lots.reduce((a,b)=>a+b.volume,0)>=level.targetVolumeT)continue;const choices=level.scenario.rounds[i].offers_exw.flatMap(o=>modes(o).map(m=>[o.id,m]));const choice=choices[option-1];if(!choice)throw Error('Opção inválida');lots.push(decision(level,i+1,choice[0],choice[1],lots));}
  return result(level,lots);
 }
-return {calc,benchmark,decision,result,evaluate,MODES,K};
+return {calc,benchmark,decision,result,evaluate,MODES,modes,K};
 });

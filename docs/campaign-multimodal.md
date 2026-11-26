@@ -1,8 +1,11 @@
-# Campanha L2/L3 · multimodal
-- Level 2: cinco rodadas; 20 ofertas com duas alternativas (11 rodo direto mais barato; 9 rodo + ferro mais barato).
-- Level 3: seis rodadas; 24 ofertas com duas alternativas (15 rodo; 9 rodo + ferro). Notícias com efeitos cruzados e defasados.
-- 60.000 t, uma compra definitiva por rodada, parcial ao atingir o saldo. Porto único Santos; terminal Rio Verde/GO. Venda CFR e marítimo fixos por nível, parâmetros novos. Todos os preços, tarifas, volumes e notícias são simulações, não cotações observadas.
-- Corredor ferroviário confirmado pela ANTT: https://www.gov.br/antt/pt-br/assuntos/ultimas-noticias/antt-realizou-visita-tecnica-na-ferrovia-norte-sul . O terminal utiliza coordenada urbana de referência; o traçado ferroviário é esquemático; OSRM para trechos rodoviários quando disponível. A tarifa ferroviária simulada inclui transbordo.
-- Pontuação: originação (25), margem (25), eficiência logística (20), volume (20), disciplina (10). Originação avalia o menor basis possível da origem escolhida contra o menor da rodada; logística avalia custo excedente da escolha de modal, evitando dupla contagem. Aprovação exige navio completo, basis médio dentro da meta, margem não negativa e nota >=70.
-- Auditoria combinatória nominal: L2 59.049 sequências, 3.012 aprovadas (2.727 com ambos os modais); L3 531.441 sequências, 42.852 aprovadas (39.851 com ambos). Inclui equivalências quando o navio completa antes do fim. Não é previsão de aprovação de alunos.
-- O L1, Iniciante e Expert mantêm seus arquivos e motor comercial. L2/L3 compartilham motor próprio, integrado ao menu e ao desbloqueio existente por localStorage. O editor Admin legado não controla o novo módulo multimodal; fontes canônicas são os JSONs por nível.
+# Campanha L2/L3 — dois terminais (v2)
+Santos é o único porto. Level 2: cinco rodadas, quatro origens por rodada (GO/MG e MT), rodoviário direto ou multimodal via terminal de referência. Level 3: seis rodadas, quatro origens por rodada, algumas origens do leste de MT têm três alternativas (direto, Rio Verde e Rondonópolis). A origem define os modais disponíveis; o jogador seleciona sem pré-seleção automática. Tarifas dos terminais variam independentemente, ligadas às notícias e aos fretes rodoviários.
+Todos os valores são simulados. A geometria ferroviária será extraída da camada pública Infra S.A./ANTT (Declaração de Rede 2024), limitada a RMN/RMC/RMP. O extrator preserva geometrias fonte; não desenha conexões artificiais; pequenos hiatos de topologia não são desenhados. Caso a geometria não esteja disponível, não existe fallback esquemático; o mapa exibe aviso. OSRM para rodovias; o frete não depende da distância roteada.
+Scorecard e progressão preservados. Novos recordes v2, desbloqueios existentes preservados. L1 e demais modos não alterados. Auditoria exaustiva com opções variáveis por rodada e verificação independente de contas e volume.
+
+## Auditoria de geometria
+Dados oficiais extraídos e armazenados localmente: `data/campaign/rail-corridors.geojson`. As coordenadas dos terminais derivam dos pátios declarados. Acesso final ferroviário à região portuária inclui segmentos MRS quando necessários; não é homologação de itinerário operacional de um trem. Hiatos de até 200 m usados apenas para conexão topológica, não desenhados.
+- Rio Verde: 1185 km de geometria, 20 hiatos topológicos, ponto ferroviário final a 0.61 km da referência de Santos.
+- Rondonópolis: 1635.3 km de geometria, 35 hiatos topológicos, ponto ferroviário final a 0.61 km da referência de Santos.
+
+Auditoria comercial: L2 59.049 sequências; 3.379 aprovadas (3.129 multimodais misturadas); L3 990.000 sequências; 44.005 aprovadas (40.182 misturadas). 9/11 e 15/9 ofertas favorecem rodoviário/ferroviário respectivamente.

@@ -1,0 +1,24 @@
+name: Extrair geometria ferroviaria oficial
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.qa/build_rail_geometry.py'
+      - '.github/workflows/rail-geometry.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python .qa/build_rail_geometry.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rail-corridors
+          path: data/campaign/rail-corridors.geojson

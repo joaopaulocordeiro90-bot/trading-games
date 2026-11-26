@@ -13,7 +13,7 @@
   "fixedDestination": "N. China",
   "fixedFreightUsdT": 43.5,
   "fixedFobbingUsdT": 11.5,
-  "summary": "Cinco rodadas: escolha rodoviário direto ou rodo + ferro via Rio Verde.",
+  "summary": "Cinco rodadas: escolha rodo direto ou rodo + ferro via Rio Verde ou Rondonópolis.",
   "rules": {
     "ship_sizes_t": [
       60000
@@ -27,16 +27,9 @@
     "fobbing_usd_t": 11.5,
     "penalties": {}
   },
-  "terminal": {
-    "city": "Rio Verde",
-    "uf": "GO",
-    "lat": -17.7923,
-    "lng": -50.9192,
-    "location_kind": "referência urbana, não coordenada exata do terminal"
-  },
   "sourceInfo": {
     "market": "Cenário integralmente ficcional; preços, lotes, Chicago, câmbio, fretes e índices são parâmetros didáticos, não cotações BRZ ou tarifas comerciais vigentes.",
-    "rail": "Corredor confirmado pela ANTT: Ferrovia Norte-Sul → Estrela d’Oeste → Malha Paulista → Santos. Tarifa simulada inclui transbordo. Não há restrição de capacidade de trens no exercício.",
+    "rail": "Malha Norte, Malha Central e Malha Paulista. Tarifas e custos rodoviários simulados; transbordo incluído na tarifa ferroviária. Traçado oficial ANTT/Infra S.A. quando disponível, sem desenho esquemático como substituto.",
     "source": "https://www.gov.br/antt/pt-br/assuntos/ultimas-noticias/antt-realizou-visita-tecnica-na-ferrovia-norte-sul"
   },
   "scenario": {
@@ -56,9 +49,9 @@
           "uf": "GO",
           "price_brl_sc": 129
         },
-        "news": "Embarques de milho desaceleram no Centro-Oeste. Transportadoras reportam caminhões disponíveis para novas retiradas. Chicago trabalha de lado, com demanda externa sem grandes novidades.",
-        "master_news": "Embarques de milho desaceleram no Centro-Oeste. Transportadoras reportam caminhões disponíveis para novas retiradas. Chicago trabalha de lado, com demanda externa sem grandes novidades.",
-        "market_headline": "Embarques de milho desaceleram no Centro-Oeste. Transportadoras reportam caminhões disponíveis para novas retiradas. Chicago trabalha de lado, com demanda externa sem grandes novidades.",
+        "news": "Embarques de milho desaceleram no Centro-Oeste. Transportadoras reportam caminhões disponíveis para novas retiradas. Chicago trabalha de lado, com demanda externa sem grandes novidades. Em MT, as descargas em Rondonópolis ainda absorvem parte dos caminhões, e a operadora indica reajuste para novas janelas.",
+        "master_news": "Embarques de milho desaceleram no Centro-Oeste. Transportadoras reportam caminhões disponíveis para novas retiradas. Chicago trabalha de lado, com demanda externa sem grandes novidades. Em MT, as descargas em Rondonópolis ainda absorvem parte dos caminhões, e a operadora indica reajuste para novas janelas.",
+        "market_headline": "Embarques de milho desaceleram no Centro-Oeste. Transportadoras reportam caminhões disponíveis para novas retiradas. Chicago trabalha de lado, com demanda externa sem grandes novidades. Em MT, as descargas em Rondonópolis ainda absorvem parte dos caminhões, e a operadora indica reajuste para novas janelas.",
         "market_signal": "A disponibilidade de caminhões pode aliviar o rodoviário direto e os acessos ao terminal. A tarifa ferroviária segue estável.",
         "previous_news_review": "Abertura: fretes próximos do equilíbrio, com diferenças relevantes por praça.",
         "decision_prompt": "Escolha uma origem e um modal, ou avance sem comprar.",
@@ -82,7 +75,8 @@
               "rail": {
                 "feeder_brl_t": 35,
                 "rail_brl_t": 210,
-                "brl_t": 245
+                "brl_t": 245,
+                "terminal": "rio_verde"
               }
             },
             "destination_port": "Santos",
@@ -91,29 +85,30 @@
           },
           {
             "id": 2,
-            "city": "Itumbiara",
-            "uf": "GO",
-            "lat": -18.419,
-            "lng": -49.216,
-            "label": "Itumbiara GO",
-            "price_brl_saca": 129,
+            "city": "Sorriso",
+            "uf": "MT",
+            "lat": -12.5425,
+            "lng": -55.7211,
+            "label": "Sorriso MT",
+            "price_brl_saca": 113,
             "volume_t": 14000,
-            "freight_brl_t_santos": 225,
-            "freight_brl_t_rio_verde": 145,
-            "rail_brl_t": 210,
+            "freight_brl_t_santos": 535,
+            "rail_brl_t": 315,
             "logistics": {
               "road": {
-                "brl_t": 225
+                "brl_t": 535
               },
               "rail": {
-                "feeder_brl_t": 145,
-                "rail_brl_t": 210,
-                "brl_t": 355
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 180,
+                "rail_brl_t": 315,
+                "brl_t": 495
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.55,
-            "ref_cbot_cent_bu": 1175
+            "ref_cbot_cent_bu": 1175,
+            "freight_brl_t_rondonopolis": 180
           },
           {
             "id": 3,
@@ -134,7 +129,8 @@
               "rail": {
                 "feeder_brl_t": 90,
                 "rail_brl_t": 210,
-                "brl_t": 300
+                "brl_t": 300,
+                "terminal": "rio_verde"
               }
             },
             "destination_port": "Santos",
@@ -143,29 +139,30 @@
           },
           {
             "id": 4,
-            "city": "Morrinhos",
-            "uf": "GO",
-            "lat": -17.732,
-            "lng": -49.105,
-            "label": "Morrinhos GO",
-            "price_brl_saca": 128.5,
+            "city": "Nova Mutum",
+            "uf": "MT",
+            "lat": -13.837,
+            "lng": -56.074,
+            "label": "Nova Mutum MT",
+            "price_brl_saca": 116.5,
             "volume_t": 16000,
-            "freight_brl_t_santos": 245,
-            "freight_brl_t_rio_verde": 130,
-            "rail_brl_t": 210,
+            "freight_brl_t_santos": 490,
+            "rail_brl_t": 315,
             "logistics": {
               "road": {
-                "brl_t": 245
+                "brl_t": 490
               },
               "rail": {
+                "terminal": "rondonopolis",
                 "feeder_brl_t": 130,
-                "rail_brl_t": 210,
-                "brl_t": 340
+                "rail_brl_t": 315,
+                "brl_t": 445
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.55,
-            "ref_cbot_cent_bu": 1175
+            "ref_cbot_cent_bu": 1175,
+            "freight_brl_t_rondonopolis": 130
           }
         ],
         "impact_next": {
@@ -174,7 +171,12 @@
           "rail_brl_t": 0,
           "road_index": -13,
           "feeder_index": -10,
-          "physical_reference_brl_sc": -2
+          "physical_reference_brl_sc": -2,
+          "rail_rondonopolis_brl_t": 10
+        },
+        "rail_tariffs": {
+          "rio_verde": 210,
+          "rondonopolis": 315
         }
       },
       {
@@ -189,38 +191,39 @@
           "uf": "GO",
           "price_brl_sc": 127
         },
-        "news": "Com a menor ocupação dos trens, a operadora oferece novas janelas comerciais em Rio Verde. Importadores voltam a consultar soja brasileira, enquanto o dólar permanece firme.",
-        "master_news": "Com a menor ocupação dos trens, a operadora oferece novas janelas comerciais em Rio Verde. Importadores voltam a consultar soja brasileira, enquanto o dólar permanece firme.",
-        "market_headline": "Com a menor ocupação dos trens, a operadora oferece novas janelas comerciais em Rio Verde. Importadores voltam a consultar soja brasileira, enquanto o dólar permanece firme.",
+        "news": "Com a menor ocupação dos trens, a operadora oferece novas janelas comerciais em Rio Verde. Importadores voltam a consultar soja brasileira, enquanto o dólar permanece firme. Rio Verde disputa novos lotes e reduz a tarifa; Rondonópolis também concede desconto, mas em menor intensidade.",
+        "master_news": "Com a menor ocupação dos trens, a operadora oferece novas janelas comerciais em Rio Verde. Importadores voltam a consultar soja brasileira, enquanto o dólar permanece firme. Rio Verde disputa novos lotes e reduz a tarifa; Rondonópolis também concede desconto, mas em menor intensidade.",
+        "market_headline": "Com a menor ocupação dos trens, a operadora oferece novas janelas comerciais em Rio Verde. Importadores voltam a consultar soja brasileira, enquanto o dólar permanece firme. Rio Verde disputa novos lotes e reduz a tarifa; Rondonópolis também concede desconto, mas em menor intensidade.",
         "market_signal": "O desconto ferroviário pode reabrir alternativas via Rio Verde; não assuma que o rodo continuará vencendo.",
-        "previous_news_review": "O rodoviário cedeu com maior oferta de caminhões. Chicago recuou e a referência física perdeu sustentação.",
+        "previous_news_review": "O rodoviário cedeu com maior oferta de caminhões. Chicago recuou e a referência física perdeu sustentação. Rondonópolis: tarifa subiu para R$ 325/t.",
         "decision_prompt": "Escolha uma origem e um modal, ou avance sem comprar.",
         "offers_exw": [
           {
             "id": 1,
-            "city": "Santa Helena de Goiás",
-            "uf": "GO",
-            "lat": -17.813,
-            "lng": -50.596,
-            "label": "Santa Helena de Goiás GO",
-            "price_brl_saca": 127.5,
+            "city": "Primavera do Leste",
+            "uf": "MT",
+            "lat": -15.5608,
+            "lng": -54.2979,
+            "label": "Primavera do Leste MT",
+            "price_brl_saca": 119.5,
             "volume_t": 15000,
-            "freight_brl_t_santos": 255,
-            "freight_brl_t_rio_verde": 35,
-            "rail_brl_t": 210,
+            "freight_brl_t_santos": 380,
+            "rail_brl_t": 325,
             "logistics": {
               "road": {
-                "brl_t": 255
+                "brl_t": 380
               },
               "rail": {
-                "feeder_brl_t": 35,
-                "rail_brl_t": 210,
-                "brl_t": 245
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 70,
+                "rail_brl_t": 325,
+                "brl_t": 395
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.56,
-            "ref_cbot_cent_bu": 1168
+            "ref_cbot_cent_bu": 1168,
+            "freight_brl_t_rondonopolis": 70
           },
           {
             "id": 2,
@@ -241,7 +244,8 @@
               "rail": {
                 "feeder_brl_t": 205,
                 "rail_brl_t": 210,
-                "brl_t": 415
+                "brl_t": 415,
+                "terminal": "rio_verde"
               }
             },
             "destination_port": "Santos",
@@ -250,29 +254,30 @@
           },
           {
             "id": 3,
-            "city": "Paraúna",
-            "uf": "GO",
-            "lat": -16.947,
-            "lng": -50.448,
-            "label": "Paraúna GO",
-            "price_brl_saca": 128.5,
+            "city": "Lucas do Rio Verde",
+            "uf": "MT",
+            "lat": -13.0587,
+            "lng": -55.9042,
+            "label": "Lucas do Rio Verde MT",
+            "price_brl_saca": 117.5,
             "volume_t": 14000,
-            "freight_brl_t_santos": 250,
-            "freight_brl_t_rio_verde": 85,
-            "rail_brl_t": 210,
+            "freight_brl_t_santos": 435,
+            "rail_brl_t": 325,
             "logistics": {
               "road": {
-                "brl_t": 250
+                "brl_t": 435
               },
               "rail": {
-                "feeder_brl_t": 85,
-                "rail_brl_t": 210,
-                "brl_t": 295
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 135,
+                "rail_brl_t": 325,
+                "brl_t": 460
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.56,
-            "ref_cbot_cent_bu": 1168
+            "ref_cbot_cent_bu": 1168,
+            "freight_brl_t_rondonopolis": 135
           },
           {
             "id": 4,
@@ -293,7 +298,8 @@
               "rail": {
                 "feeder_brl_t": 70,
                 "rail_brl_t": 210,
-                "brl_t": 280
+                "brl_t": 280,
+                "terminal": "rio_verde"
               }
             },
             "destination_port": "Santos",
@@ -307,7 +313,12 @@
           "rail_brl_t": -35,
           "road_index": 3,
           "feeder_index": 1,
-          "physical_reference_brl_sc": 3
+          "physical_reference_brl_sc": 3,
+          "rail_rondonopolis_brl_t": -30
+        },
+        "rail_tariffs": {
+          "rio_verde": 210,
+          "rondonopolis": 325
         }
       },
       {
@@ -322,11 +333,11 @@
           "uf": "GO",
           "price_brl_sc": 130
         },
-        "news": "A colheita avança nas primeiras áreas do Sudoeste de Goiás e os carregamentos se concentram. As transportadoras elevam as indicações para novas viagens; fundos recompõem posições compradas em Chicago.",
-        "master_news": "A colheita avança nas primeiras áreas do Sudoeste de Goiás e os carregamentos se concentram. As transportadoras elevam as indicações para novas viagens; fundos recompõem posições compradas em Chicago.",
-        "market_headline": "A colheita avança nas primeiras áreas do Sudoeste de Goiás e os carregamentos se concentram. As transportadoras elevam as indicações para novas viagens; fundos recompõem posições compradas em Chicago.",
+        "news": "A colheita avança nas primeiras áreas do Sudoeste de Goiás e os carregamentos se concentram. As transportadoras elevam as indicações para novas viagens; fundos recompõem posições compradas em Chicago. A concentração de retiradas aumenta a procura por trens em Rondonópolis; as tarifas de ambos os terminais tendem a subir.",
+        "master_news": "A colheita avança nas primeiras áreas do Sudoeste de Goiás e os carregamentos se concentram. As transportadoras elevam as indicações para novas viagens; fundos recompõem posições compradas em Chicago. A concentração de retiradas aumenta a procura por trens em Rondonópolis; as tarifas de ambos os terminais tendem a subir.",
+        "market_headline": "A colheita avança nas primeiras áreas do Sudoeste de Goiás e os carregamentos se concentram. As transportadoras elevam as indicações para novas viagens; fundos recompõem posições compradas em Chicago. A concentração de retiradas aumenta a procura por trens em Rondonópolis; as tarifas de ambos os terminais tendem a subir.",
         "market_signal": "O rodo deve encarecer, inclusive no primeiro trecho do multimodal. Compare o custo completo, não apenas a tarifa do trem.",
-        "previous_news_review": "A ferrovia reduziu a tarifa, Chicago reagiu às consultas externas e o dólar se firmou. O físico se recuperou.",
+        "previous_news_review": "A ferrovia reduziu a tarifa, Chicago reagiu às consultas externas e o dólar se firmou. O físico se recuperou. Rondonópolis: tarifa cedeu para R$ 295/t.",
         "decision_prompt": "Escolha uma origem e um modal, ou avance sem comprar.",
         "offers_exw": [
           {
@@ -348,7 +359,8 @@
               "rail": {
                 "feeder_brl_t": 50,
                 "rail_brl_t": 175,
-                "brl_t": 225
+                "brl_t": 225,
+                "terminal": "rio_verde"
               }
             },
             "destination_port": "Santos",
@@ -357,29 +369,30 @@
           },
           {
             "id": 2,
-            "city": "Chapadão do Céu",
-            "uf": "GO",
-            "lat": -18.407,
-            "lng": -52.549,
-            "label": "Chapadão do Céu GO",
-            "price_brl_saca": 125.5,
+            "city": "Campo Novo do Parecis",
+            "uf": "MT",
+            "lat": -13.675,
+            "lng": -57.891,
+            "label": "Campo Novo do Parecis MT",
+            "price_brl_saca": 111.5,
             "volume_t": 14000,
-            "freight_brl_t_santos": 290,
-            "freight_brl_t_rio_verde": 80,
-            "rail_brl_t": 175,
+            "freight_brl_t_santos": 505,
+            "rail_brl_t": 295,
             "logistics": {
               "road": {
-                "brl_t": 290
+                "brl_t": 505
               },
               "rail": {
-                "feeder_brl_t": 80,
-                "rail_brl_t": 175,
-                "brl_t": 255
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 195,
+                "rail_brl_t": 295,
+                "brl_t": 490
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.62,
-            "ref_cbot_cent_bu": 1190
+            "ref_cbot_cent_bu": 1190,
+            "freight_brl_t_rondonopolis": 195
           },
           {
             "id": 3,
@@ -400,7 +413,8 @@
               "rail": {
                 "feeder_brl_t": 80,
                 "rail_brl_t": 175,
-                "brl_t": 255
+                "brl_t": 255,
+                "terminal": "rio_verde"
               }
             },
             "destination_port": "Santos",
@@ -409,29 +423,30 @@
           },
           {
             "id": 4,
-            "city": "Catalão",
-            "uf": "GO",
-            "lat": -18.165,
-            "lng": -47.947,
-            "label": "Catalão GO",
-            "price_brl_saca": 135,
+            "city": "Campo Verde",
+            "uf": "MT",
+            "lat": -15.545,
+            "lng": -55.162,
+            "label": "Campo Verde MT",
+            "price_brl_saca": 125.5,
             "volume_t": 17000,
-            "freight_brl_t_santos": 205,
-            "freight_brl_t_rio_verde": 190,
-            "rail_brl_t": 175,
+            "freight_brl_t_santos": 385,
+            "rail_brl_t": 295,
             "logistics": {
               "road": {
-                "brl_t": 205
+                "brl_t": 385
               },
               "rail": {
-                "feeder_brl_t": 190,
-                "rail_brl_t": 175,
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 70,
+                "rail_brl_t": 295,
                 "brl_t": 365
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.62,
-            "ref_cbot_cent_bu": 1190
+            "ref_cbot_cent_bu": 1190,
+            "freight_brl_t_rondonopolis": 70
           }
         ],
         "impact_next": {
@@ -440,7 +455,12 @@
           "rail_brl_t": 5,
           "road_index": 23,
           "feeder_index": 21,
-          "physical_reference_brl_sc": 3
+          "physical_reference_brl_sc": 3,
+          "rail_rondonopolis_brl_t": 40
+        },
+        "rail_tariffs": {
+          "rio_verde": 175,
+          "rondonopolis": 295
         }
       },
       {
@@ -455,38 +475,39 @@
           "uf": "GO",
           "price_brl_sc": 133
         },
-        "news": "A demanda por capacidade ferroviária aumenta após as novas contratações. Com a agenda mais ocupada, a operadora retira descontos para as próximas janelas. Caminhões começam a retornar de descargas em Santos.",
-        "master_news": "A demanda por capacidade ferroviária aumenta após as novas contratações. Com a agenda mais ocupada, a operadora retira descontos para as próximas janelas. Caminhões começam a retornar de descargas em Santos.",
-        "market_headline": "A demanda por capacidade ferroviária aumenta após as novas contratações. Com a agenda mais ocupada, a operadora retira descontos para as próximas janelas. Caminhões começam a retornar de descargas em Santos.",
+        "news": "A demanda por capacidade ferroviária aumenta após as novas contratações. Com a agenda mais ocupada, a operadora retira descontos para as próximas janelas. Caminhões começam a retornar de descargas em Santos. A ocupação dos dois terminais se intensifica, sobretudo em Rio Verde. As tarifas de Rondonópolis também devem subir.",
+        "master_news": "A demanda por capacidade ferroviária aumenta após as novas contratações. Com a agenda mais ocupada, a operadora retira descontos para as próximas janelas. Caminhões começam a retornar de descargas em Santos. A ocupação dos dois terminais se intensifica, sobretudo em Rio Verde. As tarifas de Rondonópolis também devem subir.",
+        "market_headline": "A demanda por capacidade ferroviária aumenta após as novas contratações. Com a agenda mais ocupada, a operadora retira descontos para as próximas janelas. Caminhões começam a retornar de descargas em Santos. A ocupação dos dois terminais se intensifica, sobretudo em Rio Verde. As tarifas de Rondonópolis também devem subir.",
         "market_signal": "O ferroviário pode perder competitividade, especialmente para origens com acesso rodoviário caro ao terminal.",
-        "previous_news_review": "A concentração das retiradas elevou os fretes rodoviários. Chicago e o físico avançaram, e a ferrovia permaneceu competitiva.",
+        "previous_news_review": "A concentração das retiradas elevou os fretes rodoviários. Chicago e o físico avançaram, e a ferrovia permaneceu competitiva. Rondonópolis: tarifa subiu para R$ 335/t.",
         "decision_prompt": "Escolha uma origem e um modal, ou avance sem comprar.",
         "offers_exw": [
           {
             "id": 1,
-            "city": "Caiapônia",
-            "uf": "GO",
-            "lat": -16.956,
-            "lng": -51.81,
-            "label": "Caiapônia GO",
-            "price_brl_saca": 126.5,
+            "city": "Sinop",
+            "uf": "MT",
+            "lat": -11.858,
+            "lng": -55.501,
+            "label": "Sinop MT",
+            "price_brl_saca": 112,
             "volume_t": 14000,
-            "freight_brl_t_santos": 385,
-            "freight_brl_t_rio_verde": 155,
-            "rail_brl_t": 180,
+            "freight_brl_t_santos": 650,
+            "rail_brl_t": 335,
             "logistics": {
               "road": {
-                "brl_t": 385
+                "brl_t": 650
               },
               "rail": {
-                "feeder_brl_t": 155,
-                "rail_brl_t": 180,
-                "brl_t": 335
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 240,
+                "rail_brl_t": 335,
+                "brl_t": 575
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.6,
-            "ref_cbot_cent_bu": 1205
+            "ref_cbot_cent_bu": 1205,
+            "freight_brl_t_rondonopolis": 240
           },
           {
             "id": 2,
@@ -507,7 +528,8 @@
               "rail": {
                 "feeder_brl_t": 45,
                 "rail_brl_t": 180,
-                "brl_t": 225
+                "brl_t": 225,
+                "terminal": "rio_verde"
               }
             },
             "destination_port": "Santos",
@@ -516,29 +538,30 @@
           },
           {
             "id": 3,
-            "city": "Itumbiara",
-            "uf": "GO",
-            "lat": -18.419,
-            "lng": -49.216,
-            "label": "Itumbiara GO",
-            "price_brl_saca": 130,
+            "city": "Jaciara",
+            "uf": "MT",
+            "lat": -15.965,
+            "lng": -54.968,
+            "label": "Jaciara MT",
+            "price_brl_saca": 122,
             "volume_t": 16000,
-            "freight_brl_t_santos": 255,
-            "freight_brl_t_rio_verde": 160,
-            "rail_brl_t": 180,
+            "freight_brl_t_santos": 445,
+            "rail_brl_t": 335,
             "logistics": {
               "road": {
-                "brl_t": 255
+                "brl_t": 445
               },
               "rail": {
-                "feeder_brl_t": 160,
-                "rail_brl_t": 180,
-                "brl_t": 340
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 50,
+                "rail_brl_t": 335,
+                "brl_t": 385
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.6,
-            "ref_cbot_cent_bu": 1205
+            "ref_cbot_cent_bu": 1205,
+            "freight_brl_t_rondonopolis": 50
           },
           {
             "id": 4,
@@ -559,7 +582,8 @@
               "rail": {
                 "feeder_brl_t": 50,
                 "rail_brl_t": 180,
-                "brl_t": 230
+                "brl_t": 230,
+                "terminal": "rio_verde"
               }
             },
             "destination_port": "Santos",
@@ -573,7 +597,12 @@
           "rail_brl_t": 75,
           "road_index": -12,
           "feeder_index": -8,
-          "physical_reference_brl_sc": 1
+          "physical_reference_brl_sc": 1,
+          "rail_rondonopolis_brl_t": 45
+        },
+        "rail_tariffs": {
+          "rio_verde": 180,
+          "rondonopolis": 335
         }
       },
       {
@@ -588,11 +617,11 @@
           "uf": "GO",
           "price_brl_sc": 134
         },
-        "news": "Última janela de originação. A tarifa ferroviária ficou mais firme, enquanto a maior oferta de caminhões aliviou o rodoviário. O dólar sustenta o preço da soja em reais, apesar da correção em Chicago.",
-        "master_news": "Última janela de originação. A tarifa ferroviária ficou mais firme, enquanto a maior oferta de caminhões aliviou o rodoviário. O dólar sustenta o preço da soja em reais, apesar da correção em Chicago.",
-        "market_headline": "Última janela de originação. A tarifa ferroviária ficou mais firme, enquanto a maior oferta de caminhões aliviou o rodoviário. O dólar sustenta o preço da soja em reais, apesar da correção em Chicago.",
+        "news": "Última janela de originação. A tarifa ferroviária ficou mais firme, enquanto a maior oferta de caminhões aliviou o rodoviário. O dólar sustenta o preço da soja em reais, apesar da correção em Chicago. Os dois terminais estão mais caros que no início; compare a vantagem logística praça a praça.",
+        "master_news": "Última janela de originação. A tarifa ferroviária ficou mais firme, enquanto a maior oferta de caminhões aliviou o rodoviário. O dólar sustenta o preço da soja em reais, apesar da correção em Chicago. Os dois terminais estão mais caros que no início; compare a vantagem logística praça a praça.",
+        "market_headline": "Última janela de originação. A tarifa ferroviária ficou mais firme, enquanto a maior oferta de caminhões aliviou o rodoviário. O dólar sustenta o preço da soja em reais, apesar da correção em Chicago. Os dois terminais estão mais caros que no início; compare a vantagem logística praça a praça.",
         "market_signal": "Complete a carga avaliando origem e modal. Não há outra rodada.",
-        "previous_news_review": "O fim dos descontos ferroviários e a liberação de caminhões devolveram competitividade ao rodo direto.",
+        "previous_news_review": "O fim dos descontos ferroviários e a liberação de caminhões devolveram competitividade ao rodo direto. Rondonópolis: tarifa subiu para R$ 380/t.",
         "decision_prompt": "Última oportunidade: avalie o saldo e a meta econômica.",
         "offers_exw": [
           {
@@ -614,7 +643,8 @@
               "rail": {
                 "feeder_brl_t": 235,
                 "rail_brl_t": 255,
-                "brl_t": 490
+                "brl_t": 490,
+                "terminal": "rio_verde"
               }
             },
             "destination_port": "Santos",
@@ -623,29 +653,30 @@
           },
           {
             "id": 2,
-            "city": "Montividiu",
-            "uf": "GO",
-            "lat": -17.444,
-            "lng": -51.171,
-            "label": "Montividiu GO",
-            "price_brl_saca": 131.5,
+            "city": "Sapezal",
+            "uf": "MT",
+            "lat": -13.543,
+            "lng": -58.815,
+            "label": "Sapezal MT",
+            "price_brl_saca": 112,
             "volume_t": 15000,
-            "freight_brl_t_santos": 310,
-            "freight_brl_t_rio_verde": 35,
-            "rail_brl_t": 255,
+            "freight_brl_t_santos": 615,
+            "rail_brl_t": 380,
             "logistics": {
               "road": {
-                "brl_t": 310
+                "brl_t": 615
               },
               "rail": {
-                "feeder_brl_t": 35,
-                "rail_brl_t": 255,
-                "brl_t": 290
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 260,
+                "rail_brl_t": 380,
+                "brl_t": 640
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.66,
-            "ref_cbot_cent_bu": 1198
+            "ref_cbot_cent_bu": 1198,
+            "freight_brl_t_rondonopolis": 260
           },
           {
             "id": 3,
@@ -666,7 +697,8 @@
               "rail": {
                 "feeder_brl_t": 95,
                 "rail_brl_t": 255,
-                "brl_t": 350
+                "brl_t": 350,
+                "terminal": "rio_verde"
               }
             },
             "destination_port": "Santos",
@@ -675,32 +707,54 @@
           },
           {
             "id": 4,
-            "city": "Paraúna",
-            "uf": "GO",
-            "lat": -16.947,
-            "lng": -50.448,
-            "label": "Paraúna GO",
-            "price_brl_saca": 131.5,
+            "city": "Alto Garças",
+            "uf": "MT",
+            "lat": -16.946,
+            "lng": -53.527,
+            "label": "Alto Garças MT",
+            "price_brl_saca": 126.5,
             "volume_t": 14000,
-            "freight_brl_t_santos": 295,
-            "freight_brl_t_rio_verde": 100,
-            "rail_brl_t": 255,
+            "freight_brl_t_santos": 380,
+            "rail_brl_t": 380,
             "logistics": {
               "road": {
-                "brl_t": 295
+                "brl_t": 380
               },
               "rail": {
+                "terminal": "rondonopolis",
                 "feeder_brl_t": 100,
-                "rail_brl_t": 255,
-                "brl_t": 355
+                "rail_brl_t": 380,
+                "brl_t": 480
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.66,
-            "ref_cbot_cent_bu": 1198
+            "ref_cbot_cent_bu": 1198,
+            "freight_brl_t_rondonopolis": 100
           }
-        ]
+        ],
+        "rail_tariffs": {
+          "rio_verde": 255,
+          "rondonopolis": 380
+        }
       }
     ]
-  }
+  },
+  "terminals": {
+    "rio_verde": {
+      "name": "Rio Verde",
+      "uf": "GO",
+      "lat": -17.7923,
+      "lng": -50.9192,
+      "location_kind": "Referência urbana até validação cartográfica"
+    },
+    "rondonopolis": {
+      "name": "Rondonópolis",
+      "uf": "MT",
+      "lat": -16.4673,
+      "lng": -54.6372,
+      "location_kind": "Referência urbana até validação cartográfica"
+    }
+  },
+  "calibrationVersion": "dual-terminal-v2"
 }
