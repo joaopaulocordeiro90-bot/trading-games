@@ -8,7 +8,12 @@ const all=rs.map((r,i)=>{
 assert(r.offers_exw.some(o=>o.uf==='MT')&&r.offers_exw.some(o=>o.uf==='GO'||o.uf==='MG'||o.uf==='MS'));
 if(i<rs.length-1){let n=rs[i+1];near(n.rail_tariffs.rondonopolis-r.rail_tariffs.rondonopolis,r.impact_next.rail_rondonopolis_brl_t);near(n.rail_brl_t-r.rail_brl_t,r.impact_next.rail_brl_t);near(n.cbot_cent_bu-r.cbot_cent_bu,r.impact_next.cbot_cent_bu);near(n.usd-r.usd,r.impact_next.usd_brl);}
 const options=r.offers_exw.flatMap(o=>{
-assert.equal(o.destination_port,'Santos');assert.equal(o.logistics.rail.terminal,o.uf==='MT'?'rondonopolis':'rio_verde');
+assert.equal(o.destination_port,'Santos');
+assert(["Jataí","Rio Verde","Cristalina","Itumbiara","Silvânia","Chapadão do Sul","Sorriso","Lucas do Rio Verde","Nova Mutum","Primavera do Leste","Campo Novo do Parecis","Sinop","Sapezal","Querência","Água Boa"].includes(o.city));
+const f=o.freight_reference;assert.equal(f.week,'2026-S46');assert.equal(o.logistics.road.brl_t,Math.round(f.road_santos_brl_t*r.road_index/100/5)*5);assert.equal(o.logistics.rail.feeder_brl_t,Math.round(f.feeder_brl_t*r.feeder_index/100/5)*5);
+assert.equal(f.feeder_kind,o.city==='Rio Verde'?'simulated_local_access':'observed_spot_reference');
+if(o.logistics.rail_alt)assert.equal(o.logistics.rail_alt.feeder_brl_t,Math.round(f.alternative_rio_verde_brl_t*r.feeder_index/100/5)*5);
+assert.equal(new Set(r.offers_exw.map(x=>x.city)).size,4);assert.equal(o.logistics.rail.terminal,o.uf==='MT'?'rondonopolis':'rio_verde');
 const modes=Object.keys(o.logistics);assert.equal(modes.length,id===2?2:o.logistics.rail_alt?3:2);if(o.logistics.rail_alt)alt++;
 const min=Math.min(...modes.map(m=>o.logistics[m].brl_t));if(o.logistics.road.brl_t===min){if(modes.some(m=>m!=='road'&&o.logistics[m].brl_t===min))ties++;else road++;}else rail++;
 return modes.map(m=>{const x=o.logistics[m];if(m!=='road'){assert.equal(x.rail_brl_t,r.rail_tariffs[x.terminal]);assert.equal(x.brl_t,x.feeder_brl_t+x.rail_brl_t);}

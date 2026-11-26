@@ -15,8 +15,11 @@ body{margin:0;background:#e9efed;font-family:Inter,Arial,sans-serif;color:#192b3
 #campaign-l1-realmap .multi-mode.active{background:#eff8f3;border:2px solid #135f4b;padding:9px}
 #campaign-l1-realmap .multi-mode:disabled{cursor:default}
 #campaign-l1-realmap .multi-note{font-size:11px;color:#5d7669;line-height:1.5}
-#campaign-l1-realmap .multi-terminal{background:#fff6df;border:1px solid #d9ac5d;color:#684711;font-size:10px;font-weight:850;border-radius:5px;padding:6px 9px;white-space:nowrap;box-shadow:0 2px 7px #182f2033}
-#campaign-l1-realmap .multi-terminal b{font-size:15px;margin-right:3px}
+#campaign-l1-realmap .multi-terminal{box-sizing:border-box;width:100%;min-height:42px;display:grid;grid-template-columns:20px minmax(0,1fr);align-items:center;gap:5px;background:#fff6df;border:1px solid #d9ac5d;color:#684711;border-radius:6px;padding:4px 6px;white-space:normal;box-shadow:0 2px 7px #182f2033}
+#campaign-l1-realmap .multi-terminal b{font-size:16px;line-height:1;text-align:center;margin:0}
+#campaign-l1-realmap .multi-terminal span{min-width:0;display:block;overflow-wrap:anywhere}
+#campaign-l1-realmap .multi-terminal small{display:block;font:700 8px/1.1 Arial,sans-serif;letter-spacing:.06em}
+#campaign-l1-realmap .multi-terminal strong{display:block;font:800 12px/1.2 Inter,Arial,sans-serif;white-space:normal;overflow-wrap:anywhere}
 #campaign-l1-realmap .multi-delta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
 #campaign-l1-realmap .multi-delta>div{border:1px solid #e1eae3;border-radius:6px;padding:7px;background:#fafcfa;font-size:10px;color:#60796c}
 #campaign-l1-realmap .multi-delta strong{display:block;font-size:13px;color:#214c3c}

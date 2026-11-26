@@ -9,3 +9,10 @@ Dados oficiais extraídos e armazenados localmente: `data/campaign/rail-corridor
 - Rondonópolis: 1635.3 km de geometria, 35 hiatos topológicos, ponto ferroviário final a 0.61 km da referência de Santos.
 
 Auditoria comercial: L2 59.049 sequências; 3.379 aprovadas (3.129 multimodais misturadas); L3 990.000 sequências; 44.005 aprovadas (40.182 misturadas). 9/11 e 15/9 ofertas favorecem rodoviário/ferroviário respectivamente.
+
+## Revisão de praças — v3 (26/11/2026)
+- L2: R1: Jataí/GO, Sorriso/MT, Itumbiara/GO, Nova Mutum/MT; R2: Primavera do Leste/MT, Cristalina/GO, Lucas do Rio Verde/MT, Jataí/GO; R3: Rio Verde/GO, Campo Novo do Parecis/MT, Itumbiara/GO, Sapezal/MT; R4: Sinop/MT, Jataí/GO, Primavera do Leste/MT, Chapadão do Sul/MS; R5: Cristalina/GO, Sapezal/MT, Rio Verde/GO, Água Boa/MT
+- L3: R1: Querência/MT, Cristalina/GO, Jataí/GO, Água Boa/MT; R2: Rio Verde/GO, Sorriso/MT, Primavera do Leste/MT, Itumbiara/GO; R3: Água Boa/MT, Cristalina/GO, Campo Novo do Parecis/MT, Chapadão do Sul/MS; R4: Itumbiara/GO, Querência/MT, Jataí/GO, Primavera do Leste/MT; R5: Sorriso/MT, Silvânia/GO, Rio Verde/GO, Água Boa/MT; R6: Jataí/GO, Lucas do Rio Verde/MT, Querência/MT, Itumbiara/GO
+Fretes-base observados da S46 (08–14/11), BRZ Fretes, base4626-358.pdf, grãos, sem ICMS. Multiplicados pelos índices simulados existentes e arredondados em R$ 5/t. Acesso local Rio Verde R$ 45/t é simulado. Preços recalibrados para manter dificuldade de cada oferta; referência de tela de 12/11 para fev/27 registrada quando disponível. Nenhuma tarifa ferroviária é cotação observada. Os recordes v3 ficam separados dos antigos, preservando desbloqueios.
+- L2: 59049 sequências, 5943 aprovadas, 5313 com ambos os modais; 11 rodo, 8 ferro, 1 empate; melhor 98/100.
+- L3: 990000 sequências, 47690 aprovadas, 41182 com ambos os modais; 10 rodo, 13 ferro, 1 empate; melhor 100/100.

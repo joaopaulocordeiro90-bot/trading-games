@@ -28,7 +28,7 @@
     "penalties": {}
   },
   "sourceInfo": {
-    "market": "Cenário integralmente ficcional; preços, lotes, Chicago, câmbio, fretes e índices são parâmetros didáticos, não cotações BRZ ou tarifas comerciais vigentes.",
+    "market": "Origens e fretes rodoviários ancorados na base BRZ Fretes S46 (08–14/11/2026), grãos, sem ICMS. Índices de rodadas, tarifas ferroviárias, volumes, preços EXW e notícias são simulados. Referência física de 12/11/2026 do BRZ Replacement para retirada fev/27 quando disponível. Acesso local Rio Verde–terminal: R$ 45/t de referência exclusivamente didática.",
     "rail": "Malha Norte, Malha Central e Malha Paulista. Tarifas e custos rodoviários simulados; transbordo incluído na tarifa ferroviária. Traçado oficial ANTT/Infra S.A. quando disponível, sem desenho esquemático como substituto.",
     "source": "https://www.gov.br/antt/pt-br/assuntos/ultimas-noticias/antt-realizou-visita-tecnica-na-ferrovia-norte-sul"
   },
@@ -58,111 +58,163 @@
         "offers_exw": [
           {
             "id": 1,
-            "city": "Montividiu",
+            "city": "Jataí",
             "uf": "GO",
-            "lat": -17.444,
-            "lng": -51.171,
-            "label": "Montividiu GO",
-            "price_brl_saca": 123.5,
+            "lat": -17.881,
+            "lng": -51.715,
+            "label": "Jataí GO",
+            "price_brl_saca": 122,
             "volume_t": 15000,
-            "freight_brl_t_santos": 305,
-            "freight_brl_t_rio_verde": 35,
+            "freight_brl_t_santos": 295,
             "rail_brl_t": 210,
             "logistics": {
               "road": {
-                "brl_t": 305
+                "brl_t": 295
               },
               "rail": {
-                "feeder_brl_t": 35,
+                "terminal": "rio_verde",
+                "feeder_brl_t": 60,
                 "rail_brl_t": 210,
-                "brl_t": 245,
-                "terminal": "rio_verde"
+                "brl_t": 270
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.55,
-            "ref_cbot_cent_bu": 1175
+            "ref_cbot_cent_bu": 1175,
+            "freight_brl_t_rio_verde": 60,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 295,
+              "feeder_brl_t": 59,
+              "terminal": "rio_verde",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 133,
+              "scenario_adjustment_brl_sc": -11
+            }
           },
           {
             "id": 2,
             "city": "Sorriso",
             "uf": "MT",
-            "lat": -12.5425,
-            "lng": -55.7211,
+            "lat": -12.545,
+            "lng": -55.711,
             "label": "Sorriso MT",
-            "price_brl_saca": 113,
+            "price_brl_saca": 112,
             "volume_t": 14000,
-            "freight_brl_t_santos": 535,
+            "freight_brl_t_santos": 520,
             "rail_brl_t": 315,
             "logistics": {
               "road": {
-                "brl_t": 535
+                "brl_t": 520
               },
               "rail": {
                 "terminal": "rondonopolis",
-                "feeder_brl_t": 180,
+                "feeder_brl_t": 195,
                 "rail_brl_t": 315,
-                "brl_t": 495
+                "brl_t": 510
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.55,
             "ref_cbot_cent_bu": 1175,
-            "freight_brl_t_rondonopolis": 180
+            "freight_brl_t_rondonopolis": 195,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 520,
+              "feeder_brl_t": 195,
+              "terminal": "rondonopolis",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 121.5,
+              "scenario_adjustment_brl_sc": -9.5
+            }
           },
           {
             "id": 3,
-            "city": "Chapadão do Céu",
+            "city": "Itumbiara",
             "uf": "GO",
-            "lat": -18.407,
-            "lng": -52.549,
-            "label": "Chapadão do Céu GO",
-            "price_brl_saca": 123.5,
+            "lat": -18.42,
+            "lng": -49.215,
+            "label": "Itumbiara GO",
+            "price_brl_saca": 126.5,
             "volume_t": 18000,
-            "freight_brl_t_santos": 320,
-            "freight_brl_t_rio_verde": 90,
+            "freight_brl_t_santos": 250,
             "rail_brl_t": 210,
             "logistics": {
               "road": {
-                "brl_t": 320
+                "brl_t": 250
               },
               "rail": {
-                "feeder_brl_t": 90,
+                "terminal": "rio_verde",
+                "feeder_brl_t": 80,
                 "rail_brl_t": 210,
-                "brl_t": 300,
-                "terminal": "rio_verde"
+                "brl_t": 290
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.55,
-            "ref_cbot_cent_bu": 1175
+            "ref_cbot_cent_bu": 1175,
+            "freight_brl_t_rio_verde": 80,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 250,
+              "feeder_brl_t": 80,
+              "terminal": "rio_verde",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "simulated_no_matching_feb27_reference"
+            }
           },
           {
             "id": 4,
             "city": "Nova Mutum",
             "uf": "MT",
-            "lat": -13.837,
-            "lng": -56.074,
+            "lat": -13.823,
+            "lng": -56.082,
             "label": "Nova Mutum MT",
-            "price_brl_saca": 116.5,
+            "price_brl_saca": 114,
             "volume_t": 16000,
-            "freight_brl_t_santos": 490,
+            "freight_brl_t_santos": 500,
             "rail_brl_t": 315,
             "logistics": {
               "road": {
-                "brl_t": 490
+                "brl_t": 500
               },
               "rail": {
                 "terminal": "rondonopolis",
-                "feeder_brl_t": 130,
+                "feeder_brl_t": 175,
                 "rail_brl_t": 315,
-                "brl_t": 445
+                "brl_t": 490
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.55,
             "ref_cbot_cent_bu": 1175,
-            "freight_brl_t_rondonopolis": 130
+            "freight_brl_t_rondonopolis": 175,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 500,
+              "feeder_brl_t": 175,
+              "terminal": "rondonopolis",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "simulated_no_matching_feb27_reference"
+            }
           }
         ],
         "impact_next": {
@@ -205,106 +257,158 @@
             "lat": -15.5608,
             "lng": -54.2979,
             "label": "Primavera do Leste MT",
-            "price_brl_saca": 119.5,
+            "price_brl_saca": 120,
             "volume_t": 15000,
-            "freight_brl_t_santos": 380,
+            "freight_brl_t_santos": 375,
             "rail_brl_t": 325,
             "logistics": {
               "road": {
-                "brl_t": 380
+                "brl_t": 375
               },
               "rail": {
                 "terminal": "rondonopolis",
-                "feeder_brl_t": 70,
+                "feeder_brl_t": 85,
                 "rail_brl_t": 325,
-                "brl_t": 395
+                "brl_t": 410
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.56,
             "ref_cbot_cent_bu": 1168,
-            "freight_brl_t_rondonopolis": 70
+            "freight_brl_t_rondonopolis": 85,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 430,
+              "feeder_brl_t": 95,
+              "terminal": "rondonopolis",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 127.5,
+              "scenario_adjustment_brl_sc": -7.5
+            }
           },
           {
             "id": 2,
-            "city": "Uberlândia",
-            "uf": "MG",
-            "lat": -18.918,
-            "lng": -48.277,
-            "label": "Uberlândia MG",
-            "price_brl_saca": 127.5,
+            "city": "Cristalina",
+            "uf": "GO",
+            "lat": -16.768,
+            "lng": -47.613,
+            "label": "Cristalina GO",
+            "price_brl_saca": 122,
             "volume_t": 16000,
-            "freight_brl_t_santos": 170,
-            "freight_brl_t_rio_verde": 205,
+            "freight_brl_t_santos": 260,
             "rail_brl_t": 210,
             "logistics": {
               "road": {
-                "brl_t": 170
+                "brl_t": 260
               },
               "rail": {
-                "feeder_brl_t": 205,
+                "terminal": "rio_verde",
+                "feeder_brl_t": 140,
                 "rail_brl_t": 210,
-                "brl_t": 415,
-                "terminal": "rio_verde"
+                "brl_t": 350
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.56,
-            "ref_cbot_cent_bu": 1168
+            "ref_cbot_cent_bu": 1168,
+            "freight_brl_t_rio_verde": 140,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 300,
+              "feeder_brl_t": 155,
+              "terminal": "rio_verde",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "simulated_no_matching_feb27_reference"
+            }
           },
           {
             "id": 3,
             "city": "Lucas do Rio Verde",
             "uf": "MT",
-            "lat": -13.0587,
-            "lng": -55.9042,
+            "lat": -13.052,
+            "lng": -55.911,
             "label": "Lucas do Rio Verde MT",
-            "price_brl_saca": 117.5,
+            "price_brl_saca": 116.5,
             "volume_t": 14000,
-            "freight_brl_t_santos": 435,
+            "freight_brl_t_santos": 450,
             "rail_brl_t": 325,
             "logistics": {
               "road": {
-                "brl_t": 435
+                "brl_t": 450
               },
               "rail": {
                 "terminal": "rondonopolis",
-                "feeder_brl_t": 135,
+                "feeder_brl_t": 170,
                 "rail_brl_t": 325,
-                "brl_t": 460
+                "brl_t": 495
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.56,
             "ref_cbot_cent_bu": 1168,
-            "freight_brl_t_rondonopolis": 135
+            "freight_brl_t_rondonopolis": 170,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 515,
+              "feeder_brl_t": 190,
+              "terminal": "rondonopolis",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "simulated_no_matching_feb27_reference"
+            }
           },
           {
             "id": 4,
-            "city": "Quirinópolis",
+            "city": "Jataí",
             "uf": "GO",
-            "lat": -18.448,
-            "lng": -50.452,
-            "label": "Quirinópolis GO",
-            "price_brl_saca": 124.5,
+            "lat": -17.881,
+            "lng": -51.715,
+            "label": "Jataí GO",
+            "price_brl_saca": 124,
             "volume_t": 17000,
-            "freight_brl_t_santos": 250,
-            "freight_brl_t_rio_verde": 70,
+            "freight_brl_t_santos": 255,
             "rail_brl_t": 210,
             "logistics": {
               "road": {
-                "brl_t": 250
+                "brl_t": 255
               },
               "rail": {
-                "feeder_brl_t": 70,
+                "terminal": "rio_verde",
+                "feeder_brl_t": 55,
                 "rail_brl_t": 210,
-                "brl_t": 280,
-                "terminal": "rio_verde"
+                "brl_t": 265
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.56,
-            "ref_cbot_cent_bu": 1168
+            "ref_cbot_cent_bu": 1168,
+            "freight_brl_t_rio_verde": 55,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 295,
+              "feeder_brl_t": 59,
+              "terminal": "rio_verde",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 133,
+              "scenario_adjustment_brl_sc": -9
+            }
           }
         ],
         "impact_next": {
@@ -342,111 +446,163 @@
         "offers_exw": [
           {
             "id": 1,
-            "city": "Acreúna",
+            "city": "Rio Verde",
             "uf": "GO",
-            "lat": -17.397,
-            "lng": -50.378,
-            "label": "Acreúna GO",
-            "price_brl_saca": 130,
+            "lat": -17.797,
+            "lng": -50.926,
+            "label": "Rio Verde GO",
+            "price_brl_saca": 130.5,
             "volume_t": 18000,
-            "freight_brl_t_santos": 255,
-            "freight_brl_t_rio_verde": 50,
+            "freight_brl_t_santos": 260,
             "rail_brl_t": 175,
             "logistics": {
               "road": {
-                "brl_t": 255
+                "brl_t": 260
               },
               "rail": {
-                "feeder_brl_t": 50,
+                "terminal": "rio_verde",
+                "feeder_brl_t": 40,
                 "rail_brl_t": 175,
-                "brl_t": 225,
-                "terminal": "rio_verde"
-              }
-            },
-            "destination_port": "Santos",
-            "ref_cambio": 5.62,
-            "ref_cbot_cent_bu": 1190
-          },
-          {
-            "id": 2,
-            "city": "Campo Novo do Parecis",
-            "uf": "MT",
-            "lat": -13.675,
-            "lng": -57.891,
-            "label": "Campo Novo do Parecis MT",
-            "price_brl_saca": 111.5,
-            "volume_t": 14000,
-            "freight_brl_t_santos": 505,
-            "rail_brl_t": 295,
-            "logistics": {
-              "road": {
-                "brl_t": 505
-              },
-              "rail": {
-                "terminal": "rondonopolis",
-                "feeder_brl_t": 195,
-                "rail_brl_t": 295,
-                "brl_t": 490
+                "brl_t": 215
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.62,
             "ref_cbot_cent_bu": 1190,
-            "freight_brl_t_rondonopolis": 195
+            "freight_brl_t_rio_verde": 40,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 290,
+              "feeder_brl_t": 45,
+              "terminal": "rio_verde",
+              "feeder_kind": "simulated_local_access"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 133,
+              "scenario_adjustment_brl_sc": -2.5
+            }
+          },
+          {
+            "id": 2,
+            "city": "Campo Novo do Parecis",
+            "uf": "MT",
+            "lat": -13.674,
+            "lng": -57.892,
+            "label": "Campo Novo do Parecis MT",
+            "price_brl_saca": 113.5,
+            "volume_t": 14000,
+            "freight_brl_t_santos": 460,
+            "rail_brl_t": 295,
+            "logistics": {
+              "road": {
+                "brl_t": 460
+              },
+              "rail": {
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 170,
+                "rail_brl_t": 295,
+                "brl_t": 465
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.62,
+            "ref_cbot_cent_bu": 1190,
+            "freight_brl_t_rondonopolis": 170,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 510,
+              "feeder_brl_t": 185,
+              "terminal": "rondonopolis",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "simulated_no_matching_feb27_reference"
+            }
           },
           {
             "id": 3,
-            "city": "Goiatuba",
+            "city": "Itumbiara",
             "uf": "GO",
-            "lat": -18.012,
-            "lng": -49.365,
-            "label": "Goiatuba GO",
+            "lat": -18.42,
+            "lng": -49.215,
+            "label": "Itumbiara GO",
             "price_brl_saca": 132.5,
             "volume_t": 16000,
             "freight_brl_t_santos": 225,
-            "freight_brl_t_rio_verde": 80,
             "rail_brl_t": 175,
             "logistics": {
               "road": {
                 "brl_t": 225
               },
               "rail": {
-                "feeder_brl_t": 80,
+                "terminal": "rio_verde",
+                "feeder_brl_t": 75,
                 "rail_brl_t": 175,
-                "brl_t": 255,
-                "terminal": "rio_verde"
-              }
-            },
-            "destination_port": "Santos",
-            "ref_cambio": 5.62,
-            "ref_cbot_cent_bu": 1190
-          },
-          {
-            "id": 4,
-            "city": "Campo Verde",
-            "uf": "MT",
-            "lat": -15.545,
-            "lng": -55.162,
-            "label": "Campo Verde MT",
-            "price_brl_saca": 125.5,
-            "volume_t": 17000,
-            "freight_brl_t_santos": 385,
-            "rail_brl_t": 295,
-            "logistics": {
-              "road": {
-                "brl_t": 385
-              },
-              "rail": {
-                "terminal": "rondonopolis",
-                "feeder_brl_t": 70,
-                "rail_brl_t": 295,
-                "brl_t": 365
+                "brl_t": 250
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.62,
             "ref_cbot_cent_bu": 1190,
-            "freight_brl_t_rondonopolis": 70
+            "freight_brl_t_rio_verde": 75,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 250,
+              "feeder_brl_t": 80,
+              "terminal": "rio_verde",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "simulated_no_matching_feb27_reference"
+            }
+          },
+          {
+            "id": 4,
+            "city": "Sapezal",
+            "uf": "MT",
+            "lat": -13.543,
+            "lng": -58.815,
+            "label": "Sapezal MT",
+            "price_brl_saca": 119,
+            "volume_t": 17000,
+            "freight_brl_t_santos": 475,
+            "rail_brl_t": 295,
+            "logistics": {
+              "road": {
+                "brl_t": 475
+              },
+              "rail": {
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 180,
+                "rail_brl_t": 295,
+                "brl_t": 475
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.62,
+            "ref_cbot_cent_bu": 1190,
+            "freight_brl_t_rondonopolis": 180,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 525,
+              "feeder_brl_t": 200,
+              "terminal": "rondonopolis",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 121.5,
+              "scenario_adjustment_brl_sc": -2.5
+            }
           }
         ],
         "impact_next": {
@@ -486,109 +642,165 @@
             "id": 1,
             "city": "Sinop",
             "uf": "MT",
-            "lat": -11.858,
-            "lng": -55.501,
+            "lat": -11.864,
+            "lng": -55.504,
             "label": "Sinop MT",
-            "price_brl_saca": 112,
+            "price_brl_saca": 112.5,
             "volume_t": 14000,
-            "freight_brl_t_santos": 650,
+            "freight_brl_t_santos": 605,
             "rail_brl_t": 335,
             "logistics": {
               "road": {
-                "brl_t": 650
+                "brl_t": 605
               },
               "rail": {
                 "terminal": "rondonopolis",
-                "feeder_brl_t": 240,
+                "feeder_brl_t": 235,
                 "rail_brl_t": 335,
-                "brl_t": 575
+                "brl_t": 570
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.6,
             "ref_cbot_cent_bu": 1205,
-            "freight_brl_t_rondonopolis": 240
+            "freight_brl_t_rondonopolis": 235,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 535,
+              "feeder_brl_t": 210,
+              "terminal": "rondonopolis",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 122,
+              "scenario_adjustment_brl_sc": -9.5
+            }
           },
           {
             "id": 2,
-            "city": "Santa Helena de Goiás",
+            "city": "Jataí",
             "uf": "GO",
-            "lat": -17.813,
-            "lng": -50.596,
-            "label": "Santa Helena de Goiás GO",
-            "price_brl_saca": 135,
+            "lat": -17.881,
+            "lng": -51.715,
+            "label": "Jataí GO",
+            "price_brl_saca": 134,
             "volume_t": 17000,
             "freight_brl_t_santos": 335,
-            "freight_brl_t_rio_verde": 45,
             "rail_brl_t": 180,
             "logistics": {
               "road": {
                 "brl_t": 335
               },
               "rail": {
-                "feeder_brl_t": 45,
+                "terminal": "rio_verde",
+                "feeder_brl_t": 65,
                 "rail_brl_t": 180,
-                "brl_t": 225,
-                "terminal": "rio_verde"
-              }
-            },
-            "destination_port": "Santos",
-            "ref_cambio": 5.6,
-            "ref_cbot_cent_bu": 1205
-          },
-          {
-            "id": 3,
-            "city": "Jaciara",
-            "uf": "MT",
-            "lat": -15.965,
-            "lng": -54.968,
-            "label": "Jaciara MT",
-            "price_brl_saca": 122,
-            "volume_t": 16000,
-            "freight_brl_t_santos": 445,
-            "rail_brl_t": 335,
-            "logistics": {
-              "road": {
-                "brl_t": 445
-              },
-              "rail": {
-                "terminal": "rondonopolis",
-                "feeder_brl_t": 50,
-                "rail_brl_t": 335,
-                "brl_t": 385
+                "brl_t": 245
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.6,
             "ref_cbot_cent_bu": 1205,
-            "freight_brl_t_rondonopolis": 50
+            "freight_brl_t_rio_verde": 65,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 295,
+              "feeder_brl_t": 59,
+              "terminal": "rio_verde",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 133,
+              "scenario_adjustment_brl_sc": 1
+            }
           },
           {
-            "id": 4,
-            "city": "Santo Antônio da Barra",
-            "uf": "GO",
-            "lat": -17.558,
-            "lng": -50.635,
-            "label": "Santo Antônio da Barra GO",
-            "price_brl_saca": 129,
-            "volume_t": 15000,
-            "freight_brl_t_santos": 310,
-            "freight_brl_t_rio_verde": 50,
-            "rail_brl_t": 180,
+            "id": 3,
+            "city": "Primavera do Leste",
+            "uf": "MT",
+            "lat": -15.5608,
+            "lng": -54.2979,
+            "label": "Primavera do Leste MT",
+            "price_brl_saca": 118.5,
+            "volume_t": 16000,
+            "freight_brl_t_santos": 485,
+            "rail_brl_t": 335,
             "logistics": {
               "road": {
-                "brl_t": 310
+                "brl_t": 485
               },
               "rail": {
-                "feeder_brl_t": 50,
-                "rail_brl_t": 180,
-                "brl_t": 230,
-                "terminal": "rio_verde"
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 105,
+                "rail_brl_t": 335,
+                "brl_t": 440
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.6,
-            "ref_cbot_cent_bu": 1205
+            "ref_cbot_cent_bu": 1205,
+            "freight_brl_t_rondonopolis": 105,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 430,
+              "feeder_brl_t": 95,
+              "terminal": "rondonopolis",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 127.5,
+              "scenario_adjustment_brl_sc": -9
+            }
+          },
+          {
+            "id": 4,
+            "city": "Chapadão do Sul",
+            "uf": "MS",
+            "lat": -18.795,
+            "lng": -52.623,
+            "label": "Chapadão do Sul MS",
+            "price_brl_saca": 125,
+            "volume_t": 15000,
+            "freight_brl_t_santos": 350,
+            "rail_brl_t": 180,
+            "logistics": {
+              "road": {
+                "brl_t": 350
+              },
+              "rail": {
+                "terminal": "rio_verde",
+                "feeder_brl_t": 120,
+                "rail_brl_t": 180,
+                "brl_t": 300
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.6,
+            "ref_cbot_cent_bu": 1205,
+            "freight_brl_t_rio_verde": 120,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 310,
+              "feeder_brl_t": 108,
+              "terminal": "rio_verde",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "simulated_no_matching_feb27_reference"
+            }
           }
         ],
         "impact_next": {
@@ -626,30 +838,41 @@
         "offers_exw": [
           {
             "id": 1,
-            "city": "Uberlândia",
-            "uf": "MG",
-            "lat": -18.918,
-            "lng": -48.277,
-            "label": "Uberlândia MG",
-            "price_brl_saca": 132,
+            "city": "Cristalina",
+            "uf": "GO",
+            "lat": -16.768,
+            "lng": -47.613,
+            "label": "Cristalina GO",
+            "price_brl_saca": 125.5,
             "volume_t": 17000,
-            "freight_brl_t_santos": 195,
-            "freight_brl_t_rio_verde": 235,
+            "freight_brl_t_santos": 305,
             "rail_brl_t": 255,
             "logistics": {
               "road": {
-                "brl_t": 195
+                "brl_t": 305
               },
               "rail": {
-                "feeder_brl_t": 235,
+                "terminal": "rio_verde",
+                "feeder_brl_t": 160,
                 "rail_brl_t": 255,
-                "brl_t": 490,
-                "terminal": "rio_verde"
+                "brl_t": 415
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.66,
-            "ref_cbot_cent_bu": 1198
+            "ref_cbot_cent_bu": 1198,
+            "freight_brl_t_rio_verde": 160,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 300,
+              "feeder_brl_t": 155,
+              "terminal": "rio_verde",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "simulated_no_matching_feb27_reference"
+            }
           },
           {
             "id": 2,
@@ -658,79 +881,124 @@
             "lat": -13.543,
             "lng": -58.815,
             "label": "Sapezal MT",
-            "price_brl_saca": 112,
+            "price_brl_saca": 117,
             "volume_t": 15000,
-            "freight_brl_t_santos": 615,
+            "freight_brl_t_santos": 530,
             "rail_brl_t": 380,
             "logistics": {
               "road": {
-                "brl_t": 615
+                "brl_t": 530
               },
               "rail": {
                 "terminal": "rondonopolis",
-                "feeder_brl_t": 260,
+                "feeder_brl_t": 210,
                 "rail_brl_t": 380,
-                "brl_t": 640
+                "brl_t": 590
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.66,
             "ref_cbot_cent_bu": 1198,
-            "freight_brl_t_rondonopolis": 260
+            "freight_brl_t_rondonopolis": 210,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 525,
+              "feeder_brl_t": 200,
+              "terminal": "rondonopolis",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 121.5,
+              "scenario_adjustment_brl_sc": -4.5
+            }
           },
           {
             "id": 3,
-            "city": "Goiatuba",
+            "city": "Rio Verde",
             "uf": "GO",
-            "lat": -18.012,
-            "lng": -49.365,
-            "label": "Goiatuba GO",
-            "price_brl_saca": 131,
+            "lat": -17.797,
+            "lng": -50.926,
+            "label": "Rio Verde GO",
+            "price_brl_saca": 128.5,
             "volume_t": 18000,
-            "freight_brl_t_santos": 255,
-            "freight_brl_t_rio_verde": 95,
+            "freight_brl_t_santos": 295,
             "rail_brl_t": 255,
             "logistics": {
               "road": {
-                "brl_t": 255
+                "brl_t": 295
               },
               "rail": {
-                "feeder_brl_t": 95,
+                "terminal": "rio_verde",
+                "feeder_brl_t": 45,
                 "rail_brl_t": 255,
-                "brl_t": 350,
-                "terminal": "rio_verde"
-              }
-            },
-            "destination_port": "Santos",
-            "ref_cambio": 5.66,
-            "ref_cbot_cent_bu": 1198
-          },
-          {
-            "id": 4,
-            "city": "Alto Garças",
-            "uf": "MT",
-            "lat": -16.946,
-            "lng": -53.527,
-            "label": "Alto Garças MT",
-            "price_brl_saca": 126.5,
-            "volume_t": 14000,
-            "freight_brl_t_santos": 380,
-            "rail_brl_t": 380,
-            "logistics": {
-              "road": {
-                "brl_t": 380
-              },
-              "rail": {
-                "terminal": "rondonopolis",
-                "feeder_brl_t": 100,
-                "rail_brl_t": 380,
-                "brl_t": 480
+                "brl_t": 300
               }
             },
             "destination_port": "Santos",
             "ref_cambio": 5.66,
             "ref_cbot_cent_bu": 1198,
-            "freight_brl_t_rondonopolis": 100
+            "freight_brl_t_rio_verde": 45,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 290,
+              "feeder_brl_t": 45,
+              "terminal": "rio_verde",
+              "feeder_kind": "simulated_local_access"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 133,
+              "scenario_adjustment_brl_sc": -4.5
+            }
+          },
+          {
+            "id": 4,
+            "city": "Água Boa",
+            "uf": "MT",
+            "lat": -14.052,
+            "lng": -52.158,
+            "label": "Água Boa MT",
+            "price_brl_saca": 124.5,
+            "volume_t": 14000,
+            "freight_brl_t_santos": 410,
+            "rail_brl_t": 380,
+            "logistics": {
+              "road": {
+                "brl_t": 410
+              },
+              "rail": {
+                "terminal": "rondonopolis",
+                "feeder_brl_t": 175,
+                "rail_brl_t": 380,
+                "brl_t": 555
+              }
+            },
+            "destination_port": "Santos",
+            "ref_cambio": 5.66,
+            "ref_cbot_cent_bu": 1198,
+            "freight_brl_t_rondonopolis": 175,
+            "freight_reference": {
+              "week": "2026-S46",
+              "source": "BRZ Fretes · base4626-358.pdf · grãos · sem ICMS",
+              "road_santos_brl_t": 405,
+              "feeder_brl_t": 170,
+              "terminal": "rondonopolis",
+              "feeder_kind": "observed_spot_reference"
+            },
+            "price_reference": {
+              "kind": "observed_screen_reference",
+              "date": "2026-11-12",
+              "delivery": "2027-02",
+              "brl_sc": 124,
+              "scenario_adjustment_brl_sc": 0.5
+            }
           }
         ],
         "rail_tariffs": {
@@ -756,5 +1024,5 @@
       "location_kind": "Referência urbana até validação cartográfica"
     }
   },
-  "calibrationVersion": "dual-terminal-v2"
+  "calibrationVersion": "brz-origins-v3"
 }

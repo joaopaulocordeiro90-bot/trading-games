@@ -12,7 +12,7 @@ const modalName=(m,k)=>m==='road'?'Rodo direto':'Rodo + ferro · '+termLabel(k||
 let level,round=1,selected=null,mode=null,lots=[],tab='market',map=null,markers=null,routeLayer=null,tile=null,tileTimer=null,routeAbort=null,routeVersion=0,mapStyle='street',drawnRound=0,ended=false;
 const rd=()=>level.scenario.rounds[round-1],confirmed=()=>lots.find(x=>x.round===round),book=()=>E.result(level,lots),offer=()=>rd().offers_exw.find(o=>o.id===selected);
 const unlocked=()=>{try{return Math.max(1,Number(localStorage.getItem(KEY))||1)}catch(_){return 1}};
-const recordKey=()=> 'tg_campaign_multimodal_l'+id+'_v2';
+const recordKey=()=> 'tg_campaign_multimodal_l'+id+'_v3';
 function fail(msg){$('multi-app').innerHTML='<section class="multi-loading"><h1>Trading Games</h1><p>'+esc(msg)+'</p><a href="./?campaign=1">Voltar à campanha</a></section>';}
 async function boot(){
  if(![2,3].includes(id)){fail('Nível inválido.');return}
@@ -41,7 +41,7 @@ function initMap(){
  if(map){map.remove();map=null;}clearTimeout(tileTimer);drawnRound=0;
  map=L.map('l1m-map',{zoomControl:false,minZoom:3,maxZoom:13}).setView([-19,-50],5);L.control.zoom({position:'bottomright'}).addTo(map);
  routeLayer=L.layerGroup().addTo(map);markers=L.layerGroup().addTo(map);
- for(const k of Object.keys(level.terminals)){const t=level.terminals[k];L.marker(termPoint(k),{icon:L.divIcon({className:'',iconAnchor:[15,15],iconSize:[145,30],html:'<div class="multi-terminal"><b>▣</b> '+esc(t.name)+' · Terminal</div>'}),title:t.name+'/'+t.uf+(railGeometry[k]?' — referência ferroviária ANTT':' — referência urbana aproximada')}).addTo(map);}
+ for(const k of Object.keys(level.terminals)){const t=level.terminals[k];L.marker(termPoint(k),{icon:L.divIcon({className:'',iconAnchor:[15,21],iconSize:[156,42],html:'<div class="multi-terminal"><b aria-hidden="true">▣</b><span><small>TERMINAL</small><strong>'+esc(t.name)+'</strong></span></div>'}),title:t.name+'/'+t.uf+(railGeometry[k]?' — referência ferroviária ANTT':' — referência urbana aproximada')}).addTo(map);}
  L.marker(PORT,{icon:L.divIcon({className:'',iconAnchor:[15,15],iconSize:[120,35],html:'<div class="l1m-port"><b>⚓</b>SANTOS</div>'})}).addTo(map);
  updateMarkers();loadTiles(mapStyle);requestAnimationFrame(()=>{if(map){map.invalidateSize({pan:false});if(selected)drawRoutes();else general();}});
  }catch(e){console.error(e);if(map){try{map.remove()}catch(_){}map=null;}const old=$('l1m-map');if(old)old.replaceWith(old.cloneNode(false));mapHealth('Falha ao iniciar mapa. '+e.message,true);}
