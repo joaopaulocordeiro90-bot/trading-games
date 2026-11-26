@@ -70,19 +70,19 @@
             "lat": -17.524,
             "lng": -52.066,
             "label": "Perolândia GO",
-            "price_brl_saca": 116.5,
+            "price_brl_saca": 117.5,
             "volume_t": 14000,
             "freight_brl_t_santos": 315,
-            "freight_brl_t_rio_verde": 105,
+            "freight_brl_t_rio_verde": 90,
             "rail_brl_t": 205,
             "logistics": {
               "road": {
                 "brl_t": 315
               },
               "rail": {
-                "feeder_brl_t": 105,
+                "feeder_brl_t": 90,
                 "rail_brl_t": 205,
-                "brl_t": 310
+                "brl_t": 295
               }
             },
             "destination_port": "Santos",
@@ -122,19 +122,19 @@
             "lat": -17.338,
             "lng": -49.93,
             "label": "Edéia GO",
-            "price_brl_saca": 121,
+            "price_brl_saca": 120.5,
             "volume_t": 17000,
-            "freight_brl_t_santos": 265,
-            "freight_brl_t_rio_verde": 85,
+            "freight_brl_t_santos": 290,
+            "freight_brl_t_rio_verde": 65,
             "rail_brl_t": 205,
             "logistics": {
               "road": {
-                "brl_t": 265
+                "brl_t": 290
               },
               "rail": {
-                "feeder_brl_t": 85,
+                "feeder_brl_t": 65,
                 "rail_brl_t": 205,
-                "brl_t": 290
+                "brl_t": 270
               }
             },
             "destination_port": "Santos",
@@ -150,17 +150,17 @@
             "label": "Chapadão do Sul MS",
             "price_brl_saca": 120,
             "volume_t": 15000,
-            "freight_brl_t_santos": 325,
-            "freight_brl_t_rio_verde": 145,
+            "freight_brl_t_santos": 345,
+            "freight_brl_t_rio_verde": 120,
             "rail_brl_t": 205,
             "logistics": {
               "road": {
-                "brl_t": 325
+                "brl_t": 345
               },
               "rail": {
-                "feeder_brl_t": 145,
+                "feeder_brl_t": 120,
                 "rail_brl_t": 205,
-                "brl_t": 350
+                "brl_t": 325
               }
             },
             "destination_port": "Santos",
@@ -205,17 +205,17 @@
             "label": "Indiara GO",
             "price_brl_saca": 127,
             "volume_t": 15000,
-            "freight_brl_t_santos": 270,
-            "freight_brl_t_rio_verde": 85,
+            "freight_brl_t_santos": 290,
+            "freight_brl_t_rio_verde": 65,
             "rail_brl_t": 205,
             "logistics": {
               "road": {
-                "brl_t": 270
+                "brl_t": 290
               },
               "rail": {
-                "feeder_brl_t": 85,
+                "feeder_brl_t": 65,
                 "rail_brl_t": 205,
-                "brl_t": 290
+                "brl_t": 270
               }
             },
             "destination_port": "Santos",
@@ -336,19 +336,19 @@
             "lat": -18.559,
             "lng": -51.132,
             "label": "Caçu GO",
-            "price_brl_saca": 121.5,
+            "price_brl_saca": 122.5,
             "volume_t": 14000,
-            "freight_brl_t_santos": 350,
-            "freight_brl_t_rio_verde": 115,
+            "freight_brl_t_santos": 370,
+            "freight_brl_t_rio_verde": 100,
             "rail_brl_t": 200,
             "logistics": {
               "road": {
-                "brl_t": 350
+                "brl_t": 370
               },
               "rail": {
-                "feeder_brl_t": 115,
+                "feeder_brl_t": 100,
                 "rail_brl_t": 200,
-                "brl_t": 315
+                "brl_t": 300
               }
             },
             "destination_port": "Santos",
@@ -388,19 +388,19 @@
             "lat": -16.8,
             "lng": -49.925,
             "label": "Palmeiras de Goiás GO",
-            "price_brl_saca": 123,
+            "price_brl_saca": 124,
             "volume_t": 13000,
-            "freight_brl_t_santos": 335,
-            "freight_brl_t_rio_verde": 130,
+            "freight_brl_t_santos": 350,
+            "freight_brl_t_rio_verde": 115,
             "rail_brl_t": 200,
             "logistics": {
               "road": {
-                "brl_t": 335
+                "brl_t": 350
               },
               "rail": {
-                "feeder_brl_t": 130,
+                "feeder_brl_t": 115,
                 "rail_brl_t": 200,
-                "brl_t": 330
+                "brl_t": 315
               }
             },
             "destination_port": "Santos",
@@ -414,19 +414,19 @@
             "lat": -18.968,
             "lng": -51.926,
             "label": "Aporé GO",
-            "price_brl_saca": 123.5,
+            "price_brl_saca": 124.5,
             "volume_t": 15000,
-            "freight_brl_t_santos": 370,
-            "freight_brl_t_rio_verde": 175,
+            "freight_brl_t_santos": 385,
+            "freight_brl_t_rio_verde": 150,
             "rail_brl_t": 200,
             "logistics": {
               "road": {
-                "brl_t": 370
+                "brl_t": 385
               },
               "rail": {
-                "feeder_brl_t": 175,
+                "feeder_brl_t": 150,
                 "rail_brl_t": 200,
-                "brl_t": 375
+                "brl_t": 350
               }
             },
             "destination_port": "Santos",
@@ -761,19 +761,19 @@
             "lat": -17.338,
             "lng": -49.93,
             "label": "Edéia GO",
-            "price_brl_saca": 128,
+            "price_brl_saca": 126.5,
             "volume_t": 15000,
-            "freight_brl_t_santos": 240,
-            "freight_brl_t_rio_verde": 80,
+            "freight_brl_t_santos": 265,
+            "freight_brl_t_rio_verde": 60,
             "rail_brl_t": 245,
             "logistics": {
               "road": {
-                "brl_t": 240
+                "brl_t": 265
               },
               "rail": {
-                "feeder_brl_t": 80,
+                "feeder_brl_t": 60,
                 "rail_brl_t": 245,
-                "brl_t": 325
+                "brl_t": 305
               }
             },
             "destination_port": "Santos",
@@ -787,19 +787,19 @@
             "lat": -18.795,
             "lng": -52.623,
             "label": "Chapadão do Sul MS",
-            "price_brl_saca": 126.5,
+            "price_brl_saca": 125.5,
             "volume_t": 18000,
-            "freight_brl_t_santos": 295,
-            "freight_brl_t_rio_verde": 140,
+            "freight_brl_t_santos": 315,
+            "freight_brl_t_rio_verde": 115,
             "rail_brl_t": 245,
             "logistics": {
               "road": {
-                "brl_t": 295
+                "brl_t": 315
               },
               "rail": {
-                "feeder_brl_t": 140,
+                "feeder_brl_t": 115,
                 "rail_brl_t": 245,
-                "brl_t": 385
+                "brl_t": 360
               }
             },
             "destination_port": "Santos",
@@ -813,19 +813,19 @@
             "lat": -18.559,
             "lng": -51.132,
             "label": "Caçu GO",
-            "price_brl_saca": 124,
+            "price_brl_saca": 123,
             "volume_t": 17000,
-            "freight_brl_t_santos": 270,
-            "freight_brl_t_rio_verde": 90,
+            "freight_brl_t_santos": 285,
+            "freight_brl_t_rio_verde": 80,
             "rail_brl_t": 245,
             "logistics": {
               "road": {
-                "brl_t": 270
+                "brl_t": 285
               },
               "rail": {
-                "feeder_brl_t": 90,
+                "feeder_brl_t": 80,
                 "rail_brl_t": 245,
-                "brl_t": 335
+                "brl_t": 325
               }
             },
             "destination_port": "Santos",
