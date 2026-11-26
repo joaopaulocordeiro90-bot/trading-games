@@ -1,0 +1,8 @@
+# Campanha L2/L3 · multimodal
+- Level 2: cinco rodadas; 20 ofertas com duas alternativas (11 rodo direto mais barato; 9 rodo + ferro mais barato).
+- Level 3: seis rodadas; 24 ofertas com duas alternativas (15 rodo; 9 rodo + ferro). Notícias com efeitos cruzados e defasados.
+- 60.000 t, uma compra definitiva por rodada, parcial ao atingir o saldo. Porto único Santos; terminal Rio Verde/GO. Venda CFR e marítimo fixos por nível, parâmetros novos. Todos os preços, tarifas, volumes e notícias são simulações, não cotações observadas.
+- Corredor ferroviário confirmado pela ANTT: https://www.gov.br/antt/pt-br/assuntos/ultimas-noticias/antt-realizou-visita-tecnica-na-ferrovia-norte-sul . O terminal utiliza coordenada urbana de referência; o traçado ferroviário é esquemático; OSRM para trechos rodoviários quando disponível. A tarifa ferroviária simulada inclui transbordo.
+- Pontuação: originação (25), margem (25), eficiência logística (20), volume (20), disciplina (10). Originação avalia o menor basis possível da origem escolhida contra o menor da rodada; logística avalia custo excedente da escolha de modal, evitando dupla contagem. Aprovação exige navio completo, basis médio dentro da meta, margem não negativa e nota >=70.
+- Auditoria combinatória nominal: L2 59.049 sequências, 3.012 aprovadas (2.727 com ambos os modais); L3 531.441 sequências, 42.852 aprovadas (39.851 com ambos). Inclui equivalências quando o navio completa antes do fim. Não é previsão de aprovação de alunos.
+- O L1, Iniciante e Expert mantêm seus arquivos e motor comercial. L2/L3 compartilham motor próprio, integrado ao menu e ao desbloqueio existente por localStorage. O editor Admin legado não controla o novo módulo multimodal; fontes canônicas são os JSONs por nível.

@@ -565,8 +565,8 @@ const CAMPAIGN_LEVELS = [
       "Você pode comprar no máximo uma oferta por rodada. Se o lote não fecha conta, descarte ou avance; proteger o basis médio vale mais que completar volume a qualquer custo."
 ]
   },
-  { id: 2, code: "L2", name: "Mais alternativas logísticas", summary: "Disponível quando você concluir o Level 1." },
-  { id: 3, code: "L3", name: "Janelas de embarque", summary: "Disponível quando você concluir os níveis anteriores." }
+  { id: 2, code: "L2", name: "Mais alternativas logísticas", summary: "5 rodadas · Santos · escolha rodo direto ou rodo + ferro via Rio Verde." },
+  { id: 3, code: "L3", name: "Mercado em movimento", summary: "6 rodadas · Santos · CBOT, dólar, físico e fretes interligados." }
 ];
 
 function getCampaignUnlockedLevel() {
@@ -2070,7 +2070,7 @@ async function loadGameData() {
     // ✅ Novo fluxo: antes do Start, abre a tela inicial do tutorial (landing)
     // (o Start original continua existindo como 'home_canva')
     state.campaign.unlockedLevel = getCampaignUnlockedLevel();
-    setStage("tutorial_0");
+    setStage(new URLSearchParams(window.location.search).get('campaign')==='1'?'campaign_menu':"tutorial_0");
   } catch (err) {
     screen.innerHTML = `
       <div class="card">
@@ -3305,12 +3305,13 @@ function renderOverlaysForScreen(screenId, rd) {
     const levelCards = CAMPAIGN_LEVELS.map(level => {
       const isUnlocked = Number(level.id) <= Number(unlocked);
       const lockedTip = isUnlocked ? '' : 'Desbloqueie os próximos níveis';
-      const record = level.id === 1 ? readCampaignL1Record() : null;
-      const actions = level.id === 1
-        ? `<button class="campaign-btn campaign-btn-dark" ${isUnlocked ? `onclick="window.startCampaignLevel(${level.id})"` : ''}>Iniciar</button>${record?`<span class="l1-best-score">Melhor nota: ${record.bestScore}/100 ${record.approved?'· aprovado':'· não aprovado'}</span>`:''}`
-        : level.id === 2
-        ? `<a class="campaign-btn campaign-btn-light" href="./level2-mapa.html" style="position:relative;z-index:3;display:inline-flex;align-items:center;justify-content:center;flex:1;padding:11px 12px;font-size:13px;text-decoration:none;background:#135f4b;color:#fff" aria-label="Abrir prévia do mapa real do Level 2">Explorar mapa real · prévia</a>`
-        : `<button class="campaign-btn campaign-btn-light" type="button" disabled>${isUnlocked?'Desbloqueado · em preparação':'Em breve'}</button>`;
+      let record = level.id === 1 ? readCampaignL1Record() : null;
+      if (level.id !== 1) {
+        try { record = JSON.parse(localStorage.getItem('tg_campaign_multimodal_l'+level.id+'_v1')||'null'); } catch (_) {}
+      }
+      const ready = level.id === 1 || !!getCampaignLevelData(level.id)?.scenario?.rounds?.length;
+      const actions = `<button class="campaign-btn campaign-btn-${isUnlocked&&ready?'dark':'light'}" type="button" ${isUnlocked&&ready?`onclick="window.startCampaignLevel(${level.id})"`:'disabled'}>${isUnlocked&&ready?'Iniciar':isUnlocked?'Em preparação':'Bloqueado'}</button>${record?`<span class="l1-best-score">Melhor nota: ${Number(record.bestScore)||0}/100 ${record.approved?'· aprovado':'· não aprovado'}</span>`:''}`;
+
       return `
         <article class="campaign-level-card2 ${isUnlocked ? '' : 'is-locked'}">
           <div class="campaign-level-top">
@@ -3322,7 +3323,7 @@ function renderOverlaysForScreen(screenId, rd) {
           </div>
           <p>${level.summary || 'Próximo desafio da campanha.'}</p>
           <div class="campaign-actions campaign-card-actions">${actions}</div>
-          ${!isUnlocked && level.id !== 2 ? `<div class="campaign-lock-overlay" data-tip="${lockedTip}"></div>` : ''}
+          ${!isUnlocked ? `<div class="campaign-lock-overlay" data-tip="${lockedTip}"></div>` : ''}
         </article>`;
     }).join('');
 
@@ -5478,6 +5479,11 @@ window.startScenarioModeFromMenu = function() {
 
 window.startCampaignLevel = function(levelId) {
   if (!isCampaignLevelUnlocked(levelId)) return;
+  if ([2,3].includes(Number(levelId))) {
+    if (!getCampaignLevelData(levelId)?.scenario?.rounds?.length) return;
+    window.location.href = './campaign-multimodal.html?level='+Number(levelId);
+    return;
+  }
   initCampaignRun(levelId);
 };
 
